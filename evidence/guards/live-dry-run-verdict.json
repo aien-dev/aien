@@ -1,0 +1,521 @@
+{
+  "accepted": false,
+  "programme": "aien-dev/allen#1",
+  "programme_state": "open",
+  "required": 30,
+  "blockers": [
+    {
+      "repo": "aien-dev/allen",
+      "number": 1,
+      "role": "programme",
+      "label": "programme",
+      "reason": "13 unchecked task-list item(s)"
+    },
+    {
+      "repo": "aien-dev/allen",
+      "number": 1,
+      "role": "programme",
+      "label": "programme",
+      "reason": "status line carries forbidden marker `qualification: NOT_RUN`"
+    },
+    {
+      "repo": "aien-dev/allen",
+      "number": 1,
+      "role": "programme",
+      "label": "programme",
+      "reason": "status line carries forbidden marker `Status: PROPOSED`"
+    },
+    {
+      "repo": "aien-dev/allen",
+      "number": 2,
+      "role": "phase",
+      "label": "P0",
+      "reason": "open"
+    },
+    {
+      "repo": "aien-dev/allen",
+      "number": 2,
+      "role": "phase",
+      "label": "P0",
+      "reason": "4 unchecked task-list item(s)"
+    },
+    {
+      "repo": "aien-dev/allen",
+      "number": 2,
+      "role": "phase",
+      "label": "P0",
+      "reason": "status line carries forbidden marker `qualification: NOT_RUN`"
+    },
+    {
+      "repo": "aien-dev/allen",
+      "number": 2,
+      "role": "phase",
+      "label": "P0",
+      "reason": "status line carries forbidden marker `Status: PROPOSED`"
+    },
+    {
+      "repo": "aien-dev/allen",
+      "number": 3,
+      "role": "phase",
+      "label": "P1",
+      "reason": "open"
+    },
+    {
+      "repo": "aien-dev/allen",
+      "number": 3,
+      "role": "phase",
+      "label": "P1",
+      "reason": "4 unchecked task-list item(s)"
+    },
+    {
+      "repo": "aien-dev/allen",
+      "number": 3,
+      "role": "phase",
+      "label": "P1",
+      "reason": "status line carries forbidden marker `qualification: NOT_RUN`"
+    },
+    {
+      "repo": "aien-dev/allen",
+      "number": 3,
+      "role": "phase",
+      "label": "P1",
+      "reason": "status line carries forbidden marker `Status: PROPOSED`"
+    },
+    {
+      "repo": "aien-dev/allen",
+      "number": 4,
+      "role": "phase",
+      "label": "P2",
+      "reason": "open"
+    },
+    {
+      "repo": "aien-dev/allen",
+      "number": 4,
+      "role": "phase",
+      "label": "P2",
+      "reason": "4 unchecked task-list item(s)"
+    },
+    {
+      "repo": "aien-dev/allen",
+      "number": 4,
+      "role": "phase",
+      "label": "P2",
+      "reason": "status line carries forbidden marker `qualification: NOT_RUN`"
+    },
+    {
+      "repo": "aien-dev/allen",
+      "number": 4,
+      "role": "phase",
+      "label": "P2",
+      "reason": "status line carries forbidden marker `Status: PROPOSED`"
+    },
+    {
+      "repo": "aien-dev/allen",
+      "number": 5,
+      "role": "phase",
+      "label": "P3",
+      "reason": "open"
+    },
+    {
+      "repo": "aien-dev/allen",
+      "number": 5,
+      "role": "phase",
+      "label": "P3",
+      "reason": "4 unchecked task-list item(s)"
+    },
+    {
+      "repo": "aien-dev/allen",
+      "number": 5,
+      "role": "phase",
+      "label": "P3",
+      "reason": "status line carries forbidden marker `qualification: NOT_RUN`"
+    },
+    {
+      "repo": "aien-dev/allen",
+      "number": 5,
+      "role": "phase",
+      "label": "P3",
+      "reason": "status line carries forbidden marker `Status: PROPOSED`"
+    },
+    {
+      "repo": "aien-dev/allen",
+      "number": 6,
+      "role": "phase",
+      "label": "P4",
+      "reason": "open"
+    },
+    {
+      "repo": "aien-dev/allen",
+      "number": 6,
+      "role": "phase",
+      "label": "P4",
+      "reason": "4 unchecked task-list item(s)"
+    },
+    {
+      "repo": "aien-dev/allen",
+      "number": 6,
+      "role": "phase",
+      "label": "P4",
+      "reason": "status line carries forbidden marker `qualification: NOT_RUN`"
+    },
+    {
+      "repo": "aien-dev/allen",
+      "number": 6,
+      "role": "phase",
+      "label": "P4",
+      "reason": "status line carries forbidden marker `Status: PROPOSED`"
+    },
+    {
+      "repo": "aien-dev/allen",
+      "number": 7,
+      "role": "phase",
+      "label": "P5",
+      "reason": "open"
+    },
+    {
+      "repo": "aien-dev/allen",
+      "number": 7,
+      "role": "phase",
+      "label": "P5",
+      "reason": "4 unchecked task-list item(s)"
+    },
+    {
+      "repo": "aien-dev/allen",
+      "number": 7,
+      "role": "phase",
+      "label": "P5",
+      "reason": "status line carries forbidden marker `qualification: NOT_RUN`"
+    },
+    {
+      "repo": "aien-dev/allen",
+      "number": 7,
+      "role": "phase",
+      "label": "P5",
+      "reason": "status line carries forbidden marker `Status: PROPOSED`"
+    },
+    {
+      "repo": "aien-dev/allen",
+      "number": 8,
+      "role": "phase",
+      "label": "P6",
+      "reason": "open"
+    },
+    {
+      "repo": "aien-dev/allen",
+      "number": 8,
+      "role": "phase",
+      "label": "P6",
+      "reason": "4 unchecked task-list item(s)"
+    },
+    {
+      "repo": "aien-dev/allen",
+      "number": 8,
+      "role": "phase",
+      "label": "P6",
+      "reason": "status line carries forbidden marker `qualification: NOT_RUN`"
+    },
+    {
+      "repo": "aien-dev/allen",
+      "number": 8,
+      "role": "phase",
+      "label": "P6",
+      "reason": "status line carries forbidden marker `Status: PROPOSED`"
+    },
+    {
+      "repo": "aien-dev/allen",
+      "number": 9,
+      "role": "phase",
+      "label": "P7",
+      "reason": "open"
+    },
+    {
+      "repo": "aien-dev/allen",
+      "number": 9,
+      "role": "phase",
+      "label": "P7",
+      "reason": "4 unchecked task-list item(s)"
+    },
+    {
+      "repo": "aien-dev/allen",
+      "number": 9,
+      "role": "phase",
+      "label": "P7",
+      "reason": "status line carries forbidden marker `qualification: NOT_RUN`"
+    },
+    {
+      "repo": "aien-dev/allen",
+      "number": 9,
+      "role": "phase",
+      "label": "P7",
+      "reason": "status line carries forbidden marker `Status: PROPOSED`"
+    },
+    {
+      "repo": "aien-dev/aien-architecture-mv",
+      "number": 159,
+      "role": "prerequisite",
+      "label": "Identity, persona, experience, release",
+      "reason": "open"
+    },
+    {
+      "repo": "aien-dev/aien-architecture-mv",
+      "number": 159,
+      "role": "prerequisite",
+      "label": "Identity, persona, experience, release",
+      "reason": "10 unchecked task-list item(s)"
+    },
+    {
+      "repo": "aien-dev/aien-architecture-mv",
+      "number": 269,
+      "role": "prerequisite",
+      "label": "Identity, persona, experience, release",
+      "reason": "open"
+    },
+    {
+      "repo": "aien-dev/aien-architecture-mv",
+      "number": 190,
+      "role": "prerequisite",
+      "label": "Identity, persona, experience, release",
+      "reason": "open"
+    },
+    {
+      "repo": "aien-dev/aien-architecture-mv",
+      "number": 231,
+      "role": "prerequisite",
+      "label": "Physical Pi to Spark execution and independent acceptance",
+      "reason": "open"
+    },
+    {
+      "repo": "aien-dev/aien-architecture-mv",
+      "number": 232,
+      "role": "prerequisite",
+      "label": "Physical Pi to Spark execution and independent acceptance",
+      "reason": "open"
+    },
+    {
+      "repo": "aien-dev/aienos-mv",
+      "number": 396,
+      "role": "prerequisite",
+      "label": "Physical Pi to Spark execution and independent acceptance",
+      "reason": "open"
+    },
+    {
+      "repo": "aien-dev/aienos-mv",
+      "number": 396,
+      "role": "prerequisite",
+      "label": "Physical Pi to Spark execution and independent acceptance",
+      "reason": "9 unchecked task-list item(s)"
+    },
+    {
+      "repo": "aien-dev/aienos-mv",
+      "number": 398,
+      "role": "prerequisite",
+      "label": "Physical Pi to Spark execution and independent acceptance",
+      "reason": "open"
+    },
+    {
+      "repo": "aien-dev/aienos-mv",
+      "number": 399,
+      "role": "prerequisite",
+      "label": "Physical Pi to Spark execution and independent acceptance",
+      "reason": "open"
+    },
+    {
+      "repo": "aien-dev/aien-protocols-mv",
+      "number": 27,
+      "role": "prerequisite",
+      "label": "Physical Pi to Spark execution and independent acceptance",
+      "reason": "open"
+    },
+    {
+      "repo": "aien-dev/aien-sovereign-core-mv",
+      "number": 586,
+      "role": "prerequisite",
+      "label": "Physical Pi to Spark execution and independent acceptance",
+      "reason": "open"
+    },
+    {
+      "repo": "aien-dev/omega-mv",
+      "number": 505,
+      "role": "prerequisite",
+      "label": "Physical Pi to Spark execution and independent acceptance",
+      "reason": "open"
+    },
+    {
+      "repo": "aien-dev/aegis-runtime-mv",
+      "number": 53,
+      "role": "prerequisite",
+      "label": "Physical Pi to Spark execution and independent acceptance",
+      "reason": "open"
+    },
+    {
+      "repo": "aien-dev/aienos-mv",
+      "number": 286,
+      "role": "prerequisite",
+      "label": "Native Spark model path",
+      "reason": "open"
+    },
+    {
+      "repo": "aien-dev/aienos-mv",
+      "number": 286,
+      "role": "prerequisite",
+      "label": "Native Spark model path",
+      "reason": "12 unchecked task-list item(s)"
+    },
+    {
+      "repo": "aien-dev/aienos-mv",
+      "number": 327,
+      "role": "prerequisite",
+      "label": "Native Spark model path",
+      "reason": "open"
+    },
+    {
+      "repo": "aien-dev/aienos-mv",
+      "number": 327,
+      "role": "prerequisite",
+      "label": "Native Spark model path",
+      "reason": "6 unchecked task-list item(s)"
+    },
+    {
+      "repo": "aien-dev/aien-architecture-mv",
+      "number": 246,
+      "role": "prerequisite",
+      "label": "Learning economics and out-of-sample evidence",
+      "reason": "open"
+    },
+    {
+      "repo": "aien-dev/aien-architecture-mv",
+      "number": 246,
+      "role": "prerequisite",
+      "label": "Learning economics and out-of-sample evidence",
+      "reason": "5 unchecked task-list item(s)"
+    },
+    {
+      "repo": "aien-dev/aien-architecture-mv",
+      "number": 262,
+      "role": "prerequisite",
+      "label": "Learning economics and out-of-sample evidence",
+      "reason": "open"
+    },
+    {
+      "repo": "aien-dev/aien-architecture-mv",
+      "number": 263,
+      "role": "prerequisite",
+      "label": "Learning economics and out-of-sample evidence",
+      "reason": "open"
+    },
+    {
+      "repo": "aien-dev/aien-architecture-mv",
+      "number": 276,
+      "role": "prerequisite",
+      "label": "Learning economics and out-of-sample evidence",
+      "reason": "open"
+    },
+    {
+      "repo": "aien-dev/aien-architecture-mv",
+      "number": 276,
+      "role": "prerequisite",
+      "label": "Learning economics and out-of-sample evidence",
+      "reason": "16 unchecked task-list item(s)"
+    },
+    {
+      "repo": "aien-dev/aien-architecture-mv",
+      "number": 276,
+      "role": "prerequisite",
+      "label": "Learning economics and out-of-sample evidence",
+      "reason": "status line carries forbidden marker `qualification: NOT_RUN`"
+    },
+    {
+      "repo": "aien-dev/aien-architecture-mv",
+      "number": 276,
+      "role": "prerequisite",
+      "label": "Learning economics and out-of-sample evidence",
+      "reason": "status line carries forbidden marker `Status: PROPOSED`"
+    },
+    {
+      "repo": "aien-dev/omega-mv",
+      "number": 583,
+      "role": "prerequisite",
+      "label": "Learning economics and out-of-sample evidence",
+      "reason": "open"
+    },
+    {
+      "repo": "aien-dev/omega-mv",
+      "number": 583,
+      "role": "prerequisite",
+      "label": "Learning economics and out-of-sample evidence",
+      "reason": "6 unchecked task-list item(s)"
+    },
+    {
+      "repo": "aien-dev/omega-mv",
+      "number": 583,
+      "role": "prerequisite",
+      "label": "Learning economics and out-of-sample evidence",
+      "reason": "status line carries forbidden marker `qualification: NOT_RUN`"
+    },
+    {
+      "repo": "aien-dev/omega-mv",
+      "number": 583,
+      "role": "prerequisite",
+      "label": "Learning economics and out-of-sample evidence",
+      "reason": "status line carries forbidden marker `Status: PROPOSED`"
+    },
+    {
+      "repo": "aien-dev/omega-mv",
+      "number": 584,
+      "role": "prerequisite",
+      "label": "Learning economics and out-of-sample evidence",
+      "reason": "open"
+    },
+    {
+      "repo": "aien-dev/omega-mv",
+      "number": 584,
+      "role": "prerequisite",
+      "label": "Learning economics and out-of-sample evidence",
+      "reason": "12 unchecked task-list item(s)"
+    },
+    {
+      "repo": "aien-dev/omega-mv",
+      "number": 584,
+      "role": "prerequisite",
+      "label": "Learning economics and out-of-sample evidence",
+      "reason": "status line carries forbidden marker `qualification: NOT_RUN`"
+    },
+    {
+      "repo": "aien-dev/omega-mv",
+      "number": 584,
+      "role": "prerequisite",
+      "label": "Learning economics and out-of-sample evidence",
+      "reason": "status line carries forbidden marker `Status: PROPOSED`"
+    },
+    {
+      "repo": "aien-dev/omega-mv",
+      "number": 600,
+      "role": "prerequisite",
+      "label": "Learning economics and out-of-sample evidence",
+      "reason": "open"
+    },
+    {
+      "repo": "aien-dev/omega-mv",
+      "number": 600,
+      "role": "prerequisite",
+      "label": "Learning economics and out-of-sample evidence",
+      "reason": "8 unchecked task-list item(s)"
+    },
+    {
+      "repo": "aien-dev/omega-mv",
+      "number": 600,
+      "role": "prerequisite",
+      "label": "Learning economics and out-of-sample evidence",
+      "reason": "status line carries forbidden marker `qualification: NOT_RUN`"
+    },
+    {
+      "repo": "aien-dev/omega-mv",
+      "number": 600,
+      "role": "prerequisite",
+      "label": "Learning economics and out-of-sample evidence",
+      "reason": "status line carries forbidden marker `Status: PROPOSED`"
+    }
+  ],
+  "waived": [],
+  "ignored_waivers": []
+}

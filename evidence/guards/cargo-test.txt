@@ -1,0 +1,77 @@
+$ cargo test --locked   (rustc 1.97.1 (8bab26f4f 2026-07-14), Darwin arm64, 2026-10-20T13:01Z, commit 9ff6fff80729a83f41b89dfd81191164b8c5d31c)
+
+running 6 tests
+test glob::tests::globs ... ok
+test scan::tests::redaction_keeps_twelve_chars ... ok
+test close::tests::markers_only_on_status_lines ... ok
+test close::tests::unchecked_counts_list_markers_only ... ok
+test scan::tests::transcript_threshold_is_strictly_greater ... ok
+test scan::tests::generic_credential_needs_a_literal ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 10 tests
+test close_check_writes_markdown_for_the_comment ... ok
+test bad_input_is_an_error_not_a_verdict ... ok
+test live_mode_without_gh_fails_visibly_and_blocks_everything ... ok
+test is_programme_answers_true_only_for_the_programme ... ok
+test close_check_exit_codes_follow_the_verdict ... ok
+test scan_exit_codes ... ok
+test index_scan_reads_staged_content_not_the_working_tree ... ok
+test history_scan_catches_a_secret_deleted_in_a_later_commit ... ok
+test live_mode_builds_and_saves_a_snapshot ... ok
+test pre_commit_hook_refuses_weights_and_secrets_and_allows_clean_commits ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.02s
+
+
+running 9 tests
+test policy_names_programme_eight_phases_and_twenty_one_prerequisites ... ok
+test all_open_blocks_every_issue_with_exact_reasons ... ok
+test closed_without_reason_and_unknown_state_block ... ok
+test repo_names_match_case_insensitively ... ok
+test closed_missing_evidence_names_exactly_three_blockers ... ok
+test fully_accepted_has_no_blockers ... ok
+test waivers_apply_to_prerequisite_bodies_only ... ok
+test markdown_lists_blockers_and_the_override_rule_without_issue_text ... ok
+test missing_issues_are_blockers_not_acceptances ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+
+running 3 tests
+test programme_and_phases_are_allen_1_to_9 ... ok
+test rejects_duplicates_and_bad_repos ... ok
+test prerequisites_match_phases_md_table ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+
+running 13 tests
+test binary_files_skip_text_rules_but_not_extension_rules ... ok
+test record_shapes_only_checked_in_head_window ... ok
+test claude_and_codex_session_shapes_are_found ... ok
+test agent_archive_records_are_found ... ok
+test every_forbidden_directory_is_found ... ok
+test clean_fixture_has_no_findings ... ok
+test every_weight_and_database_extension_is_found ... ok
+test transcript_over_threshold_is_found_with_counts_only ... ok
+test size_cap_applies_unless_allowlisted ... ok
+test every_secret_kind_is_found ... ok
+test repository_config_allowlists_fixtures_but_not_elsewhere ... ok
+test secret_excerpts_are_redacted ... ok
+test default_cap_is_two_mebibytes ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.16s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

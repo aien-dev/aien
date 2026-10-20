@@ -1,0 +1,47 @@
+# Mutants: deliberate predicate and rule breaks, each run against the full suite
+#
+# Method: apply the edit to a clean guards/v0 tree, run `cargo test --no-fail-fast`, list the
+# failing tests, restore the file. Run on the MacBook, 2026-10-20T13:00Z, base commit 9ff6fff80729a83f41b89dfd81191164b8c5d31c.
+# A mutant is caught when at least one test fails. Result: 6 of 6 caught.
+
+## M1 accept not_planned as completed
+  file: guard/src/close.rs
+  edit:
+    -            Some("completed") => None,
+    +            Some("completed") | Some("not_planned") => None,
+  failing tests: close_check_writes_markdown_for_the_comment closed_missing_evidence_names_exactly_three_blockers markdown_lists_blockers_and_the_override_rule_without_issue_text 
+
+## M2 honour waiver labels on phases too
+  file: guard/src/close.rs
+  edit:
+    -            if r.role == Role::Prerequisite {
+    +            if r.role != Role::Programme {
+  failing tests: markdown_lists_blockers_and_the_override_rule_without_issue_text waivers_apply_to_prerequisite_bodies_only 
+
+## M3 ignore unchecked task-list items
+  file: guard/src/close.rs
+  edit:
+    -    if n > 0 {
+    +    if n > usize::MAX - 1 {
+  failing tests: all_open_blocks_every_issue_with_exact_reasons close_check_writes_markdown_for_the_comment closed_missing_evidence_names_exactly_three_blockers markdown_lists_blockers_and_the_override_rule_without_issue_text waivers_apply_to_prerequisite_bodies_only 
+
+## M4 silently skip issues missing from the snapshot
+  file: guard/src/close.rs
+  edit:
+    -            blockers.push(block("not fetched".into()));
+  failing tests: live_mode_builds_and_saves_a_snapshot live_mode_without_gh_fails_visibly_and_blocks_everything missing_issues_are_blockers_not_acceptances 
+
+## M5 break case handling of forbidden markers (uppercase the marker, lowercase the line)
+  file: guard/src/close.rs
+  edit:
+    -            let m = m.to_lowercase();
+    +            let m = m.to_uppercase();
+  failing tests: all_open_blocks_every_issue_with_exact_reasons close::tests::markers_only_on_status_lines 
+
+## M6 size cap off by one (>= instead of >)
+  file: guard/src/scan.rs
+  edit:
+    -    if size > cfg.size_cap_bytes && !glob::any_match(&cfg.allow.size, path) {
+    +    if size >= cfg.size_cap_bytes && !glob::any_match(&cfg.allow.size, path) {
+  failing tests: default_cap_is_two_mebibytes 
+

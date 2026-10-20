@@ -1,0 +1,7 @@
+$ cargo clippy --locked --all-targets -- -D warnings   (clippy 0.1.97 (8bab26f4f6 2026-07-14), 2026-10-20T13:01Z)
+    Checking allen-guard v0.1.0 (<clone>/guard)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.81s
+exit 0
+
+$ cargo fmt --all --check
+exit 0
