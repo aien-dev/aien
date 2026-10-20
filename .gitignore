@@ -1,0 +1,16 @@
+# Raw logs, weights, secrets: never in this repository (stream guards extends this list)
+*.jsonl
+records/
+raw/
+latest/
+state/
+*.safetensors
+*.gguf
+*.pt
+*.bin
+*.db
+*.sqlite
+.env
+*.pem
+*.key
+target/
