@@ -1,0 +1,158 @@
+# Programme close guard. When the programme tracker (guard/policy.toml
+# [programme]) is closed, evaluate every phase and prerequisite live; if the
+# verdict is not "accepted", reopen the programme and comment the blockers
+# with this run's URL (the audit trail). Closing any other issue only logs.
+#
+# workflow_dispatch: dry_run=true evaluates and uploads the snapshot and
+# verdict without touching any issue; dry_run=false also reopens the
+# programme if it is currently closed and not accepted.
+# A push that changes the policy or this file runs a dry run.
+#
+# The job stays green when it correctly reopens; it fails when gh api cannot
+# read an issue (missing token or permission), after still reopening.
+name: programme-close-guard
+
+on:
+  issues:
+    types: [closed]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Evaluate only; never reopen or comment"
+        type: boolean
+        default: true
+  push:
+    paths:
+      - guard/policy.toml
+      - .github/workflows/programme-close-guard.yml
+
+permissions:
+  issues: write
+  contents: read
+
+concurrency:
+  group: programme-close-guard
+  cancel-in-progress: false
+
+jobs:
+  close-guard:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      POLICY: guard/policy.toml
+      GUARD: ./target/release/allen-guard
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Build allen-guard
+        run: cargo build --locked --release -p allen-guard
+
+      - name: Decide what this run does
+        id: decide
+        env:
+          EVENT: ${{ github.event_name }}
+          REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.issue.number }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          case "$EVENT" in
+            issues)
+              if [ "$("$GUARD" is-programme --policy "$POLICY" --repo "$REPO" --number "$NUMBER")" = true ]; then
+                mode=enforce
+              else
+                echo "Issue $REPO#$NUMBER was closed; it is not the programme issue. No action."
+                mode=skip
+              fi ;;
+            workflow_dispatch)
+              if [ "$DRY_RUN" = false ]; then mode=sweep; else mode=dry-run; fi ;;
+            *) mode=dry-run ;;
+          esac
+          echo "mode: $mode"
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+
+      - name: Evaluate live
+        id: eval
+        if: steps.decide.outputs.mode != 'skip'
+        run: |
+          set +e
+          "$GUARD" close-check --policy "$POLICY" --live \
+            --write-snapshot evidence-snapshot.json --markdown verdict.md > verdict.json
+          code=$?
+          set -e
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          echo "allen-guard close-check exit $code (0 accepted, 2 not accepted, 3 gh api failed)"
+          jq '{accepted, programme, programme_state, required, blockers: (.blockers | length), waived: (.waived | length), fetch_errors: ((.fetch_errors // []) | length)}' verdict.json
+          case "$code" in
+            0|2|3) ;;
+            *) echo "::error::allen-guard close-check failed with exit $code"; exit "$code" ;;
+          esac
+
+      - name: Reopen and comment when not accepted
+        # always(): a guard error must not leave a premature closure standing.
+        if: always() && (steps.decide.outputs.mode == 'enforce' || steps.decide.outputs.mode == 'sweep')
+        env:
+          MODE: ${{ steps.decide.outputs.mode }}
+          CODE: ${{ steps.eval.outputs.code }}
+          ACTOR: ${{ github.actor }}
+          NUMBER: ${{ github.event.issue.number }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ -s verdict.json ] && [[ "$CODE" =~ ^[023]$ ]]; then
+            programme="$(jq -r .programme verdict.json)"
+            prog_repo="${programme%#*}"
+            prog_number="${programme##*#}"
+          elif [ "$MODE" = enforce ]; then
+            # The guard failed before a verdict: fail safe, treat as not accepted.
+            CODE=1
+            prog_repo="$GITHUB_REPOSITORY"
+            prog_number="$NUMBER"
+            programme="$prog_repo#$prog_number"
+            {
+              echo "## Programme close guard: could not evaluate"
+              echo
+              echo "The guard failed before producing a verdict, so the closure is undone until it can run."
+              echo "An administrator override is recorded in the audit trail and never counts as passing."
+            } > verdict.md
+          else
+            echo "::error::no verdict to act on"
+            exit 1
+          fi
+          state="$(gh api "repos/$prog_repo/issues/$prog_number" --jq .state)"
+          if [ "$MODE" = sweep ] && [ "$state" != closed ]; then
+            echo "Programme $programme is $state; nothing to undo."
+            exit 0
+          fi
+          {
+            cat verdict.md
+            echo
+            echo "Guard run: $RUN_URL (trigger: $MODE by @$ACTOR; snapshot and verdict are attached to the run as artifacts)."
+          } > comment.md
+          if [ "$CODE" = 0 ]; then
+            echo "Verdict accepted: closure of $programme stands."
+          elif [ "$state" = closed ]; then
+            gh issue reopen "$prog_number" -R "$prog_repo"
+            echo "Reopened $programme: verdict not accepted."
+          fi
+          gh issue comment "$prog_number" -R "$prog_repo" --body-file comment.md
+
+      - name: Upload snapshot and verdict
+        if: always() && steps.decide.outputs.mode != 'skip'
+        uses: actions/upload-artifact@v4
+        with:
+          name: programme-close-guard-${{ github.run_id }}
+          path: |
+            evidence-snapshot.json
+            verdict.json
+            verdict.md
+          if-no-files-found: warn
+
+      - name: Fail when gh api could not read every issue
+        if: steps.eval.outputs.code == '3'
+        run: |
+          echo "::error::gh api failed for $(jq '.fetch_errors | length' verdict.json) issue(s); check the token and its permissions."
+          jq -r '.fetch_errors[]' verdict.json
+          exit 1

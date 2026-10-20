@@ -15,12 +15,13 @@ usage:
   allen-guard close-check --policy <policy.toml> (--snapshot <file.json> | --live [--write-snapshot <file.json>])
                           [--markdown <file.md>]
   allen-guard is-programme --policy <policy.toml> --repo <owner/name> --number <n>
-  allen-guard scan [--config <scan.toml>] [--json] [--index] [paths...]
+  allen-guard scan [--config <scan.toml>] [--json] [--index | --rev <commit>] [paths...]
 
 close-check prints the JSON verdict on stdout; exit 0 accepted, 2 not accepted,
 3 not accepted because gh api failed for some issue, 1 error.
 scan walks the git working tree (tracked + untracked, not ignored) when no
-paths are given; --index scans the staged content of the given paths.
+paths are given; --index scans the staged content of the given paths and
+--rev scans them as recorded in <commit>.
 Exit 0 clean, 2 findings, 1 error.";
 
 fn main() -> ExitCode {
@@ -153,7 +154,7 @@ fn is_programme(args: &[String]) -> Result<u8, String> {
 }
 
 fn scan_cmd(args: &[String]) -> Result<u8, String> {
-    let a = Args::parse(args, &["--json", "--index"], &["--config"])?;
+    let a = Args::parse(args, &["--json", "--index"], &["--config", "--rev"])?;
     let cfg = match a.get("--config") {
         Some(p) => ScanConfig::load(Path::new(p))?,
         None if Path::new("guard/scan.toml").is_file() => {
@@ -163,7 +164,9 @@ fn scan_cmd(args: &[String]) -> Result<u8, String> {
         None => ScanConfig::default(),
     };
     let paths: Vec<PathBuf> = a.positional.iter().map(PathBuf::from).collect();
-    let findings = if a.has("--index") {
+    let findings = if let Some(rev) = a.get("--rev") {
+        scan::scan_rev(rev, &paths, &cfg)?
+    } else if a.has("--index") {
         scan::scan_index(&paths, &cfg)?
     } else if paths.is_empty() {
         let files = scan::git_worktree_files()?;

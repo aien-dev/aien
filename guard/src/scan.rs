@@ -383,16 +383,31 @@ pub fn git_worktree_files() -> Result<Vec<PathBuf>, String> {
 
 /// Scan the staged (index) content of `paths`, as the commit would record it.
 pub fn scan_index(paths: &[PathBuf], cfg: &ScanConfig) -> Result<Vec<Finding>, String> {
+    scan_git(None, paths, cfg)
+}
+
+/// Scan `paths` as recorded in commit `rev` (CI uses this for every pushed
+/// commit, so a file added and later deleted is still caught).
+pub fn scan_rev(rev: &str, paths: &[PathBuf], cfg: &ScanConfig) -> Result<Vec<Finding>, String> {
+    scan_git(Some(rev), paths, cfg)
+}
+
+fn scan_git(
+    rev: Option<&str>,
+    paths: &[PathBuf],
+    cfg: &ScanConfig,
+) -> Result<Vec<Finding>, String> {
     let mut out = Vec::new();
+    let place = rev.unwrap_or("the index");
     for p in paths {
         let shown = display_path(p);
-        let spec = format!(":{shown}");
+        let spec = format!("{}:{shown}", rev.unwrap_or(""));
         let size_out = Command::new("git")
             .args(["cat-file", "-s", &spec])
             .output()
             .map_err(|e| format!("git cat-file: {e}"))?;
         if !size_out.status.success() {
-            return Err(format!("{shown}: not in the index"));
+            return Err(format!("{shown}: not in {place}"));
         }
         let size: u64 = String::from_utf8_lossy(&size_out.stdout)
             .trim()

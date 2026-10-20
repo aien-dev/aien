@@ -346,3 +346,63 @@ fn pre_commit_hook_refuses_weights_and_secrets_and_allows_clean_commits() {
     assert!(!commit("secret").status.success());
     std::fs::remove_dir_all(dir).unwrap();
 }
+
+#[cfg(unix)]
+#[test]
+fn history_scan_catches_a_secret_deleted_in_a_later_commit() {
+    let dir = init_repo("history");
+    let token = format!("gho_{}", "x".repeat(36));
+    let commit = |msg: &str| git(&dir, &["commit", "-q", "--no-verify", "-m", msg]);
+    std::fs::write(dir.join("README.md"), "synthetic fixture\n").unwrap();
+    git(&dir, &["add", "README.md"]);
+    commit("base");
+    std::fs::write(dir.join("leak.txt"), format!("t = {token}\n")).unwrap();
+    git(&dir, &["add", "leak.txt"]);
+    commit("add leak");
+    git(&dir, &["rm", "-q", "leak.txt"]);
+    commit("remove leak");
+
+    // The tip is clean.
+    let tip = Command::new(bin())
+        .current_dir(&dir)
+        .arg("scan")
+        .output()
+        .unwrap();
+    assert_eq!(tip.status.code(), Some(0));
+
+    // --rev reads the file as that commit recorded it.
+    let rev = Command::new(bin())
+        .current_dir(&dir)
+        .args(["scan", "--rev", "HEAD~1", "--", "leak.txt"])
+        .output()
+        .unwrap();
+    assert_eq!(rev.status.code(), Some(2));
+
+    // scan-history.sh over the range finds it in the middle commit.
+    let script = crate_dir().join("../scripts/scan-history.sh");
+    let hist = Command::new(&script)
+        .current_dir(&dir)
+        .env("ALLEN_GUARD_BIN", bin())
+        .arg("HEAD~2..HEAD")
+        .output()
+        .unwrap();
+    assert_eq!(hist.status.code(), Some(1));
+    assert!(String::from_utf8_lossy(&hist.stdout).contains("leak.txt:1: secret:github-token"));
+    assert!(String::from_utf8_lossy(&hist.stderr).contains("scanned 2 commit(s)"));
+    let clean = Command::new(&script)
+        .current_dir(&dir)
+        .env("ALLEN_GUARD_BIN", bin())
+        .arg("HEAD~3..HEAD~2")
+        .output();
+    // HEAD~3 does not exist in a three-commit repository: rev-list errors.
+    assert!(!clean.unwrap().status.success());
+    let base_only = Command::new(&script)
+        .current_dir(&dir)
+        .env("ALLEN_GUARD_BIN", bin())
+        .arg("HEAD~2")
+        .arg("--max-count=1")
+        .output()
+        .unwrap();
+    assert_eq!(base_only.status.code(), Some(0));
+    std::fs::remove_dir_all(dir).unwrap();
+}

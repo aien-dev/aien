@@ -1,0 +1,59 @@
+# Source-control guard: format, lint, tests, then refuse raw logs, weights
+# and secrets in the checkout and in every pushed commit.
+name: guard
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: cargo fmt --check
+        run: cargo fmt --all --check
+
+      - name: cargo clippy
+        run: cargo clippy --locked --all-targets -- -D warnings
+
+      - name: cargo test
+        run: cargo test --locked
+
+      - name: Build allen-guard
+        run: cargo build --locked --release -p allen-guard
+
+      - name: Scan the checkout
+        run: ./target/release/allen-guard scan --config guard/scan.toml
+
+      - name: Scan every new commit
+        env:
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          if [ "$EVENT" = pull_request ]; then
+            range=("$PR_BASE..$PR_HEAD")
+          elif [ -n "$BEFORE" ] && ! [[ "$BEFORE" =~ ^0+$ ]] && git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+            range=("$BEFORE..$AFTER")
+          elif git rev-parse -q --verify origin/main >/dev/null && [ "$GITHUB_REF" != refs/heads/main ]; then
+            range=("$AFTER" --not origin/main)
+          else
+            range=("$AFTER")
+          fi
+          echo "commit range: ${range[*]}"
+          scripts/scan-history.sh "${range[@]}"
