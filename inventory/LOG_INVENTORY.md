@@ -6,7 +6,7 @@ Every number comes from a script in this directory; the exact commands are in `C
 Privacy: counts, sizes, dates, hosts, paths, session ids and digests only. No message text appears here.
 
 The archive is live (new Claude records arrive every few minutes), so counts of the live agent move by a few records between runs.
-Where two numbers for one thing differ, both are shown with the command that produced each.
+Where two numbers for one thing differ, both are shown with the command that produced each. Known live drift: Mac Claude jsonl bytes were 128,082,362 on my first ad hoc count and 128,502,825 in `data/mac-inventory.txt` (the Mac chat kept writing); I use the second.
 
 ## 0. Plain-English summary (for Drake)
 
@@ -90,7 +90,7 @@ All steps ran; ssh worked (Macbook.local). No NOT_RUN steps.
 
 | Source | Files / rows | Bytes | Oldest | Newest | Mirrored in archive? |
 |---|---|---|---|---|---|
-| ~/.claude/projects (12 dirs, 9 with jsonl) | 73 jsonl + 91 other files | 128,082,362 | 2026-09-24 | 2026-10-20 | NO |
+| ~/.claude/projects (12 dirs, 9 with jsonl) | 73 jsonl + 91 other files | 128,502,825 | 2026-09-24 | 2026-10-20 | NO |
 | ~/.codex/sessions | 982 jsonl (2026/07: 179, 2026/08: 678, 2026/09: 125) + 2 in archived_sessions | 3,950,080,013 | 2026-07-27 | 2026-09-29 | NO |
 | ~/.gemini/antigravity/conversations | 337 db, 316 wal (0 bytes), 316 shm | 3,833,888,768 (db) | 2026-09-16 | 2026-10-14 | YES (raw/gemini/macbook) |
 | ~/.gemini/antigravity-cli/conversations | 23 db, 22 wal (0 bytes), 22 shm | 114,266,112 (db) | 2026-09-16 | 2026-10-18 | YES |

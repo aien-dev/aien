@@ -33,7 +33,7 @@
     {"agent": "hermes",   "path": "~/.hermes/state.db", "bytes": 753664, "sessions": 3, "messages": 37, "oldest": "2026-10-20", "newest": "2026-10-20", "in_archive": "no collector"}
   ],
   "macbook_sources": [
-    {"agent": "claude",   "path": "~/.claude/projects", "jsonl": 73, "bytes": 128082362, "other_files": 91, "oldest": "2026-09-24", "newest": "2026-10-20", "in_archive": false},
+    {"agent": "claude",   "path": "~/.claude/projects", "jsonl": 73, "bytes": 128502825, "other_files": 91, "oldest": "2026-09-24", "newest": "2026-10-20", "in_archive": false},
     {"agent": "codex",    "path": "~/.codex/sessions", "jsonl": 982, "bytes": 3950080013, "per_month": {"2026-07": 179, "2026-08": 678, "2026-09": 125}, "archived_sessions_files": 2, "oldest": "2026-07-27", "newest": "2026-09-29", "in_archive": false},
     {"agent": "gemini",   "path": "~/.gemini/antigravity/conversations", "db": 337, "wal": 316, "bytes_db": 3833888768, "oldest": "2026-09-16", "newest": "2026-10-14", "in_archive": true},
     {"agent": "gemini",   "path": "~/.gemini/antigravity-cli/conversations", "db": 23, "wal": 22, "bytes_db": 114266112, "oldest": "2026-09-16", "newest": "2026-10-18", "in_archive": true},
@@ -53,7 +53,7 @@
     },
     "not_in_archive": [
       {"host": "macbook", "agent": "codex", "files": 982, "bytes": 3950080013},
-      {"host": "macbook", "agent": "claude", "files": 73, "bytes": 128082362},
+      {"host": "macbook", "agent": "claude", "files": 73, "bytes": 128502825},
       {"host": "macbook", "agent": "opencode", "sessions": 161, "bytes": 732741632},
       {"host": "macbook", "agent": "hermes", "sessions": 230},
       {"host": "spark", "agent": "hermes", "sessions": 3},
