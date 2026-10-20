@@ -1,0 +1,272 @@
+[
+  {
+    "repo": "aien-dev/allen",
+    "number": 1,
+    "state": "closed",
+    "state_reason": "completed",
+    "title": "Synthetic fixture aien-dev/allen#1",
+    "body": "Synthetic fixture issue body.\n\n## Acceptance\n- [x] synthetic acceptance item\n\nStatus: COMPLETE; qualification: PASS.\n",
+    "labels": []
+  },
+  {
+    "repo": "aien-dev/allen",
+    "number": 2,
+    "state": "closed",
+    "state_reason": "completed",
+    "title": "Synthetic fixture aien-dev/allen#2",
+    "body": "Synthetic fixture issue body.\n\n## Acceptance\n- [x] synthetic acceptance item\n\nStatus: COMPLETE; qualification: PASS.\n",
+    "labels": []
+  },
+  {
+    "repo": "aien-dev/allen",
+    "number": 3,
+    "state": "closed",
+    "state_reason": "completed",
+    "title": "Synthetic fixture aien-dev/allen#3",
+    "body": "Synthetic fixture issue body.\n\n## Acceptance\n- [x] synthetic acceptance item\n\nStatus: COMPLETE; qualification: PASS.\n",
+    "labels": []
+  },
+  {
+    "repo": "aien-dev/allen",
+    "number": 4,
+    "state": "closed",
+    "state_reason": "completed",
+    "title": "Synthetic fixture aien-dev/allen#4",
+    "body": "Synthetic fixture issue body.\n\n## Acceptance\n- [x] synthetic acceptance item\n\nStatus: COMPLETE; qualification: PASS.\n",
+    "labels": []
+  },
+  {
+    "repo": "aien-dev/allen",
+    "number": 5,
+    "state": "closed",
+    "state_reason": "completed",
+    "title": "Synthetic fixture aien-dev/allen#5",
+    "body": "Synthetic fixture issue body.\n\n## Acceptance\n- [x] synthetic acceptance item\n\nStatus: COMPLETE; qualification: PASS.\n",
+    "labels": []
+  },
+  {
+    "repo": "aien-dev/allen",
+    "number": 6,
+    "state": "closed",
+    "state_reason": "completed",
+    "title": "Synthetic fixture aien-dev/allen#6",
+    "body": "Synthetic fixture issue body.\n\n## Acceptance\n- [x] synthetic acceptance item\n\nStatus: COMPLETE; qualification: PASS.\n",
+    "labels": []
+  },
+  {
+    "repo": "aien-dev/allen",
+    "number": 7,
+    "state": "closed",
+    "state_reason": "completed",
+    "title": "Synthetic fixture aien-dev/allen#7",
+    "body": "Synthetic fixture issue body.\n\n## Acceptance\n- [x] synthetic acceptance item\n\nStatus: COMPLETE; qualification: PASS.\n",
+    "labels": []
+  },
+  {
+    "repo": "aien-dev/allen",
+    "number": 8,
+    "state": "closed",
+    "state_reason": "completed",
+    "title": "Synthetic fixture aien-dev/allen#8",
+    "body": "Synthetic fixture issue body.\n\n## Acceptance\n- [x] synthetic acceptance item\n\nStatus: COMPLETE; qualification: PASS.\n",
+    "labels": []
+  },
+  {
+    "repo": "aien-dev/allen",
+    "number": 9,
+    "state": "closed",
+    "state_reason": "completed",
+    "title": "Synthetic fixture aien-dev/allen#9",
+    "body": "Synthetic fixture issue body.\n\n## Acceptance\n- [x] synthetic acceptance item\n\nStatus: COMPLETE; qualification: PASS.\n",
+    "labels": []
+  },
+  {
+    "repo": "aien-dev/aien-architecture-mv",
+    "number": 159,
+    "state": "closed",
+    "state_reason": "completed",
+    "title": "Synthetic fixture aien-dev/aien-architecture-mv#159",
+    "body": "Synthetic fixture issue body.\n\n## Acceptance\n- [x] synthetic acceptance item\n\nStatus: COMPLETE; qualification: PASS.\n",
+    "labels": []
+  },
+  {
+    "repo": "aien-dev/aien-architecture-mv",
+    "number": 269,
+    "state": "closed",
+    "state_reason": "completed",
+    "title": "Synthetic fixture aien-dev/aien-architecture-mv#269",
+    "body": "Synthetic fixture issue body.\n\n## Acceptance\n- [x] synthetic acceptance item\n\nStatus: COMPLETE; qualification: PASS.\n",
+    "labels": []
+  },
+  {
+    "repo": "aien-dev/aien-architecture-mv",
+    "number": 190,
+    "state": "closed",
+    "state_reason": "completed",
+    "title": "Synthetic fixture aien-dev/aien-architecture-mv#190",
+    "body": "Synthetic fixture issue body.\n\n## Acceptance\n- [x] synthetic acceptance item\n\nStatus: COMPLETE; qualification: PASS.\n",
+    "labels": []
+  },
+  {
+    "repo": "aien-dev/aien-architecture-mv",
+    "number": 231,
+    "state": "closed",
+    "state_reason": "completed",
+    "title": "Synthetic fixture aien-dev/aien-architecture-mv#231",
+    "body": "Synthetic fixture issue body.\n\n## Acceptance\n- [x] synthetic acceptance item\n\nStatus: COMPLETE; qualification: PASS.\n",
+    "labels": []
+  },
+  {
+    "repo": "aien-dev/aien-architecture-mv",
+    "number": 232,
+    "state": "closed",
+    "state_reason": "completed",
+    "title": "Synthetic fixture aien-dev/aien-architecture-mv#232",
+    "body": "Synthetic fixture issue body.\n\n## Acceptance\n- [x] synthetic acceptance item\n\nStatus: COMPLETE; qualification: PASS.\n",
+    "labels": []
+  },
+  {
+    "repo": "aien-dev/aienos-mv",
+    "number": 396,
+    "state": "closed",
+    "state_reason": "completed",
+    "title": "Synthetic fixture aien-dev/aienos-mv#396",
+    "body": "Synthetic fixture issue body.\n\n## Acceptance\n- [x] synthetic acceptance item\n\nStatus: COMPLETE; qualification: PASS.\n",
+    "labels": []
+  },
+  {
+    "repo": "aien-dev/aienos-mv",
+    "number": 398,
+    "state": "closed",
+    "state_reason": "completed",
+    "title": "Synthetic fixture aien-dev/aienos-mv#398",
+    "body": "Synthetic fixture issue body.\n\n## Acceptance\n- [x] synthetic acceptance item\n\nStatus: COMPLETE; qualification: PASS.\n",
+    "labels": []
+  },
+  {
+    "repo": "aien-dev/aienos-mv",
+    "number": 399,
+    "state": "closed",
+    "state_reason": "completed",
+    "title": "Synthetic fixture aien-dev/aienos-mv#399",
+    "body": "Synthetic fixture issue body.\n\n## Acceptance\n- [x] synthetic acceptance item\n\nStatus: COMPLETE; qualification: PASS.\n",
+    "labels": []
+  },
+  {
+    "repo": "aien-dev/aien-protocols-mv",
+    "number": 27,
+    "state": "closed",
+    "state_reason": "completed",
+    "title": "Synthetic fixture aien-dev/aien-protocols-mv#27",
+    "body": "Synthetic fixture issue body.\n\n## Acceptance\n- [x] synthetic acceptance item\n\nStatus: COMPLETE; qualification: PASS.\n",
+    "labels": []
+  },
+  {
+    "repo": "aien-dev/aien-sovereign-core-mv",
+    "number": 586,
+    "state": "closed",
+    "state_reason": "completed",
+    "title": "Synthetic fixture aien-dev/aien-sovereign-core-mv#586",
+    "body": "Synthetic fixture issue body.\n\n## Acceptance\n- [x] synthetic acceptance item\n\nStatus: COMPLETE; qualification: PASS.\n",
+    "labels": []
+  },
+  {
+    "repo": "aien-dev/omega-mv",
+    "number": 505,
+    "state": "closed",
+    "state_reason": "completed",
+    "title": "Synthetic fixture aien-dev/omega-mv#505",
+    "body": "Synthetic fixture issue body.\n\n## Acceptance\n- [x] synthetic acceptance item\n\nStatus: COMPLETE; qualification: PASS.\n",
+    "labels": []
+  },
+  {
+    "repo": "aien-dev/aegis-runtime-mv",
+    "number": 53,
+    "state": "closed",
+    "state_reason": "completed",
+    "title": "Synthetic fixture aien-dev/aegis-runtime-mv#53",
+    "body": "Synthetic fixture issue body.\n\n## Acceptance\n- [x] synthetic acceptance item\n\nStatus: COMPLETE; qualification: PASS.\n",
+    "labels": []
+  },
+  {
+    "repo": "aien-dev/aienos-mv",
+    "number": 286,
+    "state": "closed",
+    "state_reason": "completed",
+    "title": "Synthetic fixture aien-dev/aienos-mv#286",
+    "body": "Synthetic fixture issue body.\n\n## Acceptance\n- [x] synthetic acceptance item\n\nStatus: COMPLETE; qualification: PASS.\n",
+    "labels": []
+  },
+  {
+    "repo": "aien-dev/aienos-mv",
+    "number": 327,
+    "state": "closed",
+    "state_reason": "completed",
+    "title": "Synthetic fixture aien-dev/aienos-mv#327",
+    "body": "Synthetic fixture issue body.\n\n## Acceptance\n- [x] synthetic acceptance item\n\nStatus: COMPLETE; qualification: PASS.\n",
+    "labels": []
+  },
+  {
+    "repo": "aien-dev/aien-architecture-mv",
+    "number": 246,
+    "state": "closed",
+    "state_reason": "completed",
+    "title": "Synthetic fixture aien-dev/aien-architecture-mv#246",
+    "body": "Synthetic fixture issue body.\n\n## Acceptance\n- [x] synthetic acceptance item\n\nStatus: COMPLETE; qualification: PASS.\n",
+    "labels": []
+  },
+  {
+    "repo": "aien-dev/aien-architecture-mv",
+    "number": 262,
+    "state": "closed",
+    "state_reason": "completed",
+    "title": "Synthetic fixture aien-dev/aien-architecture-mv#262",
+    "body": "Synthetic fixture issue body.\n\n## Acceptance\n- [x] synthetic acceptance item\n\nStatus: COMPLETE; qualification: PASS.\n",
+    "labels": []
+  },
+  {
+    "repo": "aien-dev/aien-architecture-mv",
+    "number": 263,
+    "state": "closed",
+    "state_reason": "completed",
+    "title": "Synthetic fixture aien-dev/aien-architecture-mv#263",
+    "body": "Synthetic fixture issue body.\n\n## Acceptance\n- [x] synthetic acceptance item\n\nStatus: COMPLETE; qualification: PASS.\n",
+    "labels": []
+  },
+  {
+    "repo": "aien-dev/aien-architecture-mv",
+    "number": 276,
+    "state": "closed",
+    "state_reason": "completed",
+    "title": "Synthetic fixture aien-dev/aien-architecture-mv#276",
+    "body": "Synthetic fixture issue body.\n\n## Acceptance\n- [x] synthetic acceptance item\n\nStatus: COMPLETE; qualification: PASS.\n",
+    "labels": []
+  },
+  {
+    "repo": "aien-dev/omega-mv",
+    "number": 583,
+    "state": "closed",
+    "state_reason": "completed",
+    "title": "Synthetic fixture aien-dev/omega-mv#583",
+    "body": "Synthetic fixture issue body.\n\n## Acceptance\n- [x] synthetic acceptance item\n\nStatus: COMPLETE; qualification: PASS.\n",
+    "labels": []
+  },
+  {
+    "repo": "aien-dev/omega-mv",
+    "number": 584,
+    "state": "closed",
+    "state_reason": "completed",
+    "title": "Synthetic fixture aien-dev/omega-mv#584",
+    "body": "Synthetic fixture issue body.\n\n## Acceptance\n- [x] synthetic acceptance item\n\nStatus: COMPLETE; qualification: PASS.\n",
+    "labels": []
+  },
+  {
+    "repo": "aien-dev/omega-mv",
+    "number": 600,
+    "state": "closed",
+    "state_reason": "completed",
+    "title": "Synthetic fixture aien-dev/omega-mv#600",
+    "body": "Synthetic fixture issue body.\n\n## Acceptance\n- [x] synthetic acceptance item\n\nStatus: COMPLETE; qualification: PASS.\n",
+    "labels": []
+  }
+]

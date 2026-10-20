@@ -1,0 +1,114 @@
+# Allen programme close guard policy.
+#
+# The programme issue may stay closed only when every phase and every
+# prerequisite below is "accepted" (see [acceptance]). Keep the prerequisite
+# list in step with the table in docs/PHASES.md; a test in
+# guard/tests/policy.rs fails when the two drift apart.
+
+[programme]
+repo = "aien-dev/allen"
+number = 1
+title = "Allen programme"
+
+# Allen P0 to P7. Waiver labels are never honoured on these.
+[[phases]]
+name = "P0"
+repo = "aien-dev/allen"
+number = 2
+
+[[phases]]
+name = "P1"
+repo = "aien-dev/allen"
+number = 3
+
+[[phases]]
+name = "P2"
+repo = "aien-dev/allen"
+number = 4
+
+[[phases]]
+name = "P3"
+repo = "aien-dev/allen"
+number = 5
+
+[[phases]]
+name = "P4"
+repo = "aien-dev/allen"
+number = 6
+
+[[phases]]
+name = "P5"
+repo = "aien-dev/allen"
+number = 7
+
+[[phases]]
+name = "P6"
+repo = "aien-dev/allen"
+number = 8
+
+[[phases]]
+name = "P7"
+repo = "aien-dev/allen"
+number = 9
+
+# Mandatory external prerequisites, copied from docs/PHASES.md.
+[[prerequisites]]
+area = "Identity, persona, experience, release"
+repo = "aien-dev/aien-architecture-mv"
+numbers = [159, 269, 190]
+
+[[prerequisites]]
+area = "Physical Pi to Spark execution and independent acceptance"
+repo = "aien-dev/aien-architecture-mv"
+numbers = [231, 232]
+
+[[prerequisites]]
+area = "Physical Pi to Spark execution and independent acceptance"
+repo = "aien-dev/aienos-mv"
+numbers = [396, 398, 399]
+
+[[prerequisites]]
+area = "Physical Pi to Spark execution and independent acceptance"
+repo = "aien-dev/aien-protocols-mv"
+numbers = [27]
+
+[[prerequisites]]
+area = "Physical Pi to Spark execution and independent acceptance"
+repo = "aien-dev/aien-sovereign-core-mv"
+numbers = [586]
+
+[[prerequisites]]
+area = "Physical Pi to Spark execution and independent acceptance"
+repo = "aien-dev/omega-mv"
+numbers = [505]
+
+[[prerequisites]]
+area = "Physical Pi to Spark execution and independent acceptance"
+repo = "aien-dev/aegis-runtime-mv"
+numbers = [53]
+
+[[prerequisites]]
+area = "Native Spark model path"
+repo = "aien-dev/aienos-mv"
+numbers = [286, 327]
+
+[[prerequisites]]
+area = "Learning economics and out-of-sample evidence"
+repo = "aien-dev/aien-architecture-mv"
+numbers = [246, 262, 263, 276]
+
+[[prerequisites]]
+area = "Learning economics and out-of-sample evidence"
+repo = "aien-dev/omega-mv"
+numbers = [583, 584, 600]
+
+[acceptance]
+# A line of an issue body is a "status line" when it contains one of these
+# keywords (case-insensitive).
+status_keywords = ["status:", "qualification:"]
+# Any of these (case-insensitive) on a status line blocks acceptance.
+forbid_markers = ["qualification: NOT_RUN", "Status: PROPOSED"]
+# A prerequisite carrying one of these labels has its body checks (unchecked
+# boxes, forbidden markers) waived; it must still be closed as completed, and
+# the waiver is listed in the guard's comment. Never honoured for phases.
+waiver_labels = ["allen-guard:waived"]

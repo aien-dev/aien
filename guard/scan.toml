@@ -1,0 +1,26 @@
+# Source-control guard configuration (allen-guard scan).
+# Defaults are compiled in (guard/src/scan.rs); this file restates them so a
+# reviewer sees the whole policy in one place.
+
+head_lines = 200
+size_cap_bytes = 2097152   # 2 MiB
+transcript_threshold = 20
+
+weight_extensions = [
+  "safetensors", "gguf", "pt", "pth", "bin", "ckpt", "npy", "npz",
+  "db", "sqlite", "sqlite3",
+]
+
+forbidden_components = [
+  "raw", "records", "latest", "state", ".claude", ".codex", ".gemini", ".hermes",
+]
+
+[allow]
+# Synthetic fixtures carry fake tokens, fake weights and forbidden paths on
+# purpose. The repository scan skips them; guard/tests/scan.rs runs the
+# scanner on each fixture directly with no allowlist.
+paths = ["guard/tests/fixtures/**"]
+# Files allowed above size_cap_bytes (none yet).
+size = []
+# Paths allowed to contain a forbidden directory component (none yet).
+components = []

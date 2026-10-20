@@ -1,16 +1,46 @@
-# Raw logs, weights, secrets: never in this repository (stream guards extends this list)
+# Raw logs, weights, secrets: never in this repository.
+# The source-control guard (allen-guard scan, guard/scan.toml) enforces the
+# same list in CI and in the pre-commit hook; this file only stops accidents
+# at `git add` time.
+
+# Raw conversation logs and archive views
 *.jsonl
 records/
 raw/
 latest/
 state/
+.claude/
+.codex/
+.gemini/
+.hermes/
+
+# Weights and model checkpoints
 *.safetensors
 *.gguf
 *.pt
+*.pth
 *.bin
+*.ckpt
+*.npy
+*.npz
+
+# Databases
 *.db
 *.sqlite
+*.sqlite3
+
+# Secrets
 .env
+.env.*
 *.pem
 *.key
+*.p12
+
+# Build output and guard run output
 target/
+/evidence-snapshot.json
+/verdict.json
+/verdict.md
+
+# Synthetic fixtures for the guard's own tests are the one exception.
+!/guard/tests/fixtures/**

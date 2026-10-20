@@ -1,0 +1,2 @@
+{"type":"user","sessionId":"synthetic-0000","message":{"role":"user","content":"synthetic fixture"}}
+{"type":"assistant","sessionId":"synthetic-0000","message":{"role":"assistant","content":[{"type":"text","text":"synthetic fixture"}]}}

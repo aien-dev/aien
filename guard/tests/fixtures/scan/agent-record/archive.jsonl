@@ -1,0 +1,3 @@
+{"ts":"2026-01-01T00:00:00Z","agent":"claude","host":"fixture-host","session":"synthetic-0000","role":"user","text":"synthetic fixture","src":"fixture.jsonl:1"}
+{"ts":"2026-01-02T00:00:00Z","agent":"claude","host":"fixture-host","session":"synthetic-0000","role":"user","text":"synthetic fixture","src":"fixture.jsonl:2"}
+{"ts":"2026-01-03T00:00:00Z","agent":"claude","host":"fixture-host","session":"synthetic-0000","role":"user","text":"synthetic fixture","src":"fixture.jsonl:3"}

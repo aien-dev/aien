@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# allen-guard pre-commit hook: refuse staged raw logs, weights and secrets.
+# Install with scripts/install-hooks.sh. Scans the staged (index) content of
+# every added, copied, modified or renamed file, so what is checked is exactly
+# what the commit would record.
+#
+# ALLEN_GUARD_BIN overrides the guard binary (tests use it).
+set -euo pipefail
+
+root="$(git rev-parse --show-toplevel)"
+cd "$root"
+
+files=()
+while IFS= read -r -d '' f; do
+  files+=("$f")
+done < <(git diff --cached --name-only -z --diff-filter=ACMR)
+if [ "${#files[@]}" -eq 0 ]; then
+  exit 0
+fi
+
+bin="${ALLEN_GUARD_BIN:-}"
+if [ -z "$bin" ]; then
+  for candidate in target/release/allen-guard target/debug/allen-guard; do
+    if [ -x "$candidate" ]; then
+      bin="$candidate"
+      break
+    fi
+  done
+fi
+if [ -z "$bin" ]; then
+  echo "allen-guard: no built guard found; running cargo build --release -p allen-guard once" >&2
+  cargo build --quiet --release -p allen-guard
+  bin=target/release/allen-guard
+fi
+
+config=()
+if [ -f guard/scan.toml ]; then
+  config=(--config guard/scan.toml)
+fi
+
+if ! "$bin" scan ${config[@]+"${config[@]}"} --index -- "${files[@]}"; then
+  echo "allen-guard: commit refused. Remove the files or lines above from the index" >&2
+  echo "allen-guard: (git restore --staged <path>). Raw logs, weights and secrets never" >&2
+  echo "allen-guard: enter this repository; see docs/CLOSE_CHECKLIST.md and guard/scan.toml." >&2
+  exit 1
+fi
