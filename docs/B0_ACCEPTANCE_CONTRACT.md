@@ -437,3 +437,86 @@ Rules:
 1. No field in `[model]` may be copied into `[allen]`, and SubjectState carries no model field (ADR 0035 I3).
 2. A missing value stays a PLACEHOLDER and blocks QUALIFIED; it is never filled with a guess.
 3. Model-supplied identity never enters the manifest (aien-architecture-mv `docs/plans/allen-continuity/CAMPAIGN-v0-PREREG.md` step 4).
+
+---
+
+## 9. Definition of success for B0
+
+B0 is a success, and may be labelled QUALIFIED within the demonstrated scope, only when all of these hold for **one candidate in one recorded run** (allen#7: "one same-candidate demonstration"):
+
+1. Task 1 runs T0 to T9 and its outcome gate (3.3) is PASS.
+2. The correction gate (3.5) is PASS.
+3. The restart gate (3.4) is PASS, including its negative control.
+4. The related-task gate (3.6) is PASS, against the numbers pre-registered in `evidence/p3/B0_PREREG.toml`.
+5. Human effort (3.2) is measured on both tasks, with both logs agreeing, and compared against the C1 baseline arm (allen#7: "measured against baseline, including corrections and failures").
+6. Controls C1 and C2 (3.7) both ran and both failed the outcome gate.
+7. The independent verifier reproduced every artifact check; nobody scored their own run.
+8. The manifest (section 8) is complete with no PLACEHOLDER left, and states where learning lives (weights, retrieval or both).
+9. The scope label says what was shown and where: hosted or physical, fixture or provisioned subject (section 11, P-2), Spark plus MacBook only.
+
+### What is NOT success
+
+| Not success | Why |
+|---|---|
+| Output that sounds like Drake | Style imitation; C2 exists to catch it |
+| Low training loss or a better perplexity | allen#5 and allen#1: no completion from training loss alone |
+| A demo without a correction, or without a restart | The frozen task requires both |
+| A run where any gate was waived, skipped or NOT_RUN | NOT_RUN is never PASS |
+| A run where a control did not run | The task's discriminating power is then unknown |
+| A sealed replay score from P3 alone | P5 requires a live run with a fresh goal |
+| Allen saying it remembers | Recall is shown from committed records, never from the model's own statement (`CAMPAIGN-v0-PREREG.md` step 5) |
+| A completed file write | Not the same as satisfying Drake's intent (allen#7) |
+| A closed issue or a green CI check | `ISSUE_FIRST_DELIVERY.md`: status is not a verdict |
+| Training completion | Not permission to replace the deployed Allen (allen#6) |
+
+---
+
+## 10. Review before training
+
+### 10.1 Who reviews
+
+| Reviewer | What they do | Recorded where |
+|---|---|---|
+| Drake | Says yes or no to this contract as written | A comment on aien-dev/allen#2 quoting the contract commit sha, linked from the amendment log |
+| One independent agent review | Reads the contract against allen#1 to #9, ADR 0035, ADR 0022, ADR 0036, `CONTRACT-v1.md` and aien-sovereign-core-mv#667; lists contradictions and untestable gates. Runs on a different model from the author (the author is Claude Opus 5.5) | `evidence/contract/REVIEW-<date>.md` |
+| The PR desk | Merges the branch after both of the above | The merge sha, entered in 10.3 |
+
+The checklist the reviewers work through is `docs/B0_REVIEW_CHECKLIST.md`.
+
+### 10.2 What "frozen" means afterwards
+
+After the merge with Drake's yes and the independent review, this contract is frozen at that commit. From then on:
+
+1. Any change needs a reviewed amendment: a PR that changes the text, adds a row to 10.3, and adds or changes the acceptance tests the change affects. It needs the same review as 10.1.
+2. A run is scored under the contract sha it started under. A run never switches contracts midway.
+3. A change made after a run has started cannot rescue that run; the run keeps its verdict.
+4. Thresholds enter only through `evidence/p3/B0_PREREG.toml`, before P4 starts, and its sha is logged in 10.3.
+5. Loosening a gate after seeing a result is not allowed; a loosened gate needs a fresh evaluation set (allen#6: renewed tuning requires a fresh holdout).
+
+### 10.3 Amendment log
+
+| Id | Date | Sections changed | Reason | Tests added or changed | Independent reviewer | Drake yes (link) | Merged sha |
+|---|---|---|---|---|---|---|---|
+
+---
+
+## 11. PROPOSED items not decided here
+
+Each item names the measurement or gate that will decide it and who runs it. Until decided, the gates that depend on it are NOT_RUN.
+
+| Id | Item | Decided by (measurement or gate) | Who runs it |
+|---|---|---|---|
+| P-1 | A standing intent kind that can hold "prepare this project". SubjectState v0 defines only `GOAL_LATENCY` (ADR 0035 section 3 item 5); a general goal kind is a stage of aien-architecture-mv#159 section 4 | A restart test that commits the admitted interpretation as a kind-24 successor and recovers it after SIGKILL. Until it passes, the "intent recovered" part of gate 3.4 is NOT_RUN | AIENOS and omega owners under aien-architecture-mv#159 |
+| P-2 | Which subject B0 runs on: a host fixture subject engaged the way ADR 0036 decision 3 describes, or an AIENOS-provisioned subject (production path PARTIAL, ADR 0035 section 9 and section 16) | Whether the provisioning path exists and passes its own gates on the day of the P5 run. The manifest field `subject_kind` and the release scope label record the answer | P5 run operator, reading the AIENOS gate record |
+| P-3 | How many runs per arm are needed when each arm gets a different fresh goal, so that goal difficulty does not decide the comparison | P3 measures the spread of operator turns across development replay goals for the baseline arm and pre-registers the run count in `evidence/p3/B0_PREREG.toml` | P3 owner (allen#5) |
+| P-4 | Whether long idle gaps (Drake away from the screen) are capped when summing attention minutes | P3 measures the gap distribution on development sessions from the transcript capture and pre-registers the rule in `evidence/p3/B0_PREREG.toml` | P3 owner |
+| P-5 | Whether "words typed" can be separated from "words pasted" | A P5 dry run on a synthetic session checks whether the interface records paste events. If not, "words typed" stays NOT_RUN and "words submitted" is reported | P5 run operator |
+| P-6 | The sealed list of kill points | Written and digested by the run operator before the run; a dry run on a synthetic task shows each point is reachable and that the mid-effect point exercises the aien-sovereign-core-mv#665 persist-before-act path | P5 run operator |
+| P-7 | Whether the runtime B0 uses has the persist-before-act session store | aien-sovereign-core-mv#665 acceptance test (kill between persist and tool run, resume with no lost or doubled effect). Until it passes, gate 3.4 is NOT_RUN | aien-sovereign-core owners |
+| P-8 | The measurement harness of section 3.1 | A dry run on a synthetic session with known counts reproduces those counts exactly | P3 owner |
+| P-9 | Whether existing interface logging can serve as the independent transcript capture | A dry run comparing its counts with the session store on a synthetic session; any mismatch means a separate capture is needed | P5 run operator |
+| P-10 | Which operator interface carries B0 (`aien-cli compose`, OSH or another; aien-architecture-mv#190 lists the choice as open for E2) | The interface that passes the P5 dry run end to end with the approval desk; recorded in the manifest `[runtime]` section | aien-architecture-mv#190 owners with the P5 run operator |
+| P-11 | Whether the native training path can produce control C2 within budget | The P4 audit of training support (allen#6, first work item). If unsupported, C2 is NOT_RUN and B0 cannot be QUALIFIED; the exact prerequisite is reported | P4 owner |
+| P-12 | The compute cap of section 4.2 | The coordinator reads the measured window records on the Spark and enters the cap as an amendment before P4 starts | Coordinator |
+| P-13 | Whether Allen may read remote aien-dev repositories during preparation (to deduplicate, as `ISSUE_FIRST_DELIVERY.md` step 1 asks) | A P5 dry run checks whether the runtime catalog offers an authorized read-only path. If not, A2's "current state" section is limited to local evidence and says so | P5 run operator |
+| P-14 | Whether a B0 run's own transcripts may later train Allen | P7's forward-looking evaluation rules (allen#9); until then they are on the exclusion list (section 4.1) | P7 owner |
