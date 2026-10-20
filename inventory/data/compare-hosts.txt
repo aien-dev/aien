@@ -1,0 +1,3 @@
+codex mac=982 spark=465 common=0
+claude mac=73 spark=3375 common=0
+opencode mac=161 spark=107 common=0

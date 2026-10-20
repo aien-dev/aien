@@ -1,0 +1,86 @@
+## 1a records per agent (files, first, last, bytes, lines)
+claude files=28 first=2026-09-23 last=2026-10-20 bytes=84395592 records=55980
+  roles:   40656 assistant   15324 user 
+  hosts:   55980 spark 
+  sessions: 3235 max_text_chars: 277148
+codex files=26 first=2026-09-05 last=2026-10-18 bytes=17534942 records=4632
+  roles:    2097 assistant    1334 system    1201 user 
+  hosts:    4632 spark 
+  sessions: 464 max_text_chars: 130914
+gemini files=20 first=2026-09-16 last=2026-10-18 bytes=10700683 records=7019
+  roles:    5169 assistant    1850 user 
+  hosts:    5985 macbook    1034 spark 
+  sessions: 585 max_text_chars: 130920
+muse files=2 first=2026-09-20 last=2026-10-04 bytes=30658 records=71
+  roles:      33 assistant      38 user 
+  hosts:      71 spark 
+  sessions: 38 max_text_chars: 2686
+opencode files=13 first=2026-09-17 last=2026-10-02 bytes=1389198 records=1359
+  roles:    1043 assistant     316 user 
+  hosts:    1359 spark 
+  sessions: 107 max_text_chars: 49299
+## 1b raw mirror per agent/host
+claude/spark files=3374 bytes=4164899228 oldest_mtime=2026-10-04 newest_mtime=2026-10-20
+codex/spark files=465 bytes=407371838 oldest_mtime=2026-10-04 newest_mtime=2026-10-18
+gemini/macbook files=1081 bytes=3964196872 oldest_mtime=2026-10-04 newest_mtime=2026-10-18
+gemini/spark files=243 bytes=592084988 oldest_mtime=2026-10-04 newest_mtime=2026-10-13
+muse/spark files=81 bytes=14613744 oldest_mtime=2026-10-04 newest_mtime=2026-10-04
+opencode/spark files=1 bytes=1978678 oldest_mtime=2026-10-04 newest_mtime=2026-10-04
+tool evidence in raw/claude/spark (jsonl lines): total=1287277
+  ["type":"tool_use"] 210397
+  ["type":"tool_result"] 209165
+  ["type":"function_call"] 0
+  ["type":"function_call_output"] 0
+  ["type":"custom_tool_call"] 0
+  ["type":"custom_tool_call_output"] 0
+tool evidence in raw/codex/spark (jsonl lines): total=79986
+  ["type":"tool_use"] 0
+  ["type":"tool_result"] 0
+  ["type":"function_call"] 578
+  ["type":"function_call_output"] 577
+  ["type":"custom_tool_call"] 8950
+  ["type":"custom_tool_call_output"] 8949
+tool evidence in raw/muse/spark (jsonl lines): total=8279
+  ["type":"tool_use"] 0
+  ["type":"tool_result"] 0
+  ["type":"function_call"] 0
+  ["type":"function_call_output"] 0
+  ["type":"custom_tool_call"] 0
+  ["type":"custom_tool_call_output"] 0
+tool evidence in raw/opencode/spark (jsonl lines): total=1363
+  ["type":"tool_use"] 0
+  ["type":"tool_result"] 0
+  ["type":"function_call"] 0
+  ["type":"function_call_output"] 0
+  ["type":"custom_tool_call"] 0
+  ["type":"custom_tool_call_output"] 0
+muse payload_type containing 'tool': 390
+## 1c Spark original sources
+claude projects=174 jsonl=3375 jsonl_bytes=4164967719 other_files=3524 oldest=2026-09-23 newest=2026-10-20
+codex jsonl=465 bytes=407371838 oldest=2026-09-05 newest=2026-10-18 archived_sessions_files=0
+opencode.db bytes=190869504 mtime=2026-10-16
+  session=107
+  message=3236
+  part=14639
+  event=54594
+part types|tool|5905 part types|step-start|2830 part types|step-finish|2797 part types|reasoning|1684 part types|text|1363 part types|compaction|36 part types|patch|23 part types|subtask|1 
+  session span: 2026-09-17 to 2026-10-02
+gemini antigravity: db=0 wal=0 wal_nonempty=0 bytes=0
+gemini antigravity-cli: db=239 wal=239 wal_nonempty=0 bytes=564371456
+gemini antigravity-ide: db=0 wal=0 wal_nonempty=0 bytes=0
+muse session.jsonl=81 bytes=21530552 tui_history_lines=44
+hermes dir_bytes=2146974701 sessions_dir_files=0 state.db bytes=753664
+  sessions/messages: 3 / 37 span 2026-10-20 to 2026-10-20
+hermes roles|assistant|18 hermes roles|tool|15 hermes roles|user|4 
+## 1e cursor check (archive state vs source)
+claude cursors=3375 sources=3375
+  source_without_cursor=0 cursor_without_source=0 sources_with_unread_bytes=0 unread_bytes_total=0 cursor_past_end=0
+codex cursors=465 sources=465
+  source_without_cursor=0 cursor_without_source=0 sources_with_unread_bytes=0 unread_bytes_total=0 cursor_past_end=0
+gemini cursors=1924 opencode cursors={"parts":"1790977027984|prt_0fe8caf90001Te66wNrU1Qd4qq"} muse cursors=81
+## 1e record gaps (agent first last span_days days_with_records days_without) and the missing dates
+claude 2026-09-23 2026-10-20 28 28 0 missing:
+codex 2026-09-05 2026-10-18 44 26 18 missing: 2026-09-07 2026-09-08 2026-09-09 2026-09-10 2026-09-11 2026-09-12 2026-09-14 2026-09-15 2026-09-16 2026-09-17 2026-09-18 2026-09-19 2026-09-21 2026-10-06 2026-10-07 2026-10-08 2026-10-11 2026-10-15
+gemini 2026-09-16 2026-10-18 33 20 13 missing: 2026-09-22 2026-10-02 2026-10-04 2026-10-06 2026-10-07 2026-10-08 2026-10-09 2026-10-10 2026-10-11 2026-10-12 2026-10-15 2026-10-16 2026-10-17
+muse 2026-09-20 2026-10-04 15 2 13 missing: 2026-09-21 2026-09-22 2026-09-23 2026-09-24 2026-09-25 2026-09-26 2026-09-27 2026-09-28 2026-09-29 2026-09-30 2026-10-01 2026-10-02 2026-10-03
+opencode 2026-09-17 2026-10-02 16 13 3 missing: 2026-09-21 2026-09-28 2026-09-29

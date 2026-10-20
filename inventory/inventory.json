@@ -1,0 +1,69 @@
+{
+  "counted_at_utc": "2026-10-20T12:50:29Z",
+  "archive_commit": "47721c7335050d22f2aa9af3d0b04ec38dbd7b46",
+  "archive_records": {
+    "claude":   {"day_files": 28, "first": "2026-09-23", "last": "2026-10-20", "records": 55980, "bytes": 84395592, "roles": {"user": 15324, "assistant": 40656, "system": 0, "tool": 0}, "sessions": 3235, "hosts": {"spark": 55980}},
+    "codex":    {"day_files": 26, "first": "2026-09-05", "last": "2026-10-18", "records": 4632, "bytes": 17534942, "roles": {"user": 1201, "assistant": 2097, "system": 1334, "tool": 0}, "sessions": 464, "hosts": {"spark": 4632}},
+    "gemini":   {"day_files": 20, "first": "2026-09-16", "last": "2026-10-18", "records": 7019, "bytes": 10700683, "roles": {"user": 1850, "assistant": 5169, "system": 0, "tool": 0}, "sessions": 585, "hosts": {"macbook": 5985, "spark": 1034}},
+    "muse":     {"day_files": 2, "first": "2026-09-20", "last": "2026-10-04", "records": 71, "bytes": 30658, "roles": {"user": 38, "assistant": 33, "system": 0, "tool": 0}, "sessions": 38, "hosts": {"spark": 71}},
+    "opencode": {"day_files": 13, "first": "2026-09-17", "last": "2026-10-02", "records": 1359, "bytes": 1389198, "roles": {"user": 316, "assistant": 1043, "system": 0, "tool": 0}, "sessions": 107, "hosts": {"spark": 1359}}
+  },
+  "records_keep_full_text": true,
+  "record_max_text_chars": {"claude": 277148, "codex": 130914, "gemini": 130920, "muse": 2686, "opencode": 49299},
+  "raw_mirror": [
+    {"agent": "claude",   "host": "spark",   "files": 3374, "bytes": 4164899228, "oldest_mtime": "2026-10-04", "newest_mtime": "2026-10-20"},
+    {"agent": "codex",    "host": "spark",   "files": 465,  "bytes": 407371838,  "oldest_mtime": "2026-10-04", "newest_mtime": "2026-10-18"},
+    {"agent": "gemini",   "host": "macbook", "files": 1081, "bytes": 3964196872, "oldest_mtime": "2026-10-04", "newest_mtime": "2026-10-18"},
+    {"agent": "gemini",   "host": "spark",   "files": 243,  "bytes": 592084988,  "oldest_mtime": "2026-10-04", "newest_mtime": "2026-10-13"},
+    {"agent": "muse",     "host": "spark",   "files": 81,   "bytes": 14613744,   "oldest_mtime": "2026-10-04", "newest_mtime": "2026-10-04"},
+    {"agent": "opencode", "host": "spark",   "files": 1,    "bytes": 1978678,    "oldest_mtime": "2026-10-04", "newest_mtime": "2026-10-04"}
+  ],
+  "raw_tool_evidence_lines": {
+    "claude/spark":   {"jsonl_lines": 1287277, "tool_use": 210397, "tool_result": 209165, "function_call": 0, "function_call_output": 0, "custom_tool_call": 0, "custom_tool_call_output": 0},
+    "codex/spark":    {"jsonl_lines": 79986, "tool_use": 0, "tool_result": 0, "function_call": 578, "function_call_output": 577, "custom_tool_call": 8950, "custom_tool_call_output": 8949},
+    "muse/spark":     {"jsonl_lines": 8279, "payload_type_contains_tool": 390},
+    "opencode/spark": {"jsonl_lines": 1363, "tool_use": 0, "tool_result": 0, "function_call": 0}
+  },
+  "spark_sources": [
+    {"agent": "claude",   "path": "~/.claude/projects", "project_dirs": 174, "jsonl": 3375, "jsonl_bytes": 4164967719, "other_files": 3524, "oldest": "2026-09-23", "newest": "2026-10-20", "in_archive": "jsonl only", "unread_by_archive_cursor_bytes": 0},
+    {"agent": "codex",    "path": "~/.codex/sessions", "jsonl": 465, "bytes": 407371838, "oldest": "2026-09-05", "newest": "2026-10-18", "archived_sessions_files": 0, "in_archive": "yes", "unread_by_archive_cursor_bytes": 0},
+    {"agent": "opencode", "path": "~/.local/share/opencode/opencode.db", "bytes": 190869504, "sessions": 107, "messages": 3236, "parts": 14639, "tool_parts": 5905, "text_parts": 1363, "oldest": "2026-09-17", "newest": "2026-10-02", "in_archive": "text parts only"},
+    {"agent": "gemini",   "path": "~/.gemini/antigravity-cli/conversations", "db": 239, "wal": 239, "wal_nonempty": 0, "bytes": 564371456, "oldest": "2026-09-23", "newest": "2026-10-16", "in_archive": "db yes, wal 3 of 239"},
+    {"agent": "muse",     "path": "~/.local/share/muse", "session_jsonl": 81, "bytes": 21530552, "oldest": "2026-09-20", "newest": "2026-10-04", "in_archive": "yes"},
+    {"agent": "hermes",   "path": "~/.hermes/state.db", "bytes": 753664, "sessions": 3, "messages": 37, "oldest": "2026-10-20", "newest": "2026-10-20", "in_archive": "no collector"}
+  ],
+  "macbook_sources": [
+    {"agent": "claude",   "path": "~/.claude/projects", "jsonl": 73, "bytes": 128082362, "other_files": 91, "oldest": "2026-09-24", "newest": "2026-10-20", "in_archive": false},
+    {"agent": "codex",    "path": "~/.codex/sessions", "jsonl": 982, "bytes": 3950080013, "per_month": {"2026-07": 179, "2026-08": 678, "2026-09": 125}, "archived_sessions_files": 2, "oldest": "2026-07-27", "newest": "2026-09-29", "in_archive": false},
+    {"agent": "gemini",   "path": "~/.gemini/antigravity/conversations", "db": 337, "wal": 316, "bytes_db": 3833888768, "oldest": "2026-09-16", "newest": "2026-10-14", "in_archive": true},
+    {"agent": "gemini",   "path": "~/.gemini/antigravity-cli/conversations", "db": 23, "wal": 22, "bytes_db": 114266112, "oldest": "2026-09-16", "newest": "2026-10-18", "in_archive": true},
+    {"agent": "opencode", "path": "~/.local/share/opencode/opencode.db", "bytes": 732741632, "sessions": 161, "messages": 15778, "parts": 59004, "tool_parts": 15159, "text_parts": 7063, "oldest": "2026-08-21", "newest": "2026-09-25", "in_archive": false},
+    {"agent": "hermes",   "path": "~/.hermes/state.db", "bytes": 198303744, "sessions": 227, "messages": 29221, "oldest": "2026-10-18", "newest": "2026-10-20", "in_archive": false},
+    {"agent": "hermes",   "path": "~/.hermes/profiles/gideon/state.db", "bytes": 544768, "sessions": 3, "messages": 6, "oldest": "2026-10-19", "newest": "2026-10-19", "in_archive": false},
+    {"agent": "catalog",  "path": "~/aien-chat-catalog/build/mac.db", "bytes": 5730304, "sessions": 188, "messages": 11531, "documents": 75, "oldest": "2026-09-24", "newest": "2026-10-19", "in_archive": false, "note": "existing catalog of Mac chats (claude-code and hermes only)"}
+  ],
+  "host_id_overlap": {"codex": {"mac": 982, "spark": 465, "common": 0}, "claude": {"mac": 73, "spark": 3375, "common": 0}, "opencode": {"mac": 161, "spark": 107, "common": 0}},
+  "gaps": {
+    "record_days_without_records": {
+      "claude": {"span_days": 28, "days_with_records": 28, "missing": []},
+      "codex": {"span_days": 44, "days_with_records": 26, "missing": ["2026-09-07","2026-09-08","2026-09-09","2026-09-10","2026-09-11","2026-09-12","2026-09-14","2026-09-15","2026-09-16","2026-09-17","2026-09-18","2026-09-19","2026-09-21","2026-10-06","2026-10-07","2026-10-08","2026-10-11","2026-10-15"]},
+      "gemini": {"span_days": 33, "days_with_records": 20, "missing": ["2026-09-22","2026-10-02","2026-10-04","2026-10-06","2026-10-07","2026-10-08","2026-10-09","2026-10-10","2026-10-11","2026-10-12","2026-10-15","2026-10-16","2026-10-17"]},
+      "muse": {"span_days": 15, "days_with_records": 2, "missing": ["2026-09-21","2026-09-22","2026-09-23","2026-09-24","2026-09-25","2026-09-26","2026-09-27","2026-09-28","2026-09-29","2026-09-30","2026-10-01","2026-10-02","2026-10-03"]},
+      "opencode": {"span_days": 16, "days_with_records": 13, "missing": ["2026-09-21","2026-09-28","2026-09-29"]}
+    },
+    "not_in_archive": [
+      {"host": "macbook", "agent": "codex", "files": 982, "bytes": 3950080013},
+      {"host": "macbook", "agent": "claude", "files": 73, "bytes": 128082362},
+      {"host": "macbook", "agent": "opencode", "sessions": 161, "bytes": 732741632},
+      {"host": "macbook", "agent": "hermes", "sessions": 230},
+      {"host": "spark", "agent": "hermes", "sessions": 3},
+      {"host": "spark", "agent": "opencode", "tool_parts": 5905},
+      {"host": "spark", "agent": "claude", "other_files": 3524}
+    ],
+    "agents_without_collector": ["hermes"],
+    "formats_unverified_by_agent_archive": ["gemini", "muse (partly)"],
+    "caps": {"txt_max_chars": 8000, "latest_lines": 20000, "applies_to": "latest/ views only", "records_truncated": false}
+  },
+  "totals": {"records": 69061, "archive_sessions": 4429, "raw_mirror_files": 5245, "raw_mirror_bytes": 9145145348, "mac_sessions_or_files_not_archived": 1446, "spark_hermes_sessions_not_archived": 3},
+  "manifest": {"path": "~/archive/agent-chats/manifests/2026-10-20-source-manifest.tsv", "rows": 16144, "sha256": "2ad87ff8281d7cc3a29cddbad5f572c646453f95cb21211eb7178494b5dc70b2", "mode": "0600"}
+}

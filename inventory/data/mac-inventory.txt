@@ -1,0 +1,268 @@
+### mac-inventory-1-files.sh
+.claude/projects [*.jsonl] files=73 bytes=128502825 oldest=2026-09-24 newest=2026-10-20
+claude non-jsonl: 91
+claude project dirs: 12
+.codex/sessions [*.jsonl] files=982 bytes=3950080013 oldest=2026-07-27 newest=2026-09-29
+.gemini/antigravity/conversations [*.db] files=337 bytes=3833888768 oldest=2026-09-16 newest=2026-10-14
+.gemini/antigravity/conversations [*.db-wal] files=316 bytes=0 oldest=2026-10-12 newest=2026-10-15
+.gemini/antigravity/conversations [*.db-shm] files=316 bytes=10354688 oldest=2026-10-16 newest=2026-10-16
+.gemini/antigravity-cli/conversations [*.db] files=23 bytes=114266112 oldest=2026-09-16 newest=2026-10-18
+.gemini/antigravity-cli/conversations [*.db-wal] files=22 bytes=0 oldest=2026-10-12 newest=2026-10-12
+.gemini/antigravity-cli/conversations [*.db-shm] files=22 bytes=720896 oldest=2026-10-16 newest=2026-10-16
+.gemini/antigravity-ide/conversations [*.db] files=0 bytes=0 oldest= newest=
+.gemini/antigravity-ide/conversations [*.db-wal] files=0 bytes=0 oldest= newest=
+.gemini/antigravity-ide/conversations [*.db-shm] files=0 bytes=0 oldest= newest=
+--- opencode
+total 1450944
+drwxr-xr-x@ 11 drakestapleton  staff        352 Sep 15 15:38 .
+drwxr-xr-x@ 19 drakestapleton  staff        608 Sep 17 11:14 ..
+-rw-------   1 drakestapleton  staff        131 Sep 15 15:38 auth.json
+drwxr-xr-x@  3 drakestapleton  staff         96 Aug 21 03:23 log
+-rw-r--r--@  1 drakestapleton  staff  732741632 Oct 15 19:08 opencode.db
+-rw-r--r--@  1 drakestapleton  staff      32768 Oct 20 07:46 opencode.db-shm
+-rw-r--r--@  1 drakestapleton  staff      32768 Oct 15 19:08 opencode.db-wal
+drwxr-xr-x@  2 drakestapleton  staff         64 Aug 21 03:23 repos
+drwxr-xr-x@  3 drakestapleton  staff         96 Aug 21 08:16 snapshot
+drwxr-xr-x@  4 drakestapleton  staff        128 Aug 21 04:42 storage
+drwxr-xr-x@  8 drakestapleton  staff        256 Sep 25 09:06 tool-output
+--- hermes
+8936896
+SOUL.md
+assets
+audio_cache
+auth.json
+auth.lock
+backups
+bootstrap-cache
+bot_relay
+browser-profile
+cache
+channel_directory.json
+composer-pastes
+config.channels.lock
+config.yaml
+config.yaml.bak-20261018-192749-skills
+config.yaml.bak-20261020T114046Z
+cron
+desktop
+desktop-plugins
+desktop-ssh
+free_tier
+gateway
+gateway-starts.log
+gateway.lock
+gateway.pid
+gateway.sock
+gateway_state.json
+hermes-agent
+hermes-setup
+hooks
+image_cache
+install_id
+installs
+kanban
+kanban.db
+kanban.db-shm
+kanban.db-wal
+kanban.db.dispatch.lock
+kanban.db.init.lock
+locks
+logs
+lsp
+memories
+models
+models_dev_cache.etag
+models_dev_cache.json
+pairing
+pending
+pending_messages
+pets
+platforms
+plugin-update-checks
+plugins
+processes.json
+processes.json.lock
+profiles
+projects.db
+provider_models_cache.json
+provider_models_cache.json.lock
+response_store.db
+### mac-inventory-2-projects-codex-opencode.sh
+== claude per project (jsonl count, bytes, oldest, newest)
+-Users-drakestapleton	24	47497184	2026-09-24	2026-10-20
+-Users-drakestapleton--hermes-cache-delegation-live	1	230783	2026-10-19	2026-10-19
+-Users-drakestapleton--hermes-cache-scratch	2	1728683	2026-10-20	2026-10-20
+-Users-drakestapleton-Developer-aienos-mv	29	33192754	2026-10-18	2026-10-18
+-Users-drakestapleton-Developer-aienos-mv--claude-worktrees-imac-screensaver	2	3138737	2026-10-18	2026-10-18
+-Users-drakestapleton-aien-dev	12	23038050	2026-10-13	2026-10-13
+-Users-drakestapleton-drakestapleton-com	1	19420068	2026-10-17	2026-10-17
+-private-var-folders-9c-q5c265r94tb2j44htn5s733r0000gn-T-crumbproof-j8pW	1	132938	2026-10-19	2026-10-19
+-private-var-folders-9c-q5c265r94tb2j44htn5s733r0000gn-T-crumbproof-ruN2	1	132938	2026-10-19	2026-10-19
+== codex files per YYYY/MM
+ 179 2026/07
+ 678 2026/08
+ 125 2026/09
+codex other files: 43 ; archived_sessions: 2
+== opencode db
+session 161
+message 15778
+part 59004
+2026-08-21|2026-09-25
+tool|15159
+step-start|13929
+step-finish|13557
+reasoning|9207
+text|7063
+compaction|54
+patch|27
+subtask|4
+### mac-inventory-3-hermes-files.sh
+response_store.db response_store.db-shm response_store.db-wal runs_idempotency.db runs_idempotency.db-shm runs_idempotency.db-wal runtime runtimes sandboxes scripts sessions shared shared-state.db skills skills-archive source-checks spawn-ledger.json state state.db state.db-shm state.db-wal state.db.auto-maintenance.lock state.db.fts_rebuild.lock state.db.quarantine.lock telemetry tools vault 
+dbs:
+./state.db 198303744 2026-10-20
+./kanban.db 118784 2026-10-18
+./projects.db 45056 2026-10-19
+./shared-state.db 155648 2026-10-18
+./profiles/gideon/state.db 544768 2026-10-20
+./profiles/gideon/projects.db 45056 2026-10-19
+./runs_idempotency.db 16384 2026-10-20
+./response_store.db 57344 2026-10-20
+./cron/executions.db 73728 2026-10-20
+./cron/notepad.db 12288 2026-10-19
+sessions dir: 2 files
+sessions: files=2 bytes=743160
+profiles: files=70 bytes=1850104
+state.db:
+-rw-------@ 1 drakestapleton  staff  198303744 Oct 20 07:44 state.db
+-rw-------@ 1 drakestapleton  staff      32768 Oct 20 07:13 state.db-shm
+-rw-------@ 1 drakestapleton  staff    4190072 Oct 20 07:49 state.db-wal
+-rw-r--r--@ 1 drakestapleton  staff          0 Oct 18 15:15 state.db.auto-maintenance.lock
+-rw-r--r--@ 1 drakestapleton  staff          0 Oct 18 14:06 state.db.fts_rebuild.lock
+-rw-r--r--@ 1 drakestapleton  staff          0 Oct 18 14:06 state.db.quarantine.lock
+### mac-inventory-4-hermes-db.sh
+== state.db
+sessions: 227|2026-10-18|2026-10-20
+messages: 29221|2026-10-18|2026-10-20
+roles:
+assistant|13815
+tool|14315
+user|1091
+sources:
+cron|1
+desktop|211
+local|1
+oneshot|7
+subagent|7
+tool_calls(sum sessions.tool_call_count): 11899
+messages with tool_calls column non-null:
+12910
+== profiles/gideon/state.db
+sessions: 3|2026-10-19|2026-10-19
+messages: 6|2026-10-19|2026-10-19
+roles:
+assistant|3
+user|3
+sources:
+api_server|2
+desktop|1
+tool_calls(sum sessions.tool_call_count): 0
+messages with tool_calls column non-null:
+0
+== sessions dir files
+sessions/request_dump_<h>_181836_a40085_<h>_181907_155647.json 82657 2026-10-18
+sessions/request_dump_<h>_093801_06b4bb_<h>_095000_739163.json 660503 2026-10-19
+### mac-inventory-5-catalog.sh
+total 647120
+drwxr-xr-x@  6 drakestapleton  staff        192 Oct 19 12:04 .
+drwxr-xr-x@ 13 drakestapleton  staff        416 Oct 19 12:25 ..
+-rw-r--r--@  1 drakestapleton  staff  175304704 Oct 19 12:04 catalog.db
+-rw-r--r--@  1 drakestapleton  staff    5730304 Oct 19 12:03 mac.db
+drwxr-xr-x@ 35 drakestapleton  staff       1120 Oct 19 12:25 phil
+-rw-r--r--@  1 drakestapleton  staff  144039936 Oct 19 12:03 spark.db
+DRAKE_PHILOSOPHY.md
+README.md
+__pycache__
+build
+build_catalog.py
+categorize.py
+export.py
+merge.py
+redact.py
+wispr_match.py
+size 5730304 mtime 2026-10-19T12:03:59Z
+documents 75
+messages 11531
+redaction_stats 11
+sessions 188
+### mac-inventory-6-catalog-schema.sh
+== build/mac.db
+  documents 75
+  messages 11531
+  redaction_stats 11
+  sessions 188
+== build/spark.db
+  documents 3511
+  messages 244061
+  redaction_stats 10
+  sessions 3088
+== build/catalog.db
+  dictations 902
+  messages_fts_config 1
+  redaction_stats 12
+  documents 3586
+  messages_fts_data 5601
+  sessions 3276
+  messages 255592
+  messages_fts_docsize 255592
+  wispr_counts 22
+  messages_fts 255592
+  messages_fts_idx 5615
+CREATE TABLE sessions(
+  id TEXT PRIMARY KEY, machine TEXT, source TEXT, project_dir TEXT, repo TEXT,
+  title TEXT, model TEXT, started_at TEXT, ended_at TEXT,
+  n_user INTEGER, n_assistant INTEGER, n_tool_calls INTEGER, user_chars INTEGER, n_injected INTEGER,
+  project TEXT, kind TEXT, tags TEXT, first_prompt TEXT, is_subagent INTEGER);
+### mac-inventory-7-catalog-coverage.sh
+== mac.db
+sessions_by_machine_source|mac|claude-code|63|2026-09-24|2026-10-19
+sessions_by_machine_source|mac|hermes/cron|1|2026-10-19|2026-10-19
+sessions_by_machine_source|mac|hermes/desktop|121|2026-10-18|2026-10-19
+sessions_by_machine_source|mac|hermes/subagent|3|2026-10-19|2026-10-19
+sum_tool_calls|10100|subagent_sessions|41
+CREATE TABLE messages(
+  id INTEGER PRIMARY KEY, session_id TEXT, seq INTEGER, role TEXT, ts TEXT,
+  text TEXT, tools TEXT, redactions INTEGER, author TEXT, sender TEXT);
+CREATE INDEX m_sess ON messages(session_id, seq);
+CREATE INDEX m_role ON messages(role);
+authors|agent|97
+authors|assistant|10751
+authors|human|544
+authors|system|139
+== spark.db
+sessions_by_machine_source|spark|claude-code|3088|2026-09-23|2026-10-19
+sum_tool_calls|185716|subagent_sessions|2575
+CREATE TABLE messages(
+  id INTEGER PRIMARY KEY, session_id TEXT, seq INTEGER, role TEXT, ts TEXT,
+  text TEXT, tools TEXT, redactions INTEGER, author TEXT, sender TEXT);
+CREATE INDEX m_sess ON messages(session_id, seq);
+CREATE INDEX m_role ON messages(role);
+authors|agent|5311
+authors|assistant|229191
+authors|human|1633
+authors|system|7926
+== catalog.db
+sessions_by_machine_source|mac|claude-code|63|2026-09-24|2026-10-19
+sessions_by_machine_source|mac|hermes/cron|1|2026-10-19|2026-10-19
+sessions_by_machine_source|mac|hermes/desktop|121|2026-10-18|2026-10-19
+sessions_by_machine_source|mac|hermes/subagent|3|2026-10-19|2026-10-19
+sessions_by_machine_source|spark|claude-code|3088|2026-09-23|2026-10-19
+sum_tool_calls|195816|subagent_sessions|2616
+CREATE TABLE messages(
+  id INTEGER PRIMARY KEY, session_id TEXT, seq INTEGER, role TEXT, ts TEXT,
+  text TEXT, tools TEXT, redactions INTEGER, author TEXT, sender TEXT);
+CREATE INDEX m_sess ON messages(session_id, seq);
+CREATE INDEX m_role ON messages(role);
+authors|agent|5408
+authors|assistant|239942
+authors|human|2177
+authors|system|8065
