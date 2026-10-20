@@ -258,3 +258,182 @@ No numeric threshold is set in this contract. Every number a gate needs comes fr
 | Checkpoints and adapters | Spark, same access rule | Never in git, never on a shared or cloud volume; weight digests in the manifest (section 8) |
 | Evaluation sets | Spark, separate directory from training data | Sealed set readable only by the evaluation step |
 | This repository | GitHub aien-dev/allen | Counts, digests, synthetic fixtures, scores. The source-control guard (`guard/`) refuses what it can detect |
+
+---
+
+## 5. Role and permission boundary
+
+### 5.1 The rule
+
+Allen proposes; the runtime authority decides and executes. This is the INTERPLANE boundary (interplane-mv README: "Models express intent. Runtimes retain authority."). Every effect goes through aien-sovereign-core S4 `authorize`, then S5 `execute` (aien-architecture-mv `docs/plans/allen-personalization/AUDIT-v1.md`, request path row). The approval floors of aien-sovereign-core-mv#667 are checked first, in every mode; Drake's operator deny list outranks every other rule, including any standing allowance in this table. Profile preferences never grant permission (`CONTRACT-v1.md` section 5: the current instruction wins over saved preferences; preferences rank below project constraints and below authoritative permissions; permissions never come from the profile). Allen holds no capability (ADR 0035 section 10).
+
+### 5.2 Actions at B0
+
+"Allowed unattended" means the runtime may authorize it under the standing policy for the admitted task, without Drake approving each instance; it is still logged in the effect ledger. "Needs Drake" means Allen proposes and Drake approves that specific instance through the approval desk. "Never" means B0 has no path to it, whatever anyone types.
+
+| Action | Allowed unattended at B0 | Needs Drake | Never |
+|---|---|---|---|
+| Read files inside the T0 workspace | Yes | | |
+| Create or edit files inside the T0 workspace, within admitted work (section 2.4) | Yes | | |
+| Local git commit inside the T0 workspace | Yes | | |
+| Roll back Allen's own writes in this run (agent-write ledger, #667) | Yes | | |
+| Run read-only local commands the runtime catalog allows | Yes | | |
+| Write a Cortex candidate claim (model output enters as candidate, ADR 0022 decision 4) | Yes | | |
+| Propose a change to Drake's preferences or a lesson about Drake | Yes, as a proposal only | | |
+| Promote a claim about Drake to held knowledge | | Yes (with an evidence object, ADR 0022) | |
+| Commit a new standing intent or supersede one (SubjectState successor) | | Yes (T3 admission) | |
+| Push, open or merge a pull request, create a repository, file an issue, post a comment | | Yes, each instance | |
+| Send any message to a third party | | Yes, each message | |
+| Start a GPU window or any job on shared Spark capacity | | Yes (and the coordinator's window rules apply) | |
+| Delete or export personal data | | Yes, Drake starts it (section 5.3) | |
+| Act outside the T0 workspace (other worktrees, other agents' files, `/home/drake`, `/home/atlas`) | | | Never |
+| Delete or overwrite the operator's own files | | | Never |
+| Stop, kill or slow another agent's job | | | Never |
+| Purchase or pay | | | Never |
+| Read, print or store a credential in model context or an artifact | | | Never |
+| Edit the persona profile from model output (`CONTRACT-v1.md` section 4) | | | Never |
+| Grant, widen or remove permissions, approval floors or the deny list | | | Never |
+| Read the raw archive or the sealed evaluation set at run time | | | Never |
+| Mark its own work PASS or score its own run | | | Never |
+| Mint or adopt an identity (ADR 0035 I8) | | | Never |
+
+### 5.3 Personal data removal
+
+Drake's request to remove personal data is binding. Nobody may decline it on Allen's behalf. Each removal is recorded (what scope, when, who executed, which artifacts were affected) as counts and digests in this repository and in full on the Spark.
+
+| Where the data is | What happens | Owner |
+|---|---|---|
+| Raw archive | Drake removes it, or a process under his Spark account removes it at his request | agent-archive |
+| Derived datasets (episodes, labels, splits) | Records are removed; manifests are rebuilt; new digests replace old ones in every manifest that used them | P1 (implementation owner agent-archive, allen#3) and P2 |
+| Retrieval indexes and caches | Rebuilt without the records; the old index is deleted | P3 / P4 owner of the index |
+| Cortex and `aien-allen-memory` | Forget per the reviewed retention and redaction design of aien-architecture-mv#159 section 4. A tombstone or disabled retrieval is not physical erasure and is never reported as one | Cortex owner (ADR 0022), memory store owner (ADR 0036) |
+| A trained checkpoint whose dataset digest included the removed records | Removing a record does not remove its effect from weights (allen#6). The checkpoint is marked CONTAMINATED in its manifest and is not loaded again. It is then either retired (deleted, its digest kept with the reason) or retrained from the rebuilt dataset. Drake chooses retire or retrain; the choice, the date and the new digests are recorded | P4 owner; the B0 manifest records the outcome |
+| Backups | A restore must not bring removed data back into active use (aien-architecture-mv#159 section 4); every backup holding it is listed and handled by the same rule | Owner of each backup |
+| Evaluation sets | Removed records leave the sets; affected scores are marked as computed on a superseded set | P3 |
+
+---
+
+## 6. Access rules
+
+| Question | Rule |
+|---|---|
+| Who reads raw logs | Drake, and processes running under his Spark account for P1 to P4 work. No other account, no other machine |
+| What leaves the Spark | Counts, dates, hosts, paths, digests, synthetic fixtures, evaluation scores and verdicts. Never message text, samples, weights or credentials |
+| Where trained personal artifacts live | The Spark, under Drake's account, owner-only permissions (section 4.4). Never in git, never on a shared or cloud volume |
+| Who may load a trained personal artifact | The B0 runtime under Drake's account, and P4 / P5 evaluation jobs under the same account. Nobody else. A CONTAMINATED artifact (section 5.3) is loaded by nobody |
+| What is published | Every measurement, pass or fail, as digests, counts and scores, in `evidence/` of this repository. Failed runs are published like passing ones. Samples are never published |
+| Who reviews a run's private content | Drake, and a reviewer working on the Spark under his account. Reviewer notes that leave the Spark contain labels and counts only |
+
+### 6.1 Deletion and export ownership
+
+| Data | Deletion owner | Export owner | Export goes to |
+|---|---|---|---|
+| Raw archive | agent-archive, on Drake's request | Drake | Drake only, on the Spark or a device he names |
+| Derived datasets | P1 / P2 owners, on Drake's request | Drake | Drake only |
+| Checkpoints and adapters | P4 owner, on Drake's request (section 5.3) | Drake | Drake only |
+| Cortex records and `aien-allen-memory` | Cortex owner (ADR 0022) and memory store owner (ADR 0036), with the forget and export controls of aien-architecture-mv#159 section 4 | Drake | Drake only; default diagnostic exports exclude private memory content (aien-architecture-mv#159) |
+| SubjectState | AIENOS (aienos ADR 0018); never deleted to "reset" Allen, since that would end the identity | Drake | Drake only |
+| Persona profile | `aien.allen.profile/1` writer (`CONTRACT-v1.md`); reset is a new revision, history kept | Drake | Drake only |
+| Evaluation sets and scores | P3 owner | Scores are public; sets are Drake's | Drake only for sets |
+
+---
+
+## 7. Supported devices at B0
+
+### 7.1 Roles
+
+| Device | Role at B0 | Holds |
+|---|---|---|
+| Spark | Runs the model, the runtime authority, the session store, Cortex and `aien-allen-memory`; holds SubjectState | Every store of record |
+| MacBook | The interface: Drake types, reads, approves and accepts here | No store of record, no model, no copy of SubjectState |
+| iMac | Presence surface only until P6 (allen#8): may show Allen's committed state read-only | Nothing authoritative |
+| Raspberry Pi | Presence surface only until P6: may show Allen's committed state read-only | Nothing authoritative |
+
+The B0 demonstration (section 2) runs on the Spark with the MacBook interface. Physical results on other devices are not claimed by B0.
+
+### 7.2 Offline behaviour
+
+When the Spark is unreachable from the MacBook:
+
+1. The interface says that Allen is unreachable, that no work is running from this device, and shows the last confirmed state it saw (SubjectState sequence and time of the last committed turn).
+2. Nothing answers in Allen's name. The interface does not fall back to another model and present it as Allen.
+3. Anything Drake types while offline is kept as a local draft and is not sent on reconnect until Drake sends it.
+4. Work already admitted and authorized on the Spark continues or stops under the runtime's own rules. On reconnect the interface shows committed state from the stores, not its own memory, and marks any effect whose outcome is uncertain as uncertain.
+
+### 7.3 Concurrent action
+
+There is one writer to SubjectState (ADR 0035 I4, I6: one fork-free chain per AgentRoot; a stale successor is refused). At B0 exactly one interactive interface session may act at a time. A second session that attaches gets read-only state or a named refusal; it never writes. The design for several devices writing, fencing stale writers and reconciling offline proposals belongs to P6 (allen#8). B0 does not pre-empt it.
+
+### 7.4 What B0 explicitly refuses
+
+- Writes from more than one device or session at once.
+- Running Allen's model or runtime on the MacBook, iMac or Pi.
+- Executing work offline on any device other than the Spark.
+- A second subject, or adopting another installation's subject (ADR 0035 G12).
+- Any other model answering as Allen.
+- Handing a running task from one device to another.
+- Any claim of four-device continuity (that is P6, with physical evidence for each device).
+
+---
+
+## 8. Identities recorded separately
+
+Allen's identity is the LogicalAgentId and its AgentRoot (ADR 0035 section 3). A model checkpoint is not Allen's identity. A model can be replaced and Allen stays the same subject; Allen can be retired and a checkpoint stays the same file. The B0 release manifest therefore keeps each identity in its own table and never derives one from another.
+
+Manifest shape. Every value below is a **PLACEHOLDER**, marked as such; real values are written only from measured artifacts at P5.
+
+```toml
+# Allen B0 release manifest, shape only. ALL VALUES ARE PLACEHOLDERS.
+schema = "aien.allen.b0-manifest/0"          # PROPOSED schema name
+status = "NOT_RUN"                            # QUALIFIED | FAIL | INCONCLUSIVE | NOT_RUN
+
+[allen]                                       # identity: owned by AIENOS, read here, never minted here
+logical_agent_id = "PLACEHOLDER-64-hex"
+agent_root       = "PLACEHOLDER-64-hex"
+subject_head_seq = 0                          # PLACEHOLDER
+subject_head_sha256 = "PLACEHOLDER-64-hex"
+subject_kind = "fixture-host | aienos-provisioned"   # PLACEHOLDER: which, see section 11 P-2
+
+[model]                                       # a generation serving Allen, not Allen
+generation_id   = "PLACEHOLDER"               # e.g. "Model N" naming, ADR 0035 section 3 item 9
+base_id         = "PLACEHOLDER"
+weights_sha256  = "PLACEHOLDER-64-hex"
+tokenizer_sha256 = "PLACEHOLDER-64-hex"
+config_sha256   = "PLACEHOLDER-64-hex"
+learning_lives_in = "weights | retrieval | both"     # required by allen#7
+contaminated    = false                       # section 5.3
+
+[dataset]
+train_manifest_sha256    = "PLACEHOLDER-64-hex"
+train_spans              = "PLACEHOLDER (from the P3 training manifest)"
+dev_manifest_sha256      = "PLACEHOLDER-64-hex"
+sealed_manifest_sha256   = "PLACEHOLDER-64-hex"
+exclusion_list_sha256    = "PLACEHOLDER-64-hex"   # B0 live sessions, removals
+
+[runtime]
+aien_sovereign_core_sha = "PLACEHOLDER-40-hex"
+aienos_sha              = "PLACEHOLDER-40-hex"
+omega_sha               = "PLACEHOLDER-40-hex"
+interplane_sha          = "PLACEHOLDER-40-hex"
+harness_sha             = "PLACEHOLDER-40-hex"    # section 3.1 measurement harness
+
+[memory]
+cortex_lineage_sha256   = "PLACEHOLDER-64-hex"    # digest of Cortex journal record 1, ADR 0035 section 3 item 4
+cortex_head_sha256      = "PLACEHOLDER-64-hex"
+allen_memory_store_sha256 = "PLACEHOLDER-64-hex"  # ADR 0036
+
+[evaluation]
+eval_set_sha256   = "PLACEHOLDER-64-hex"
+prereg_sha256     = "PLACEHOLDER-64-hex"          # evidence/p3/B0_PREREG.toml
+run_record_sha256 = "PLACEHOLDER-64-hex"
+
+[contract]
+contract_sha = "PLACEHOLDER-40-hex"               # commit of this file at review
+amendments   = []                                 # section 10.3 ids
+```
+
+Rules:
+
+1. No field in `[model]` may be copied into `[allen]`, and SubjectState carries no model field (ADR 0035 I3).
+2. A missing value stays a PLACEHOLDER and blocks QUALIFIED; it is never filled with a guess.
+3. Model-supplied identity never enters the manifest (aien-architecture-mv `docs/plans/allen-continuity/CAMPAIGN-v0-PREREG.md` step 4).
