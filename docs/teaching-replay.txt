@@ -1,0 +1,16 @@
+REPOSITORY: allen
+BASE_SHA: e97222eb82f1ec56e852ba9571786db9ccc5c97a
+ENVIRONMENT: macOS-26.6.2-arm64-arm-64bit-Mach-O
+COMMAND:
+python3 - <<'PYCODE'
+from pathlib import Path
+p=Path('docs/PHASES.md').read_text()
+assert '| P0 |' in p and 'ACTIVE' in p and 'NOT_RUN' in p
+missing=[x for x in ('docs/SOURCE_MAP.md','docs/B0_ACCEPTANCE_CONTRACT.md','guard/Cargo.toml') if not Path(x).exists()]
+print('P0 status: ACTIVE / NOT_RUN')
+print('evaluation unavailable:', ', '.join(missing))
+PYCODE
+EXIT: 0
+RAW OUTPUT:
+P0 status: ACTIVE / NOT_RUN
+evaluation unavailable: docs/SOURCE_MAP.md, docs/B0_ACCEPTANCE_CONTRACT.md, guard/Cargo.toml

@@ -34,3 +34,24 @@ Created private on 2026-10-20 as issue aien-architecture-mv#279 asked. Decision 
 ## License
 
 AGPL-3.0-or-later. AIEN is non-commercial.
+
+## How I bound Allen's first evaluation
+
+I keep Allen's [mission](docs/MISSION.md) and [phase ledger](docs/PHASES.md) separate from the identity object, Cortex memory and runtime authority they describe. [The P0 plan](docs/PLAN.md) assigns `SOURCE_MAP.md`, B0 acceptance, inventory and guards to separate streams; on `main` at `e97222e`, those files and a runnable evaluator are **absent**. A checkpoint would be a model generation, not Allen's identity. The phase table says P0 ACTIVE and P1–P7 PROPOSED, with qualification NOT_RUN. This is the present boundary, not a completed training or release flow.
+
+### Synthetic status check
+
+At commit `e97222e`, with Python 3 and no personal data or model, run:
+
+```sh
+python3 - <<'PYCODE'
+from pathlib import Path
+p=Path('docs/PHASES.md').read_text()
+assert '| P0 |' in p and 'ACTIVE' in p and 'NOT_RUN' in p
+missing=[x for x in ('docs/SOURCE_MAP.md','docs/B0_ACCEPTANCE_CONTRACT.md','guard/Cargo.toml') if not Path(x).exists()]
+print('P0 status: ACTIVE / NOT_RUN')
+print('evaluation unavailable:', ', '.join(missing))
+PYCODE
+```
+
+Expected exit 0 and the missing-file list. This checks the published contract boundary only. A synthetic guard verdict or refusal cannot be demonstrated until the assigned guard/evaluator stream lands and its fixtures are reviewed; no raw conversations, weights or access changes are needed for this check. [Replay receipt](docs/teaching-replay.txt).
