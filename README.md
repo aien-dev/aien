@@ -59,3 +59,8 @@ PYCODE
 ```
 
 Expected exit 0 and the missing-file list. This checks the published contract boundary only. A synthetic guard verdict or refusal cannot be demonstrated until the assigned guard/evaluator stream lands and its fixtures are reviewed; no raw conversations, weights or access changes are needed for this check. [Replay receipt](docs/teaching-replay.txt).
+
+
+### Parent fresh-checkout replay
+
+A separate coordination replay is retained in [the parent receipt](docs/parent-replay-2026-10-22.txt). Its scope and observed exit are explicit; source review and final desk qualification remain separate. A recorded absence or expected failing baseline is not a passing implementation.
