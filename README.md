@@ -1,3 +1,7 @@
+<!-- github-native-navigation -->
+[Source](https://github.com/aien-dev/allen) · [Replay receipt](docs/teaching-replay.txt) · [Issues](https://github.com/aien-dev/allen/issues)
+<!-- /github-native-navigation -->
+
 # Allen
 
 Allen is the persistent subject that the AIEN system sustains: one identity across the iMac, the Raspberry Pi, the DGX Spark and the MacBook (architecture ADR 0035). This repository is Allen's project home: mission, phase ledger (P0 to P7), data contracts, evaluation harness, release manifests and the acceptance contract for the first qualified release, **Allen B0**.
