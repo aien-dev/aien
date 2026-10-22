@@ -58,9 +58,43 @@ print('evaluation unavailable:', ', '.join(missing))
 PYCODE
 ```
 
-Expected exit 0 and the missing-file list. This checks the published contract boundary only. A synthetic guard verdict or refusal cannot be demonstrated until the assigned guard/evaluator stream lands and its fixtures are reviewed; no raw conversations, weights or access changes are needed for this check. [Replay receipt](docs/teaching-replay.txt).
+Expected exit 0 and the missing-file list. This checks the published contract boundary only. This main-only check does not evaluate a guard. The existing pending guard branch supplies the actual offline verdict exercise below; it is not merged or a B0 qualification. No raw conversations, weights or access changes are needed. [Replay receipt](docs/teaching-replay.txt).
 
 
 ### Parent fresh-checkout replay
 
 A separate coordination replay is retained in [the parent receipt](docs/parent-replay-2026-10-22.txt). Its scope and observed exit are explicit; source review and final desk qualification remain separate. A recorded absence or expected failing baseline is not a passing implementation.
+
+
+### Existing pending guard: accepted and refused synthetic snapshots
+
+The existing [`guards/v0` implementation at `ec97384701c6e86aa2be745c1336b70645a549d4`](https://github.com/aien-dev/allen/tree/ec97384701c6e86aa2be745c1336b70645a549d4) is separate from this documentation and was not on main at the inspected pin. It provides a real offline programme-close predicate, not a trained model or identity migration.
+
+Trace the path from [`main.rs::close_check`](https://github.com/aien-dev/allen/blob/ec97384701c6e86aa2be745c1336b70645a549d4/guard/src/main.rs) through [`Policy`](https://github.com/aien-dev/allen/blob/ec97384701c6e86aa2be745c1336b70645a549d4/guard/src/policy.rs) and [`close::evaluate`](https://github.com/aien-dev/allen/blob/ec97384701c6e86aa2be745c1336b70645a549d4/guard/src/close.rs): policy names required issue identities; a saved synthetic issue snapshot supplies their state and body; the evaluator produces a verdict and blockers; the CLI maps accepted to exit0 and rejected to exit2. The fully accepted fixture is the positive case; the all-open fixture is a meaningful refusal control. Neither calls `--live` or edits GitHub.
+
+Prerequisites: GitHub read access to this private repository, Git, Rust/Cargo (replayed with the version in the linked raw receipt), Python3, and Cargo dependency access/cache. In a new directory:
+
+```sh
+set -eu
+git init allen-guard-lesson
+cd allen-guard-lesson
+git remote add origin https://github.com/aien-dev/allen.git
+git fetch --depth 1 origin ec97384701c6e86aa2be745c1336b70645a549d4
+git checkout --detach FETCH_HEAD
+cargo test --locked
+cargo run --quiet --locked -- close-check --policy guard/policy.toml \
+  --snapshot guard/tests/fixtures/close/fully-accepted.json > accepted.json
+rc=0
+cargo run --quiet --locked -- close-check --policy guard/policy.toml \
+  --snapshot guard/tests/fixtures/close/all-open.json > refused.json 2> refused.md || rc=$?
+test "$rc" -eq 2
+python3 - <<'PYCODE'
+import json
+accepted = json.load(open('accepted.json'))
+refused = json.load(open('refused.json'))
+assert accepted['accepted'] is True and refused['accepted'] is False
+print('accepted_fixture=true; all_open_fixture=false; refusal_exit=2')
+PYCODE
+```
+
+Expected: the existing41 tests pass, the first verdict accepts, the second refuses with exit2, and the final assertion exits0. [Actual parent replay](docs/pending-guard-replay.txt) retains the test output and Rust version. This qualifies only offline synthetic policy evaluation at that pending source pin. It does not qualify live issue-event enforcement, hook installation elsewhere, model evaluation, training, memory continuity, phase completion or Allen B0. The phase status and private-repository boundaries above remain unchanged.
