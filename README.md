@@ -4,6 +4,10 @@ Allen is the persistent subject that the AIEN system sustains: one identity acro
 
 **Pre-alpha.** Nothing here is qualified. Every claim in this repository links to a file under `evidence/` or to a receipt in [aien-dev/aien-receipts](https://github.com/aien-dev/aien-receipts); a sentence with no link is a plan, not a result.
 
+The source is public. The [Alpha 1.0 delivery status](docs/ALPHA_1_0.md) separates
+the seeded Omega component checks from the unfinished interactive application
+and iMac launch requirements. Public source does not mean the app is released.
+
 ## What lives here and what does not
 
 | Here | Not here (owner) |
@@ -29,7 +33,11 @@ Moving coordination here does not mint a second identity and does not fork memor
 
 ## Visibility
 
-Created private on 2026-10-20 as issue aien-architecture-mv#279 asked. Decision recorded in `docs/PLAN.md`: the repository becomes public when the source-control guard is green on `main` (it is the thing that makes public safe), as every other aien-dev repository is public. Raw logs, personal training artifacts and weights stay access controlled whatever the repository visibility.
+Created private on 2026-10-20 as issue aien-architecture-mv#279 asked. Made public
+on 2026-10-23 under Drake's explicit instruction. The earlier conditional
+publication sequence in `docs/PLAN.md` is superseded by that instruction;
+publication does not claim that its unfinished qualification gates passed.
+Raw logs, personal training artifacts and weights stay access controlled.
 
 ## License
 
