@@ -25,13 +25,19 @@ export, including 24 compiled fault controls. These are Linux AArch64 results.
 See the candidate's `evidence/allen-portable-build-20261023/` for raw receipts.
 Candidate work is proposed until integrated through the existing publication desk.
 
+The clipped RGB text surface (L765) is implemented in the same seeded core and
+host-qualified: 85 focused surface checks, 2,831 full native assertions, 24
+compiled mutants and an independent L768 review with no source finding. It
+renders retained presentation into real Omega pixels. It is a rendering
+component, not a window, input loop, display driver or iMac qualification.
+
 ## Remaining release requirements
 
 | Requirement | Current evidence and owner |
 |---|---|
 | Public source acquisition | PASS: Allen and omega-bridge public, anonymous reads and compiler download verified |
 | Reproducible seeded component build | PASS on candidate above; independent review and integration pending |
-| Real visual window, keyboard and input loop | NOT_RUN; existing Allen platform owner |
+| Real visual window, keyboard and input loop | Surface component PASS on Linux AArch64 (L765, L768 review); window, keyboard and input loop NOT_RUN; existing Allen platform owner |
 | Live conversation plus durable session restore | NOT_RUN for this visual artifact; reuse existing gateway/storage owners |
 | Qualified hosted iMac executable | NOT_RUN; existing Omega compiler/platform owners, no foreign implementation fallback |
 | Qualified native iMac boot and device path | NOT_RUN; emulator acceptance then bundled physical trial |
