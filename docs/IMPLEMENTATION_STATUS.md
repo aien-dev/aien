@@ -14,7 +14,7 @@ Status is recorded against Allen #12's MAC-1 through MAC-8 gates. **Overall impl
   bash scripts/harness_evolution/gate.sh
   ```
 
-  Observed exit status: 103. The source-aware and bounded-recursion sub-gates completed before this failure. The latest unsigned failure receipt is `evidence/harness-evolution/offline-20261024T143158Z-Bzwtcv/receipt.json`. The fixture has no captured stdout or stderr for the native failure, so its exact cause is not established. The previous selector-only PASS receipt predates the current candidate/observation schema and does not qualify this expanded implementation.
+  Observed exit status: 103. The source-aware and bounded-recursion sub-gates completed before this failure. The latest unsigned failure receipt is `evidence/harness-evolution/offline-20261024T143343Z-sFSLGm/receipt.json`. The fixture has no captured stdout or stderr for the native failure, so its exact cause is not established. The previous selector-only PASS receipt predates the current candidate/observation schema and does not qualify this expanded implementation.
 - Independent architecture review found the earlier kernel incorrectly tied sequential ancestry to the current best result and did not enforce measured usage bounds. The expanded kernel addresses those paths in source, but the current native fixture failure means those changes remain unaccepted.
 - Spark RSI has an offline four-arm manifest proposal in its separate required review branch, PR #69. It lists both model seats as unqualified and routes disabled. It is fixture scope only, not the required 30-task independent evaluation or signed judge result.
 

@@ -1,0 +1,21 @@
+{
+  "schema": "aien.allen.harness-evolution.native-kernel-run/1",
+  "verdict": "FAIL",
+  "stage": "native_execution",
+  "signed": false,
+  "allen_source_commit": "fca662789e020eb18f430a77123a1d5b319ded83",
+  "omega_source_commit": "c434565c67552c0b01df2d7f76c1a04287c70560",
+  "compiler_sha256": "191b776ef98821597c3e30655da6d680a9b66edbc9ceaca3c39c61ea6df098e9",
+  "compiler_seed_source_sha256": "8608fa11f6a2cf1c50db22d871eef16b00d5bc719bc1a222cc3e456984ac5ebf",
+  "bounded_recursion_source_sha256": "f73660bee1b3c93fe737d4cd2a7f9609cd8da7e0c5cb0479c1cbe4e511121558",
+  "decision_source_sha256": "bf85a5b6cfe0d84be0b93b1d9e7c6df468ee0c8ecc27a41d38807b24961ce9ac",
+  "fixture_source_sha256": "37a134ae183f26c80953a6da3d1969a3bd97c14a2158a137bcc20a226272d7c8",
+  "executable_sha256": "548f19fc64af9271213ddf062e891f5e49b3c3d123247549ff89465d4aabf85a",
+  "script_exit": 103,
+  "gate_exit": "103",
+  "last_mutant_exit": "NOT_RUN",
+  "evidence_files": ["compile.stderr", "program", "program.om", "test.stderr", "test.stdout"],
+  "model_inference": "NOT_RUN",
+  "gpu_or_physical_qualification": "NOT_RUN",
+  "deployment": "OFF"
+}

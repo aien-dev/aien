@@ -35,6 +35,13 @@ finish() {
     if test -f "$run_dir/test.stdout"; then verdict=FAIL; fi
     local binary_sha=NOT_BUILT
     if test -f "$run_dir/program"; then binary_sha=$(sha256sum "$run_dir/program" | cut -d' ' -f1); fi
+    local evidence_json=""
+    local evidence_file
+    for evidence_file in "$run_dir"/*; do
+      test -f "$evidence_file" || continue
+      if test -n "$evidence_json"; then evidence_json="$evidence_json, "; fi
+      evidence_json="$evidence_json\"$(basename "$evidence_file")\""
+    done
     cat > "$run_dir/receipt.json" <<EOF
 {
   "schema": "aien.allen.harness-evolution.native-kernel-run/1",
@@ -52,14 +59,13 @@ finish() {
   "script_exit": $exit_status,
   "gate_exit": "$gate_exit",
   "last_mutant_exit": "$last_mutant_exit",
-  "evidence_files": ["compile.stderr", "test.stdout", "test.stderr", "mutant-compile.stderr", "mutant-policy-effect.stdout", "mutant-policy-effect.stderr"],
+  "evidence_files": [$evidence_json],
   "model_inference": "NOT_RUN",
   "gpu_or_physical_qualification": "NOT_RUN",
   "deployment": "OFF"
 }
 EOF
   fi
-  rm -f "$run_dir/program.om" "$run_dir/program" "$run_dir/mutant.om" "$run_dir/mutant"
 }
 trap finish EXIT
 
