@@ -1,0 +1,177 @@
+/tmp/allen-gm-1pWERh/kernel
+== plan admission and plan mutants
+INIT /tmp/allen-gm-1pWERh/state-a
+ok 1 init acceptance plan
+ok 2 objective status 1
+ok 3 plan mutant old-abi 10
+ok 4 plan mutant cycle 20
+ok 5 plan mutant missing-dep 19
+ok 6 plan mutant self-dep 19
+ok 7 plan mutant overlong-unsplittable 15
+ok 8 plan mutant cap-above-profile 14
+ok 9 plan mutant compute-with-tokens 14
+ok 10 plan mutant changed-privacy-owner 17
+ok 11 plan mutant unauthorized-effect 18
+ok 12 plan mutant missing-operand 22
+ok 13 plan mutant missing-verifier 16
+ok 14 plan mutant never-retry-twice 23
+ok 15 plan mutant effect-idempotent-retry 23
+ok 16 plan mutant over-budget 26
+ok 17 plan mutant terminal-optional 21
+ok 18 plan mutant truncated 2
+ok 19 plan mutant malformed-word 3
+== independent microjobs before the join (several running at once)
+ok 20 accept 1 1 1 1 20 0 0 0 0 0 0 0
+ok 21 accept 1 2 1 1 20 0 0 0 0 0 0 0
+ok 22 reject dispatch-by-verifier 39
+ok 23 reject dispatch-by-owner 39
+ok 24 accept 1 3 1 1 20 0 0 0 0 0 0 0
+ok 25 accept 1 4 1 1 21 0 0 0 0 0 0 0
+ok 26 node 4 = 2/1/1
+ok 27 reject dispatch-before-dependencies 43
+ok 28 accept 2 1 1 1 20 0 1590122661048274730 7389054293607566922 17765220216278269213 13044143991252991534 0 3
+ok 29 reject compute-result-with-tokens 48
+ok 30 reject self-reported-success 40
+ok 31 reject wrong-verifier 39
+ok 32 reject verifier-digest-mismatch 41
+ok 33 accept 3 1 1 1 5 1 1590122661048274730 7389054293607566922 17765220216278269213 13044143991252991534 0 0
+ok 34 accept 2 2 1 1 20 0 4253987349393077938 10964823111325125458 1959900809203827567 11787345162165643590 0 2
+ok 35 accept 3 2 1 1 5 1 4253987349393077938 10964823111325125458 1959900809203827567 11787345162165643590 0 0
+ok 36 accept 2 3 1 1 20 0 57178629525245691 12211817538912167415 9498373582304253565 8557495015591468559 0 2
+ok 37 accept 3 3 1 1 5 1 57178629525245691 12211817538912167415 9498373582304253565 8557495015591468559 0 0
+ok 38 reject result-over-token-contract 42
+ok 39 reject result-by-other-worker 39
+ok 40 accept 2 4 1 1 21 0 2576060380415320165 6580880047771462738 12507361528110776190 8661819979625693711 50 900
+ok 41 accept 3 4 1 1 6 1 2576060380415320165 6580880047771462738 12507361528110776190 8661819979625693711 0 0
+== refusal: optional teacher route has no current qualification
+ok 42 accept 7 6 0 1 9 0 0 0 0 0 0 0
+ok 43 node 6 = 7/1/0
+== model failure then bounded retry
+ok 44 accept 1 5 1 1 22 0 0 0 0 0 0 0
+ok 45 accept 4 5 1 1 22 0 0 0 0 0 40 4000
+ok 46 node 5 = 1/1/1
+ok 47 reject retry-reuses-attempt 35
+ok 48 accept 1 5 2 1 22 0 0 0 0 0 0 0
+ok 49 accept 2 5 2 1 22 0 6999281575176425519 3407000082743584239 2167815311104621344 10234730077480277535 110 2500
+ok 50 accept 3 5 2 1 6 1 6999281575176425519 3407000082743584239 2167815311104621344 10234730077480277535 0 0
+ok 51 node 5 = 4/1/2
+== join
+ok 52 accept 1 7 1 1 20 0 0 0 0 0 0 0
+ok 53 accept 2 7 1 1 20 0 17224845271616584223 16171549890298527030 17800844123137603035 3042115809255429608 0 3
+ok 54 accept 3 7 1 1 5 1 17224845271616584223 16171549890298527030 17800844123137603035 3042115809255429608 0 0
+ok 55 accept 1 8 1 1 20 0 0 0 0 0 0 0
+ok 56 accept 2 8 1 1 20 0 2818904119461198038 16261208186759639446 2478762515103212180 997723088937920693 0 3
+ok 57 accept 3 8 1 1 5 1 2818904119461198038 16261208186759639446 2478762515103212180 997723088937920693 0 0
+ok 58 accept 1 9 1 1 21 0 0 0 0 0 0 0
+== partial completion: process stops with a live lease; restart replays exact state
+ok 59 SIGKILL inside the commit window left the journal unchanged
+ok 60 restart replay byte-identical (57ad1d2912901c45)
+ok 61 node 9 = 2/1/1
+ok 62 objective status 1
+ok 63 accept 4 9 1 1 9 0 0 0 0 0 0 0
+ok 64 reject duplicate-result-after-restart 33
+ok 65 accept 1 9 2 1 21 0 0 0 0 0 0 0
+ok 66 accept 2 9 2 1 21 0 11633796683688162578 2611344908833760339 4922051788661163011 15670096361300299659 120 1800
+ok 67 accept 3 9 2 1 6 0 11633796683688162578 2611344908833760339 4922051788661163011 15670096361300299659 0 0
+ok 68 node 9 = 1/1/2
+ok 69 accept 1 9 3 1 21 0 0 0 0 0 0 0
+ok 70 accept 2 9 3 1 21 0 3412303477703198325 7269490103541353055 10070534316660443892 16345471507689219391 118 1700
+ok 71 reject result-twice 33
+ok 72 accept 3 9 3 1 6 1 3412303477703198325 7269490103541353055 10070534316660443892 16345471507689219391 0 0
+ok 73 node 9 = 4/1/3
+== human correction invalidates exactly the affected nodes
+ok 74 reject correction-by-non-owner 39
+ok 75 reject correction-same-operand 46
+ok 76 reject correction-stale-generation 34
+ok 77 accept 6 3 0 1 7 0 5072716031019659500 4128923715579579505 12284614851141366448 11841212444260770447 0 0
+ok 78 unaffected nodes 1 2 4 5 stay DONE at generation 1
+ok 79 node 6 = 7/1/0
+ok 80 affected nodes 3 7 8 9 10 11 12 reset to generation 2
+ok 81 reject stale-generation-dispatch 34
+ok 82 accept 1 3 1 2 20 0 0 0 0 0 0 0
+ok 83 accept 2 3 1 2 20 0 2093590270565682254 11548926694544840364 6070175920586574933 6952502308757408306 0 3
+ok 84 accept 3 3 1 2 5 1 2093590270565682254 11548926694544840364 6070175920586574933 6952502308757408306 0 0
+ok 85 accept 1 7 1 2 20 0 0 0 0 0 0 0
+ok 86 accept 2 7 1 2 20 0 15574667287881363842 12066288271262833419 8107324006556479113 17687535031327705966 0 3
+ok 87 accept 3 7 1 2 5 1 15574667287881363842 12066288271262833419 8107324006556479113 17687535031327705966 0 0
+ok 88 accept 1 8 1 2 20 0 0 0 0 0 0 0
+ok 89 accept 2 8 1 2 20 0 2818904119461198038 16261208186759639446 2478762515103212180 997723088937920693 0 3
+ok 90 accept 3 8 1 2 5 1 2818904119461198038 16261208186759639446 2478762515103212180 997723088937920693 0 0
+ok 91 accept 1 9 1 2 21 0 0 0 0 0 0 0
+ok 92 accept 2 9 1 2 21 0 8346972878197550184 13043866356439012208 10005504574032716483 11937233746841748218 116 1600
+ok 93 accept 3 9 1 2 6 1 8346972878197550184 13043866356439012208 10005504574032716483 11937233746841748218 0 0
+ok 94 accept 1 10 1 2 20 0 0 0 0 0 0 0
+ok 95 accept 2 10 1 2 20 0 91435745762526669 341739918392791537 3475024831268958988 16657810616692251939 0 3
+ok 96 accept 3 10 1 2 5 1 91435745762526669 341739918392791537 3475024831268958988 16657810616692251939 0 0
+ok 97 accept 1 11 1 2 20 0 0 0 0 0 0 0
+ok 98 accept 2 11 1 2 20 0 18007436206504913072 15352066082236739459 12086397700553737565 6724779656487292723 0 3
+ok 99 accept 3 11 1 2 5 1 18007436206504913072 15352066082236739459 12086397700553737565 6724779656487292723 0 0
+ok 100 reject effect-before-done 44
+ok 101 accept 1 12 1 2 20 0 0 0 0 0 0 0
+ok 102 accept 2 12 1 2 20 0 10050724480683792692 4611644038588508684 18364119300094584349 6745272966897600211 0 3
+ok 103 accept 3 12 1 2 5 1 10050724480683792692 4611644038588508684 18364119300094584349 6745272966897600211 0 0
+ok 104 reject effect-on-non-effect-node 44
+ok 105 reject effect-by-worker 39
+ok 106 objective status 1
+ok 107 accept 8 12 0 2 9 0 6117567086248000858 7043326477162805701 4741653272459182596 14856818743245759094 0 0
+ok 108 reject duplicate-effect 45
+ok 109 objective status 2
+ok 110 objective totals: 18 attempts, 7 model calls, 972 tokens reserved, 554 used, 12531 ms
+ok 111 terminal receipt binds objective digest and verified terminal result n11:note-ok:668
+== event wire refusals (driven directly, the driver never writes these)
+ok 112 wire seq-gap 30
+ok 113 wire unknown-event-type 32
+ok 114 wire unknown-node 31
+ok 115 wire truncated-event 2
+== budgets stop model-call storms
+INIT /tmp/allen-gm-1pWERh/state-b
+ok 116 accept 1 4 1 1 21 0 0 0 0 0 0 0
+ok 117 accept 4 4 1 1 21 0 0 0 0 0 70 2000
+ok 118 accept 1 4 2 1 21 0 0 0 0 0 0 0
+ok 119 accept 4 4 2 1 21 0 0 0 0 0 70 2000
+ok 120 reject model-call-budget 37
+ok 121 unfundable model node is not offered as ready
+INIT /tmp/allen-gm-1pWERh/state-c
+ok 122 accept 1 4 1 1 21 0 0 0 0 0 0 0
+ok 123 accept 2 4 1 1 21 0 2576060380415320165 6580880047771462738 12507361528110776190 8661819979625693711 50 900
+ok 124 accept 3 4 1 1 6 1 2576060380415320165 6580880047771462738 12507361528110776190 8661819979625693711 0 0
+ok 125 reject token-budget 38
+INIT /tmp/allen-gm-1pWERh/state-d
+ok 126 accept 1 4 1 1 21 0 0 0 0 0 0 0
+ok 127 accept 4 4 1 1 21 0 0 0 0 0 10 2000
+ok 128 accept 1 4 2 1 21 0 0 0 0 0 0 0
+ok 129 accept 4 4 2 1 21 0 0 0 0 0 10 2000
+ok 130 accept 1 4 3 1 21 0 0 0 0 0 0 0
+ok 131 accept 4 4 3 1 21 0 0 0 0 0 10 2000
+ok 132 node 4 = 5/1/3
+ok 133 reject attempts-exhausted 33
+ok 134 objective status 3
+ok 135 dependents of the exhausted model node are blocked
+== cancellation
+INIT /tmp/allen-gm-1pWERh/state-e
+ok 136 accept 1 1 1 1 20 0 0 0 0 0 0 0
+ok 137 accept 1 4 1 1 21 0 0 0 0 0 0 0
+ok 138 reject cancel-by-non-owner 39
+ok 139 accept 5 4 0 0 7 0 0 0 0 0 0 0
+ok 140 cancel of node 4 cancels exactly 4 and its dependents 5 6 8 9 10 11 12
+ok 141 reject late-result-after-cancel 33
+ok 142 accept 2 1 1 1 20 0 1590122661048274730 7389054293607566922 17765220216278269213 13044143991252991534 0 3
+ok 143 accept 3 1 1 1 5 1 1590122661048274730 7389054293607566922 17765220216278269213 13044143991252991534 0 0
+ok 144 node 1 = 4/1/1
+ok 145 objective status 5
+ok 146 accept 5 0 0 0 7 0 0 0 0 0 0 0
+ok 147 objective status 4
+ok 148 reject dispatch-after-objective-cancel 47
+ok 149 reject cancel-twice 47
+== source mutation controls
+ok 150 mutant verifier-identity caught by wrong-verifier (39 -> 0)
+ok 151 mutant self-verification caught by self-reported-success (40 -> 39)
+ok 152 mutant dependency-gate caught by dispatch-before-dependencies (43 -> 0)
+ok 153 mutant generation-bump caught by stale-generation-dispatch (34 -> 0)
+ok 154 mutant duplicate-effect caught by duplicate-effect (45 -> 0)
+ok 155 mutant model-budget caught by model-call-budget (37 -> 0)
+ok 156 mutant objective-cancel caught by cancel-twice (47 -> 0)
+ok 157 mutant cycle-check caught by plan-cycle (20 -> 0)
+ok 158 mutant privacy-owner caught by plan-changed-privacy-owner (17 -> 0)
+== receipt
+PASS /home/drakestapleton/workspace/si-allena1/evidence/goal-microjobs/offline-20261024T182027Z-rdcMbK/receipt.json checks=158
