@@ -1,0 +1,5 @@
+{
+  "schema_version": "1.0.0",
+  "name": "goal-microjobs",
+  "purpose": "Pinned seeded .om build and host file/lock glue for the microjob journal"
+}

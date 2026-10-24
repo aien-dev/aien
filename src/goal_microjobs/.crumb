@@ -1,0 +1,5 @@
+{
+  "schema_version": "1.0.0",
+  "name": "goal-microjobs",
+  "purpose": "Allen #13 objective-to-microjob admission and journal replay kernel in seeded .om"
+}
