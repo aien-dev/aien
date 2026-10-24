@@ -1,0 +1,445 @@
+note SPDX-License-Identifier: AGPL-3.0-or-later
+note Seeded bounded strategy validation and selection kernel for Allen.
+note Content digests, profile validation, capabilities, independent receipts and
+note actual-use records must be supplied by trusted existing owner interfaces.
+note This kernel executes no tools and writes no memory or authority state.
+global Lim ulong 22
+global Cand ulong 30
+global Obs ulong 63
+global Workers ulong 3
+global Base ulong 4
+global Best ulong 3
+global BaseId uchar 32
+global CandId uchar 96
+global ParentId uchar 96
+global ObsId uchar 96
+
+fn limits_valid to bool
+if ne get Lim 0 1
+ret false
+end
+if gt get Lim 4 2
+ret false
+end
+if or gt get Lim 1 2 or gt get Lim 2 8 gt get Lim 3 2
+ret false
+end
+if eq get Lim 21 0
+ret false
+end
+if or eq get Lim 5 0 eq get Lim 6 0
+ret false
+end
+if or eq get Lim 7 0 eq get Lim 8 0
+ret false
+end
+if or eq get Lim 9 0 eq get Lim 10 0
+ret false
+end
+if or eq get Lim 11 0 eq get Lim 12 0
+ret false
+end
+if or eq get Lim 13 0 eq get Lim 14 0
+ret false
+end
+if or eq get Lim 15 0 eq get Lim 16 0
+ret false
+end
+if or eq get Lim 17 0 eq get Lim 18 0
+ret false
+end
+if or gt get Lim 5 get Lim 6 gt get Lim 7 get Lim 8
+ret false
+end
+if or gt get Lim 9 get Lim 10 gt get Lim 11 get Lim 12
+ret false
+end
+if or gt get Lim 13 get Lim 14 gt get Lim 15 get Lim 16
+ret false
+end
+if or gt get Lim 17 get Lim 18 gt get Lim 19 get Lim 20
+ret false
+end
+ret true
+end
+
+fn base_id_nonzero to bool
+sum = ulong 0
+for i ulong 32
+sum = add sum ulong get BaseId i
+end
+ret ne sum 0
+end
+
+fn cand_equal a ulong b ulong to bool
+for i ulong 32
+if ne get CandId add mul a 32 i get CandId add mul b 32 i
+ret false
+end
+end
+ret true
+end
+
+fn cand_nonzero slot ulong to bool
+sum = ulong 0
+for i ulong 32
+sum = add sum ulong get CandId add mul slot 32 i
+end
+ret ne sum 0
+end
+
+fn cand_base_equal slot ulong to bool
+for i ulong 32
+if ne get CandId add mul slot 32 i get BaseId i
+ret false
+end
+end
+ret true
+end
+
+fn parent_base_equal slot ulong to bool
+for i ulong 32
+if ne get ParentId add mul slot 32 i get BaseId i
+ret false
+end
+end
+ret true
+end
+
+fn parent_cand_equal slot ulong parslot ulong to bool
+for i ulong 32
+if ne get ParentId add mul slot 32 i get CandId add mul parslot 32 i
+ret false
+end
+end
+ret true
+end
+
+fn parent_digest_matches slot ulong to bool
+at = mul slot 10
+parid = get Cand add at 1
+if eq parid get Base 0
+ret parent_base_equal slot
+end
+for p ulong slot
+pa = mul p 10
+if eq get Cand pa parid
+ret parent_cand_equal slot p
+end
+end
+ret false
+end
+
+fn candidate_valid slot ulong parid ulong to bool
+if or ge slot 3 eq limits_valid false
+ret false
+end
+if or eq get Lim 4 0 or eq get Lim 2 0 eq get Lim 3 0
+ret false
+end
+at = mul slot 10
+id = get Cand at
+scope = get Cand add at 2
+diff = get Cand add at 3
+round = get Cand add at 4
+family = get Cand add at 5
+if or eq id 0 ne get Cand add at 1 parid
+ret false
+end
+if or eq id get Base 0 or eq scope 0 gt scope 3
+ret false
+end
+if ne scope diff
+ret false
+end
+if or eq round 0 gt round get Lim 1
+ret false
+end
+if or gt family 7 ne family get Base 3
+ret false
+end
+evidence = get Cand add at 6
+identity = get Cand add at 7
+if or eq evidence 0 ne identity 1
+ret false
+end
+if eq cand_nonzero slot false
+ret false
+end
+if eq cand_base_equal slot true
+ret false
+end
+if eq parent_digest_matches slot false
+ret false
+end
+for p ulong slot
+if eq cand_equal slot p true
+ret false
+end
+end
+comp = get Cand add at 8
+comp_ok = get Cand add at 9
+mode = get Lim 4
+if eq comp 1
+if or ne mode 1 ne round 2
+ret false
+end
+if or ne scope 3 ne comp_ok 1
+ret false
+end
+end
+ret true
+end
+
+fn obs_id_equal slot ulong to bool
+for i ulong 32
+if ne get ObsId add mul slot 32 i get CandId add mul slot 32 i
+ret false
+end
+end
+ret true
+end
+
+fn observation_eligible slot ulong to bool
+if ge slot 3
+ret false
+end
+at = mul slot 21
+if ne get Obs at 2
+ret false
+end
+if ne get Obs add at 1 get Cand at
+ret false
+end
+if eq obs_id_equal slot false
+ret false
+end
+if ne get Obs add at 2 1
+ret false
+end
+if ne get Obs add at 3 1
+ret false
+end
+if ne get Obs add at 4 1
+ret false
+end
+if ne get Obs add at 5 1
+ret false
+end
+if ne get Obs add at 6 1
+ret false
+end
+if ne get Obs add at 7 1
+ret false
+end
+if or gt get Obs add at 8 1000 eq get Obs add at 9 0
+ret false
+end
+if gt get Obs add at 9 1000000
+ret false
+end
+if ne get Obs add at 10 0
+ret false
+end
+if ne get Obs add at 11 1
+ret false
+end
+if gt get Obs add at 12 get Lim 2
+ret false
+end
+if gt get Obs add at 13 get Lim 9
+ret false
+end
+if gt get Obs add at 14 get Lim 11
+ret false
+end
+if gt get Obs add at 15 get Lim 13
+ret false
+end
+if gt get Obs add at 16 get Lim 7
+ret false
+end
+if gt get Obs add at 17 get Lim 5
+ret false
+end
+if gt get Obs add at 18 get Lim 15
+ret false
+end
+if gt get Obs add at 19 get Lim 17
+ret false
+end
+if gt get Obs add at 20 get Lim 19
+ret false
+end
+if gt get Workers slot get Lim 3
+ret false
+end
+ret true
+end
+
+fn better q ulong cost ulong bestq ulong bestcost ulong to bool
+if or gt q 1000 or eq cost 0 gt cost 1000000
+ret false
+end
+if or gt bestq 1000 or eq bestcost 0 gt bestcost 1000000
+ret false
+end
+ret gt mul q bestcost mul bestq cost
+end
+
+fn attempted slot ulong to bool
+at = mul slot 21
+ret ne get Obs at 0
+end
+
+fn parent_ready slot ulong to bool
+at = mul slot 10
+parid = get Cand add at 1
+round = get Cand add at 4
+if le round 1
+ret true
+end
+for p ulong slot
+pa = mul p 10
+if and eq get Cand pa parid eq get Cand add pa 4 sub round 1
+if and eq candidate_valid p get Base 0 true eq observation_eligible p true
+ret true
+end
+end
+end
+ret false
+end
+
+fn parallel_ready to bool
+if ne get Lim 4 1
+ret false
+end
+if eq attempted 0 false
+ret false
+end
+if eq attempted 1 false
+ret false
+end
+if ne get Cand 8 0
+ret false
+end
+if ne get Cand 18 0
+ret false
+end
+if eq get Cand 2 get Cand 12
+ret false
+end
+ret true
+end
+
+fn composition_supported to bool
+ready = parallel_ready
+if eq ready false
+ret false
+end
+bothok = parallel_candidates_valid
+if eq bothok false
+ret false
+end
+ok0 = observation_eligible 0
+if eq ok0 false
+ret false
+end
+ok1 = observation_eligible 1
+if eq ok1 false
+ret false
+end
+q0 = get Obs 8
+c0 = get Obs 9
+q1 = get Obs 29
+c1 = get Obs 30
+better0 = better q0 c0 get Base 1 get Base 2
+if eq better0 false
+ret false
+end
+if eq better q1 c1 get Base 1 get Base 2 false
+ret false
+end
+s0 = get Cand 2
+s1 = get Cand 12
+overlap = and s0 s1
+if ne overlap 0
+ret false
+end
+union = or s0 s1
+composed = get Cand 22
+ret eq composed union
+end
+
+fn parallel_candidates_valid to bool
+valid0 = candidate_valid 0 get Base 0
+if eq valid0 false
+ret false
+end
+valid1 = candidate_valid 1 get Base 0
+ret valid1
+end
+
+fn consider slot ulong parid ulong compok bool to void
+valid = candidate_valid slot parid
+if and eq get Lim 4 1 eq slot 2
+if eq compok false
+valid = false
+end
+end
+if and eq get Lim 4 2 gt get Cand add mul slot 10 4 1
+if eq parent_ready slot false
+valid = false
+end
+end
+observed = observation_eligible slot
+if and eq valid true eq observed true
+oa = mul slot 21
+q = get Obs add oa 8
+cost = get Obs add oa 9
+bestq = get Best 1
+bestcost = get Best 2
+if eq better q cost bestq bestcost true
+put Best 0 add slot 1
+put Best 1 q
+put Best 2 cost
+end
+end
+end
+
+fn choose_strategy to ulong
+if eq limits_valid false
+ret 0
+end
+if eq base_id_nonzero false
+ret 0
+end
+baseid = get Base 0
+baseq = get Base 1
+basecost = get Base 2
+if or eq baseid 0 gt baseq 1000
+ret 0
+end
+if or eq basecost 0 gt basecost 1000000
+ret 0
+end
+if and eq get Lim 4 1 eq parallel_ready false
+ret 0
+end
+compok = true
+if eq get Lim 4 1
+compok = composition_supported
+end
+put Best 0 0
+put Best 1 baseq
+put Best 2 basecost
+for slot ulong 3
+at = mul slot 10
+parid = get Cand add at 1
+if eq get Lim 4 1
+parid = get Base 0
+end
+consider slot parid compok
+end
+ret get Best 0
+end

@@ -1,0 +1,5 @@
+{
+  "schema_version": "1.0.0",
+  "name": "harness-evolution",
+  "purpose": "Seeded .om compilation, execution, mutation checks and receipts"
+}

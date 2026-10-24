@@ -1,0 +1,21 @@
+{
+  "schema": "aien.allen.harness-evolution.native-kernel-run/1",
+  "verdict": "FAIL",
+  "stage": "native_execution",
+  "signed": false,
+  "allen_source_commit": "102bf3de99ddb340008ff6dd9666d3034ed6e16e",
+  "omega_source_commit": "c434565c67552c0b01df2d7f76c1a04287c70560",
+  "compiler_sha256": "191b776ef98821597c3e30655da6d680a9b66edbc9ceaca3c39c61ea6df098e9",
+  "compiler_seed_source_sha256": "8608fa11f6a2cf1c50db22d871eef16b00d5bc719bc1a222cc3e456984ac5ebf",
+  "bounded_recursion_source_sha256": "f73660bee1b3c93fe737d4cd2a7f9609cd8da7e0c5cb0479c1cbe4e511121558",
+  "decision_source_sha256": "c7f5288877f3355c8910a168102f359cfc36c45e283f740f9d7122e6dbf24052",
+  "fixture_source_sha256": "37a134ae183f26c80953a6da3d1969a3bd97c14a2158a137bcc20a226272d7c8",
+  "executable_sha256": "12b2d960de2a93cda4baee8f88346d52059c0f6b277d9648cbd5e46761011ba6",
+  "script_exit": 103,
+  "gate_exit": "103",
+  "last_mutant_exit": "NOT_RUN",
+  "evidence_files": ["compile.stderr", "test.stdout", "test.stderr", "mutant-compile.stderr", "mutant-policy-effect.stdout", "mutant-policy-effect.stderr"],
+  "model_inference": "NOT_RUN",
+  "gpu_or_physical_qualification": "NOT_RUN",
+  "deployment": "OFF"
+}

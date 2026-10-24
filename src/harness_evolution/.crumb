@@ -1,0 +1,5 @@
+{
+  "schema_version": "1.0.0",
+  "name": "harness-evolution",
+  "purpose": "Bounded strategy candidate and composition implementation"
+}

@@ -1,0 +1,3 @@
+policy-effect	compiled	8	CAUGHT
+missing-cap	compiled	13	CAUGHT
+protected-scope	compiled	29	CAUGHT

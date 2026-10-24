@@ -1,0 +1,303 @@
+note Synthetic structural controls for the bounded seeded strategy kernel.
+
+fn init_limits to void
+put Lim 0 1
+put Lim 1 2
+put Lim 2 8
+put Lim 3 2
+put Lim 4 1
+put Lim 5 100
+put Lim 6 100
+put Lim 7 1000
+put Lim 8 1000
+put Lim 9 8
+put Lim 10 8
+put Lim 11 4096
+put Lim 12 4096
+put Lim 13 4096
+put Lim 14 4096
+put Lim 15 1048576
+put Lim 16 1048576
+put Lim 17 1000
+put Lim 18 1000
+put Lim 19 0
+put Lim 20 0
+put Lim 21 1
+end
+
+fn init_base to void
+put Base 0 100
+put Base 1 700
+put Base 2 1000
+put Base 3 2
+for i ulong 32
+put BaseId i uchar 100
+end
+end
+
+fn init_cand slot ulong id ulong parent ulong scope ulong round ulong composed ulong to void
+at = mul slot 10
+put Cand at id
+put Cand add at 1 parent
+put Cand add at 2 scope
+put Cand add at 3 scope
+put Cand add at 4 round
+put Cand add at 5 2
+put Cand add at 6 1
+put Cand add at 7 1
+put Cand add at 8 composed
+put Cand add at 9 1
+for i ulong 32
+put CandId add mul slot 32 i uchar add id 0
+put ParentId add mul slot 32 i uchar 100
+put ObsId add mul slot 32 i uchar add id 0
+end
+end
+
+fn init_obs slot ulong id ulong score ulong cost ulong to void
+at = mul slot 21
+put Obs at 2
+put Obs add at 1 id
+put Obs add at 2 1
+put Obs add at 3 1
+put Obs add at 4 1
+put Obs add at 5 1
+put Obs add at 6 1
+put Obs add at 7 1
+put Obs add at 8 score
+put Obs add at 9 cost
+put Obs add at 10 0
+put Obs add at 11 1
+put Obs add at 12 1
+put Obs add at 13 2
+put Obs add at 14 1000
+put Obs add at 15 900
+put Obs add at 16 900
+put Obs add at 17 90
+put Obs add at 18 100000
+put Obs add at 19 500
+put Obs add at 20 0
+put Workers slot 1
+end
+
+fn reset_candidates to void
+for i ulong 30
+put Cand i 0
+end
+for i ulong 63
+put Obs i 0
+end
+for i ulong 3
+put Workers i 0
+end
+for i ulong 96
+put CandId i 0
+put ParentId i 0
+put ObsId i 0
+end
+end
+
+fn main to int
+init_limits
+put Lim 4 2
+init_base
+init_cand 0 101 100 1 1 0
+init_obs 0 101 900 1200
+if eq limits_valid false
+ret 1
+end
+if eq candidate_valid 0 100 false
+ret 2
+end
+if eq observation_eligible 0 false
+ret 3
+end
+if ne choose_strategy 1
+ret 4
+end
+
+note Missing, failed, forged, stale, unqualified and over-budget observations
+note all keep the incumbent.
+put Obs 0 0
+if ne choose_strategy 0
+ret 5
+end
+put Obs 0 2
+put Obs 6 0
+if ne choose_strategy 0
+ret 6
+end
+put Obs 6 1
+put Obs 10 1
+if ne choose_strategy 0
+ret 7
+end
+put Obs 10 0
+put Obs 11 0
+if ne choose_strategy 0
+ret 8
+end
+put Obs 11 1
+put Obs 3 0
+if ne choose_strategy 0
+ret 9
+end
+put Obs 3 1
+put Obs 4 0
+if ne choose_strategy 0
+ret 10
+end
+put Obs 4 1
+put Obs 5 0
+if ne choose_strategy 0
+ret 11
+end
+put Obs 5 1
+put Obs 2 0
+if ne choose_strategy 0
+ret 12
+end
+put Obs 2 1
+put Obs 7 0
+if ne choose_strategy 0
+ret 13
+end
+put Obs 7 1
+put Obs 16 1001
+if ne choose_strategy 0
+ret 14
+end
+put Obs 16 900
+put Obs 12 9
+if ne choose_strategy 0
+ret 15
+end
+put Obs 12 1
+put Obs 14 4097
+if ne choose_strategy 0
+ret 16
+end
+put Obs 14 1000
+put Obs 18 1048577
+if ne choose_strategy 0
+ret 17
+end
+put Obs 18 100000
+put Obs 15 4097
+if ne choose_strategy 0
+ret 32
+end
+put Obs 15 900
+put Obs 17 101
+if ne choose_strategy 0
+ret 33
+end
+put Obs 17 90
+put Obs 19 1001
+if ne choose_strategy 0
+ret 34
+end
+put Obs 19 500
+put Obs 20 1
+if ne choose_strategy 0
+ret 35
+end
+put Obs 20 0
+put Lim 5 101
+if ne choose_strategy 0
+ret 18
+end
+put Lim 5 100
+put Lim 21 0
+if ne choose_strategy 0
+ret 19
+end
+put Lim 21 1
+put Cand 7 0
+if eq candidate_valid 0 100 true
+ret 20
+end
+put Cand 7 1
+put Cand 2 4
+put Cand 3 4
+if eq candidate_valid 0 100 true
+ret 21
+end
+put Cand 2 1
+put Cand 3 1
+
+note Parallel mode needs two executed proposals. Composition is eligible only
+note when both distinct supported changes improve independently and the
+note independently probed composition carries both changes.
+put Lim 4 1
+init_cand 1 102 100 2 1 0
+init_obs 1 102 950 1250
+init_cand 2 103 100 3 2 1
+init_obs 2 103 980 1200
+if ne choose_strategy 3
+ret 22
+end
+put Cand 29 0
+if ne choose_strategy 2
+ret 23
+end
+put Cand 29 1
+for i ulong 32
+put CandId add 32 i uchar 101
+end
+if eq candidate_valid 1 100 true
+ret 24
+end
+for i ulong 32
+put CandId add 32 i uchar 102
+end
+put Cand 11 999
+if eq candidate_valid 1 100 true
+ret 25
+end
+put Cand 11 100
+put Cand 0 101
+put Cand 9 1
+put Lim 0 2
+if ne choose_strategy 0
+ret 26
+end
+put Lim 0 1
+put Cand 0 101
+put Cand 9 0
+put Lim 5 101
+if ne choose_strategy 0
+ret 27
+end
+put Lim 5 100
+put Lim 3 3
+if ne choose_strategy 0
+ret 28
+end
+put Lim 3 2
+
+note Sequential round two may refine any independently verified round-one
+note parent, even when that intermediate did not beat the baseline.
+reset_candidates
+init_limits
+put Lim 4 2
+init_base
+init_cand 0 201 100 1 1 0
+init_obs 0 201 650 1000
+init_cand 2 203 201 3 2 0
+for i ulong 32
+put ParentId add 64 i uchar 201
+end
+init_obs 2 203 900 1100
+if eq candidate_valid 2 201 false
+ret 29
+end
+if ne choose_strategy 3
+ret 30
+end
+put Obs 6 0
+if ne choose_strategy 0
+ret 31
+end
+ret 0
+end
