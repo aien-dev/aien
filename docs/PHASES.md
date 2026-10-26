@@ -2,7 +2,7 @@
 
 Programme issue: [aien-dev/allen#1](https://github.com/aien-dev/allen/issues/1) (transferred 2026-10-20 from aien-architecture-mv#278; the old URL redirects, comments and history preserved).
 
-Phase numbers are sequence, not priority. Progress status words: PROPOSED, SCOPED, ACTIVE, IN_REVIEW, COMPLETE. Qualification verdicts are separate: PASS, FAIL, INCONCLUSIVE, NOT_RUN. A phase closes only with its acceptance evidence; the programme close guard (`guard/`) reopens the programme otherwise.
+Phase numbers are sequence, not priority. Progress status words: PROPOSED, SCOPED, ACTIVE, IN_REVIEW, COMPLETE. Qualification verdicts are separate: PASS, FAIL, INCONCLUSIVE, NOT_RUN. A phase should close only with its acceptance evidence. The planned programme close guard is not present on `main`; issue reopening is not automatic.
 
 | Phase | Issue here | Former issue | Title | Status | Qualification |
 |---|---|---|---|---|---|
@@ -19,7 +19,7 @@ Order: P0 -> P1 -> P2 -> P3 -> P4 -> P5 produces B0 only if its gates pass; P6 e
 
 ## Mandatory external prerequisites (programme cannot close while any is open)
 
-Verified OPEN when the gate was written (2026-10-20). The close guard reads this list from `guard/policy.toml`; keep both in step.
+Listed as OPEN when this ledger was written (2026-10-20). A future close guard is planned to read these prerequisites from `guard/policy.toml`, but neither that file nor the guard exists on `main`. Check them manually before closing the programme; keep the ledger and policy in step if a guard is implemented.
 
 | Area | Issues |
 |---|---|
