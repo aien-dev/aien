@@ -35,3 +35,16 @@ Created private on 2026-10-20 as issue aien-architecture-mv#279 asked. `docs/PLA
 ## License
 
 AGPL-3.0-or-later. AIEN is non-commercial.
+
+## Human-Directed Agentic Engineering
+
+Development follows Human-Directed Agentic Engineering (HDAE): humans define goals,
+architecture, constraints, acceptance criteria, and stopping points; agents implement,
+execute checks, diagnose failures, and revise within those boundaries. Human review
+retains responsibility for claims, acceptance, and release decisions. This describes
+the development method, not a change to runtime autonomy or historical evidence.
+
+For the documented method and a systems-software case study, see Gregory M. Kurtzer
+(2026), *Ginux: Building an Independent Kernel That Runs Linux Userspace through
+Human-Directed Agentic Engineering*, technical report, v1, Zenodo,
+<https://doi.org/10.5281/zenodo.23682548>.
