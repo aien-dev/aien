@@ -2,7 +2,9 @@
 
 Drake's direction, 2026-10-20 (programme issue, formerly aien-architecture-mv#278):
 
-Build the first personal Aien from Drake's project-development conversations with Claude Code, Codex and other agents. Learn his intended outcomes, constraints, corrections and what actually worked. Preserve his language, including profanity; avoid converting style or frustration into unsupported claims about feelings, permission or correctness.
+Build the first personal Allen from Drake's project-development conversations with Claude Code, Codex and other agents. Learn his intended outcomes, constraints, corrections and what actually worked. Preserve his language, including profanity; avoid converting style or frustration into unsupported claims about feelings, permission or correctness.
+
+The recorded direction above retains the name used on 2026-10-20. The project now uses Aien, as described under Names below.
 
 Aien's mission is to develop a continuing, correctable understanding of his human and provide useful anticipation while preserving the human's ability to change their mind. The endpoint is one persistent identity across the iMac, Raspberry Pi, Spark and MacBook: purpose, memory, authority and evidence remain coherent through interaction changes, disconnection, restart and model replacement. This programme tests operational continuity and usefulness.
 
