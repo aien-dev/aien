@@ -1,0 +1,279 @@
+OM2GATE START cases=candidate/tests/goal_microjobs/shadow.cases scratch=native-final-budget
+IDENTITY omc ./omc sha256=d6290c7663c2b4bafb59eb3fdf812476e977f4c144def71095c6248ef9b96b84 pinned=d6290c7663c2b4bafb59eb3fdf812476e977f4c144def71095c6248ef9b96b84 match
+CASE A0 line=1
+  $ ./omc < native-final-budget/1.src > native-final-budget/1.elf 2> native-final-budget/1.cerr
+  $ native-final-budget/1.elf --private-local-shadow A 0 < /dev/null > native-final-budget/1.out 2> native-final-budget/1.err
+VERDICT A0 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE kernel-A0 line=2
+  $ ./omc < native-final-budget/2.src > native-final-budget/2.elf 2> native-final-budget/2.cerr
+  $ native-final-budget/2.elf < candidate/evidence/nl5-A0.planjournal > native-final-budget/2.out 2> native-final-budget/2.err
+VERDICT kernel-A0 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE A1 line=3
+  $ ./omc < native-final-budget/3.src > native-final-budget/3.elf 2> native-final-budget/3.cerr
+  $ native-final-budget/3.elf --private-local-shadow A 1 < /dev/null > native-final-budget/3.out 2> native-final-budget/3.err
+VERDICT A1 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE kernel-A1 line=4
+  $ ./omc < native-final-budget/4.src > native-final-budget/4.elf 2> native-final-budget/4.cerr
+  $ native-final-budget/4.elf < candidate/evidence/nl5-A1.planjournal > native-final-budget/4.out 2> native-final-budget/4.err
+VERDICT kernel-A1 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE A2 line=5
+  $ ./omc < native-final-budget/5.src > native-final-budget/5.elf 2> native-final-budget/5.cerr
+  $ native-final-budget/5.elf --private-local-shadow A 2 < /dev/null > native-final-budget/5.out 2> native-final-budget/5.err
+VERDICT A2 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE kernel-A2 line=6
+  $ ./omc < native-final-budget/6.src > native-final-budget/6.elf 2> native-final-budget/6.cerr
+  $ native-final-budget/6.elf < candidate/evidence/nl5-A2.planjournal > native-final-budget/6.out 2> native-final-budget/6.err
+VERDICT kernel-A2 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE A3 line=7
+  $ ./omc < native-final-budget/7.src > native-final-budget/7.elf 2> native-final-budget/7.cerr
+  $ native-final-budget/7.elf --private-local-shadow A 3 < /dev/null > native-final-budget/7.out 2> native-final-budget/7.err
+VERDICT A3 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE kernel-A3 line=8
+  $ ./omc < native-final-budget/8.src > native-final-budget/8.elf 2> native-final-budget/8.cerr
+  $ native-final-budget/8.elf < candidate/evidence/nl5-A3.planjournal > native-final-budget/8.out 2> native-final-budget/8.err
+VERDICT kernel-A3 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE A4 line=9
+  $ ./omc < native-final-budget/9.src > native-final-budget/9.elf 2> native-final-budget/9.cerr
+  $ native-final-budget/9.elf --private-local-shadow A 4 < /dev/null > native-final-budget/9.out 2> native-final-budget/9.err
+VERDICT A4 PASS run exit=65 expected=65 stdout=match stderr=match
+CASE kernel-A4 line=10
+  $ ./omc < native-final-budget/10.src > native-final-budget/10.elf 2> native-final-budget/10.cerr
+  $ native-final-budget/10.elf < candidate/evidence/nl5-A4.planjournal > native-final-budget/10.out 2> native-final-budget/10.err
+VERDICT kernel-A4 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE A5 line=11
+  $ ./omc < native-final-budget/11.src > native-final-budget/11.elf 2> native-final-budget/11.cerr
+  $ native-final-budget/11.elf --private-local-shadow A 5 < /dev/null > native-final-budget/11.out 2> native-final-budget/11.err
+VERDICT A5 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE kernel-A5 line=12
+  $ ./omc < native-final-budget/12.src > native-final-budget/12.elf 2> native-final-budget/12.cerr
+  $ native-final-budget/12.elf < candidate/evidence/nl5-A5.planjournal > native-final-budget/12.out 2> native-final-budget/12.err
+VERDICT kernel-A5 PASS run exit=43 expected=43 stdout=match stderr=match
+CASE A6 line=13
+  $ ./omc < native-final-budget/13.src > native-final-budget/13.elf 2> native-final-budget/13.cerr
+  $ native-final-budget/13.elf --private-local-shadow A 6 < /dev/null > native-final-budget/13.out 2> native-final-budget/13.err
+VERDICT A6 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE kernel-A6 line=14
+  $ ./omc < native-final-budget/14.src > native-final-budget/14.elf 2> native-final-budget/14.cerr
+  $ native-final-budget/14.elf < candidate/evidence/nl5-A6.planjournal > native-final-budget/14.out 2> native-final-budget/14.err
+VERDICT kernel-A6 PASS run exit=39 expected=39 stdout=match stderr=match
+CASE A7 line=15
+  $ ./omc < native-final-budget/15.src > native-final-budget/15.elf 2> native-final-budget/15.cerr
+  $ native-final-budget/15.elf --private-local-shadow A 7 < /dev/null > native-final-budget/15.out 2> native-final-budget/15.err
+VERDICT A7 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE kernel-A7 line=16
+  $ ./omc < native-final-budget/16.src > native-final-budget/16.elf 2> native-final-budget/16.cerr
+  $ native-final-budget/16.elf < candidate/evidence/nl5-A7.planjournal > native-final-budget/16.out 2> native-final-budget/16.err
+VERDICT kernel-A7 PASS run exit=37 expected=37 stdout=match stderr=match
+CASE A8 line=17
+  $ ./omc < native-final-budget/17.src > native-final-budget/17.elf 2> native-final-budget/17.cerr
+  $ native-final-budget/17.elf --private-local-shadow A 8 < /dev/null > native-final-budget/17.out 2> native-final-budget/17.err
+VERDICT A8 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE kernel-A8 line=18
+  $ ./omc < native-final-budget/18.src > native-final-budget/18.elf 2> native-final-budget/18.cerr
+  $ native-final-budget/18.elf < candidate/evidence/nl5-A8.planjournal > native-final-budget/18.out 2> native-final-budget/18.err
+VERDICT kernel-A8 PASS run exit=44 expected=44 stdout=match stderr=match
+CASE A9 line=19
+  $ ./omc < native-final-budget/19.src > native-final-budget/19.elf 2> native-final-budget/19.cerr
+  $ native-final-budget/19.elf --private-local-shadow A 9 < /dev/null > native-final-budget/19.out 2> native-final-budget/19.err
+VERDICT A9 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE kernel-A9 line=20
+  $ ./omc < native-final-budget/20.src > native-final-budget/20.elf 2> native-final-budget/20.cerr
+  $ native-final-budget/20.elf < candidate/evidence/nl5-A9.planjournal > native-final-budget/20.out 2> native-final-budget/20.err
+VERDICT kernel-A9 PASS run exit=33 expected=33 stdout=match stderr=match
+CASE B0 line=21
+  $ ./omc < native-final-budget/21.src > native-final-budget/21.elf 2> native-final-budget/21.cerr
+  $ native-final-budget/21.elf --private-local-shadow B 0 < /dev/null > native-final-budget/21.out 2> native-final-budget/21.err
+VERDICT B0 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE kernel-B0 line=22
+  $ ./omc < native-final-budget/22.src > native-final-budget/22.elf 2> native-final-budget/22.cerr
+  $ native-final-budget/22.elf < candidate/evidence/nl5-B0.planjournal > native-final-budget/22.out 2> native-final-budget/22.err
+VERDICT kernel-B0 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE B1 line=23
+  $ ./omc < native-final-budget/23.src > native-final-budget/23.elf 2> native-final-budget/23.cerr
+  $ native-final-budget/23.elf --private-local-shadow B 1 < /dev/null > native-final-budget/23.out 2> native-final-budget/23.err
+VERDICT B1 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE kernel-B1 line=24
+  $ ./omc < native-final-budget/24.src > native-final-budget/24.elf 2> native-final-budget/24.cerr
+  $ native-final-budget/24.elf < candidate/evidence/nl5-B1.planjournal > native-final-budget/24.out 2> native-final-budget/24.err
+VERDICT kernel-B1 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE B2 line=25
+  $ ./omc < native-final-budget/25.src > native-final-budget/25.elf 2> native-final-budget/25.cerr
+  $ native-final-budget/25.elf --private-local-shadow B 2 < /dev/null > native-final-budget/25.out 2> native-final-budget/25.err
+VERDICT B2 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE kernel-B2 line=26
+  $ ./omc < native-final-budget/26.src > native-final-budget/26.elf 2> native-final-budget/26.cerr
+  $ native-final-budget/26.elf < candidate/evidence/nl5-B2.planjournal > native-final-budget/26.out 2> native-final-budget/26.err
+VERDICT kernel-B2 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE B3 line=27
+  $ ./omc < native-final-budget/27.src > native-final-budget/27.elf 2> native-final-budget/27.cerr
+  $ native-final-budget/27.elf --private-local-shadow B 3 < /dev/null > native-final-budget/27.out 2> native-final-budget/27.err
+VERDICT B3 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE kernel-B3 line=28
+  $ ./omc < native-final-budget/28.src > native-final-budget/28.elf 2> native-final-budget/28.cerr
+  $ native-final-budget/28.elf < candidate/evidence/nl5-B3.planjournal > native-final-budget/28.out 2> native-final-budget/28.err
+VERDICT kernel-B3 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE B4 line=29
+  $ ./omc < native-final-budget/29.src > native-final-budget/29.elf 2> native-final-budget/29.cerr
+  $ native-final-budget/29.elf --private-local-shadow B 4 < /dev/null > native-final-budget/29.out 2> native-final-budget/29.err
+VERDICT B4 PASS run exit=65 expected=65 stdout=match stderr=match
+CASE kernel-B4 line=30
+  $ ./omc < native-final-budget/30.src > native-final-budget/30.elf 2> native-final-budget/30.cerr
+  $ native-final-budget/30.elf < candidate/evidence/nl5-B4.planjournal > native-final-budget/30.out 2> native-final-budget/30.err
+VERDICT kernel-B4 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE B5 line=31
+  $ ./omc < native-final-budget/31.src > native-final-budget/31.elf 2> native-final-budget/31.cerr
+  $ native-final-budget/31.elf --private-local-shadow B 5 < /dev/null > native-final-budget/31.out 2> native-final-budget/31.err
+VERDICT B5 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE kernel-B5 line=32
+  $ ./omc < native-final-budget/32.src > native-final-budget/32.elf 2> native-final-budget/32.cerr
+  $ native-final-budget/32.elf < candidate/evidence/nl5-B5.planjournal > native-final-budget/32.out 2> native-final-budget/32.err
+VERDICT kernel-B5 PASS run exit=43 expected=43 stdout=match stderr=match
+CASE B6 line=33
+  $ ./omc < native-final-budget/33.src > native-final-budget/33.elf 2> native-final-budget/33.cerr
+  $ native-final-budget/33.elf --private-local-shadow B 6 < /dev/null > native-final-budget/33.out 2> native-final-budget/33.err
+VERDICT B6 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE kernel-B6 line=34
+  $ ./omc < native-final-budget/34.src > native-final-budget/34.elf 2> native-final-budget/34.cerr
+  $ native-final-budget/34.elf < candidate/evidence/nl5-B6.planjournal > native-final-budget/34.out 2> native-final-budget/34.err
+VERDICT kernel-B6 PASS run exit=39 expected=39 stdout=match stderr=match
+CASE B7 line=35
+  $ ./omc < native-final-budget/35.src > native-final-budget/35.elf 2> native-final-budget/35.cerr
+  $ native-final-budget/35.elf --private-local-shadow B 7 < /dev/null > native-final-budget/35.out 2> native-final-budget/35.err
+VERDICT B7 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE kernel-B7 line=36
+  $ ./omc < native-final-budget/36.src > native-final-budget/36.elf 2> native-final-budget/36.cerr
+  $ native-final-budget/36.elf < candidate/evidence/nl5-B7.planjournal > native-final-budget/36.out 2> native-final-budget/36.err
+VERDICT kernel-B7 PASS run exit=37 expected=37 stdout=match stderr=match
+CASE B8 line=37
+  $ ./omc < native-final-budget/37.src > native-final-budget/37.elf 2> native-final-budget/37.cerr
+  $ native-final-budget/37.elf --private-local-shadow B 8 < /dev/null > native-final-budget/37.out 2> native-final-budget/37.err
+VERDICT B8 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE kernel-B8 line=38
+  $ ./omc < native-final-budget/38.src > native-final-budget/38.elf 2> native-final-budget/38.cerr
+  $ native-final-budget/38.elf < candidate/evidence/nl5-B8.planjournal > native-final-budget/38.out 2> native-final-budget/38.err
+VERDICT kernel-B8 PASS run exit=44 expected=44 stdout=match stderr=match
+CASE B9 line=39
+  $ ./omc < native-final-budget/39.src > native-final-budget/39.elf 2> native-final-budget/39.cerr
+  $ native-final-budget/39.elf --private-local-shadow B 9 < /dev/null > native-final-budget/39.out 2> native-final-budget/39.err
+VERDICT B9 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE kernel-B9 line=40
+  $ ./omc < native-final-budget/40.src > native-final-budget/40.elf 2> native-final-budget/40.cerr
+  $ native-final-budget/40.elf < candidate/evidence/nl5-B9.planjournal > native-final-budget/40.out 2> native-final-budget/40.err
+VERDICT kernel-B9 PASS run exit=33 expected=33 stdout=match stderr=match
+CASE C0 line=41
+  $ ./omc < native-final-budget/41.src > native-final-budget/41.elf 2> native-final-budget/41.cerr
+  $ native-final-budget/41.elf --private-local-shadow C 0 < /dev/null > native-final-budget/41.out 2> native-final-budget/41.err
+VERDICT C0 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE kernel-C0 line=42
+  $ ./omc < native-final-budget/42.src > native-final-budget/42.elf 2> native-final-budget/42.cerr
+  $ native-final-budget/42.elf < candidate/evidence/nl5-C0.planjournal > native-final-budget/42.out 2> native-final-budget/42.err
+VERDICT kernel-C0 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE C1 line=43
+  $ ./omc < native-final-budget/43.src > native-final-budget/43.elf 2> native-final-budget/43.cerr
+  $ native-final-budget/43.elf --private-local-shadow C 1 < /dev/null > native-final-budget/43.out 2> native-final-budget/43.err
+VERDICT C1 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE kernel-C1 line=44
+  $ ./omc < native-final-budget/44.src > native-final-budget/44.elf 2> native-final-budget/44.cerr
+  $ native-final-budget/44.elf < candidate/evidence/nl5-C1.planjournal > native-final-budget/44.out 2> native-final-budget/44.err
+VERDICT kernel-C1 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE C2 line=45
+  $ ./omc < native-final-budget/45.src > native-final-budget/45.elf 2> native-final-budget/45.cerr
+  $ native-final-budget/45.elf --private-local-shadow C 2 < /dev/null > native-final-budget/45.out 2> native-final-budget/45.err
+VERDICT C2 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE kernel-C2 line=46
+  $ ./omc < native-final-budget/46.src > native-final-budget/46.elf 2> native-final-budget/46.cerr
+  $ native-final-budget/46.elf < candidate/evidence/nl5-C2.planjournal > native-final-budget/46.out 2> native-final-budget/46.err
+VERDICT kernel-C2 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE C3 line=47
+  $ ./omc < native-final-budget/47.src > native-final-budget/47.elf 2> native-final-budget/47.cerr
+  $ native-final-budget/47.elf --private-local-shadow C 3 < /dev/null > native-final-budget/47.out 2> native-final-budget/47.err
+VERDICT C3 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE kernel-C3 line=48
+  $ ./omc < native-final-budget/48.src > native-final-budget/48.elf 2> native-final-budget/48.cerr
+  $ native-final-budget/48.elf < candidate/evidence/nl5-C3.planjournal > native-final-budget/48.out 2> native-final-budget/48.err
+VERDICT kernel-C3 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE C4 line=49
+  $ ./omc < native-final-budget/49.src > native-final-budget/49.elf 2> native-final-budget/49.cerr
+  $ native-final-budget/49.elf --private-local-shadow C 4 < /dev/null > native-final-budget/49.out 2> native-final-budget/49.err
+VERDICT C4 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE kernel-C4 line=50
+  $ ./omc < native-final-budget/50.src > native-final-budget/50.elf 2> native-final-budget/50.cerr
+  $ native-final-budget/50.elf < candidate/evidence/nl5-C4.planjournal > native-final-budget/50.out 2> native-final-budget/50.err
+VERDICT kernel-C4 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE C5 line=51
+  $ ./omc < native-final-budget/51.src > native-final-budget/51.elf 2> native-final-budget/51.cerr
+  $ native-final-budget/51.elf --private-local-shadow C 5 < /dev/null > native-final-budget/51.out 2> native-final-budget/51.err
+VERDICT C5 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE kernel-C5 line=52
+  $ ./omc < native-final-budget/52.src > native-final-budget/52.elf 2> native-final-budget/52.cerr
+  $ native-final-budget/52.elf < candidate/evidence/nl5-C5.planjournal > native-final-budget/52.out 2> native-final-budget/52.err
+VERDICT kernel-C5 PASS run exit=43 expected=43 stdout=match stderr=match
+CASE C6 line=53
+  $ ./omc < native-final-budget/53.src > native-final-budget/53.elf 2> native-final-budget/53.cerr
+  $ native-final-budget/53.elf --private-local-shadow C 6 < /dev/null > native-final-budget/53.out 2> native-final-budget/53.err
+VERDICT C6 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE kernel-C6 line=54
+  $ ./omc < native-final-budget/54.src > native-final-budget/54.elf 2> native-final-budget/54.cerr
+  $ native-final-budget/54.elf < candidate/evidence/nl5-C6.planjournal > native-final-budget/54.out 2> native-final-budget/54.err
+VERDICT kernel-C6 PASS run exit=39 expected=39 stdout=match stderr=match
+CASE C7 line=55
+  $ ./omc < native-final-budget/55.src > native-final-budget/55.elf 2> native-final-budget/55.cerr
+  $ native-final-budget/55.elf --private-local-shadow C 7 < /dev/null > native-final-budget/55.out 2> native-final-budget/55.err
+VERDICT C7 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE kernel-C7 line=56
+  $ ./omc < native-final-budget/56.src > native-final-budget/56.elf 2> native-final-budget/56.cerr
+  $ native-final-budget/56.elf < candidate/evidence/nl5-C7.planjournal > native-final-budget/56.out 2> native-final-budget/56.err
+VERDICT kernel-C7 PASS run exit=37 expected=37 stdout=match stderr=match
+CASE C8 line=57
+  $ ./omc < native-final-budget/57.src > native-final-budget/57.elf 2> native-final-budget/57.cerr
+  $ native-final-budget/57.elf --private-local-shadow C 8 < /dev/null > native-final-budget/57.out 2> native-final-budget/57.err
+VERDICT C8 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE kernel-C8 line=58
+  $ ./omc < native-final-budget/58.src > native-final-budget/58.elf 2> native-final-budget/58.cerr
+  $ native-final-budget/58.elf < candidate/evidence/nl5-C8.planjournal > native-final-budget/58.out 2> native-final-budget/58.err
+VERDICT kernel-C8 PASS run exit=44 expected=44 stdout=match stderr=match
+CASE C9 line=59
+  $ ./omc < native-final-budget/59.src > native-final-budget/59.elf 2> native-final-budget/59.cerr
+  $ native-final-budget/59.elf --private-local-shadow C 9 < /dev/null > native-final-budget/59.out 2> native-final-budget/59.err
+VERDICT C9 PASS run exit=0 expected=0 stdout=match stderr=match
+CASE kernel-C9 line=60
+  $ ./omc < native-final-budget/60.src > native-final-budget/60.elf 2> native-final-budget/60.cerr
+  $ native-final-budget/60.elf < candidate/evidence/nl5-C9.planjournal > native-final-budget/60.out 2> native-final-budget/60.err
+VERDICT kernel-C9 PASS run exit=33 expected=33 stdout=match stderr=match
+CASE default-off line=61
+  $ ./omc < native-final-budget/61.src > native-final-budget/61.elf 2> native-final-budget/61.cerr
+  $ native-final-budget/61.elf < /dev/null > native-final-budget/61.out 2> native-final-budget/61.err
+VERDICT default-off PASS run exit=64 expected=64 stdout=match stderr=match
+CASE bad-arm line=62
+  $ ./omc < native-final-budget/62.src > native-final-budget/62.elf 2> native-final-budget/62.cerr
+  $ native-final-budget/62.elf --private-local-shadow D 0 < /dev/null > native-final-budget/62.out 2> native-final-budget/62.err
+VERDICT bad-arm PASS run exit=64 expected=64 stdout=match stderr=match
+CASE bad-scope line=63
+  $ ./omc < native-final-budget/63.src > native-final-budget/63.elf 2> native-final-budget/63.cerr
+  $ native-final-budget/63.elf --public A 0 < /dev/null > native-final-budget/63.out 2> native-final-budget/63.err
+VERDICT bad-scope PASS run exit=64 expected=64 stdout=match stderr=match
+SUBST candidate/tests/goal_microjobs/shadow-guard.from candidate/tests/goal_microjobs/shadow-guard.to
+CASE oracle-guard-mutant line=65
+  MUTATE exact-once substitution at byte 5199
+  $ ./omc < native-final-budget/65.src > native-final-budget/65.elf 2> native-final-budget/65.cerr
+  $ native-final-budget/65.elf --private-local-shadow A 4 < /dev/null > native-final-budget/65.out 2> native-final-budget/65.err
+VERDICT oracle-guard-mutant PASS run exit=0 expected=0 killed: stdout differs from the oracle at byte 991 stderr=unchecked
+SUBST candidate/tests/goal_microjobs/shadow-fallback.from candidate/tests/goal_microjobs/shadow-fallback.to
+CASE fallback-mutant line=67
+  MUTATE exact-once substitution at byte 5048
+  $ ./omc < native-final-budget/67.src > native-final-budget/67.elf 2> native-final-budget/67.cerr
+  $ native-final-budget/67.elf --private-local-shadow C 4 < /dev/null > native-final-budget/67.out 2> native-final-budget/67.err
+VERDICT fallback-mutant PASS run exit=65 expected=65 killed: stdout differs from the oracle at byte 964 stderr=unchecked
+SUBST candidate/tests/goal_microjobs/shadow-optin.from candidate/tests/goal_microjobs/shadow-guard.to
+CASE optin-mutant line=69
+  MUTATE exact-once substitution at byte 5309
+  $ ./omc < native-final-budget/69.src > native-final-budget/69.elf 2> native-final-budget/69.cerr
+  $ native-final-budget/69.elf --public A 0 < /dev/null > native-final-budget/69.out 2> native-final-budget/69.err
+VERDICT optin-mutant PASS run exit=0 expected=0 killed: stdout differs from the oracle at byte 0 stderr=unchecked
+SUBST candidate/tests/goal_microjobs/shadow-fuel.from candidate/tests/goal_microjobs/shadow-fuel.to
+CASE fuel-refusal line=71
+  MUTATE exact-once substitution at byte 3558
+  $ ./omc < native-final-budget/71.src > native-final-budget/71.elf 2> native-final-budget/71.cerr
+  $ native-final-budget/71.elf --private-local-shadow A 0 < /dev/null > native-final-budget/71.out 2> native-final-budget/71.err
+VERDICT fuel-refusal PASS run exit=68 expected=68 stdout=match stderr=unchecked
+OM2GATE PASS cases=67 pass=67 fail=0 invalid=0 not_run=0

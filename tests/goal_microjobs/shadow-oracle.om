@@ -1,0 +1,30 @@
+note SPDX-License-Identifier: AGPL-3.0-or-later
+note Independent Wolfram expected answers; raw tool calls/results in evidence/nl5-wolfram.jsonl.
+note Query initial={3+5,4+7,6+8,9+2}; chain=FoldList[Plus,Total[initial],{1,2,3,4,5,6,7}];
+note corrected=ReplacePart[initial,3->(6+9)]; {Join[initial,chain],Join[corrected,FoldList[Plus,Total[corrected],{1,2,3,4,5,6,7}]]}
+fn oracle to void
+put Ref 0 8
+put Ref 1 11
+put Ref 2 14
+put Ref 3 11
+put Ref 4 44
+put Ref 5 45
+put Ref 6 47
+put Ref 7 50
+put Ref 8 54
+put Ref 9 59
+put Ref 10 65
+put Ref 11 72
+put Ref 12 8
+put Ref 13 11
+put Ref 14 15
+put Ref 15 11
+put Ref 16 45
+put Ref 17 46
+put Ref 18 48
+put Ref 19 51
+put Ref 20 55
+put Ref 21 60
+put Ref 22 66
+put Ref 23 73
+end

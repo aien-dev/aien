@@ -1,5 +1,19 @@
 {
-  "schema_version": "1.0.0",
+  "extensions": {
+    "generated": {
+      "children": [],
+      "children_root": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "compiled_at": "2026-10-28T14:20:21Z",
+      "compiler": "crumb-compile/1",
+      "digest": "sha256:68157290bd0a904b0d8425d18f6d43f04586abfac9124081e0914c6519856587",
+      "evidence_files": 0,
+      "evidence_root": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "files": 1,
+      "generated_at_commit": "52067ba2ec2e631db017fb9e700f31c048f1a12d",
+      "source_tree": "sha256:1a7c65517f3d909e2c7aa95bf696defb7cbfd9e8b1bd4e14e436fb61fa32c401"
+    }
+  },
   "name": "goal-microjobs",
-  "purpose": "Allen #13 objective-to-microjob admission and journal replay kernel in seeded .om"
+  "purpose": "Allen #13 objective-to-microjob admission and journal replay kernel in seeded .om",
+  "schema_version": "1.0.0"
 }
