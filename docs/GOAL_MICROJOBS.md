@@ -57,6 +57,19 @@ OMEGA_WORKTREE=<seeded Omega worktree at c434565c> bash tests/goal_microjobs/gat
 
 `scripts/goal_microjobs/build.sh` checks the same Omega commit and compiler pins as Allen #12's harness gate. The gate writes `evidence/goal-microjobs/offline-*/` (unsigned receipt, transcript, final status and journal, mutation table).
 
+The historical compiler is **not tracked at that Omega revision**. A fresh
+clone without archived `build/L574/toolchain` artifacts returns exit 3 with
+`BLOCKED`, rather than an unexplained checksum failure. Supply that archive
+under the pinned checkout before running the gate. Required archive identities:
+`build/bootstrap/omc` SHA-256
+`191b776ef98821597c3e30655da6d680a9b66edbc9ceaca3c39c61ea6df098e9`;
+`seed/omc/omc.om` SHA-256
+`8608fa11f6a2cf1c50db22d871eef16b00d5bc719bc1a222cc3e456984ac5ebf`.
+The archive also contains `tools/verify-elf.sh`. No download or compiler
+substitution is implicit. Without this prerequisite the replay is BLOCKED,
+not PASS. PR #14 delivers the admission/replay kernel only; the open #13
+items below remain a separate workstream.
+
 The 12-node acceptance objective runs nodes 1 to 4 concurrently before the join at node 7; it has five COMPUTE nodes with zero tokens before the correction, three bounded NEURAL routes, one refused optional teacher route, one model failure with retry, one interrupted lease after a SIGKILL'd writer, one rejected model answer with retry, and one owner correction of node 3 that resets exactly nodes 3, 7, 8, 9, 10, 11, 12. Expected totals, recomputed with the Wolfram Language evaluator: tokens reserved (60+12) + 2(120+30) + 4(120+30) = 972; tokens used 50+40+110+120+118+116 = 554; time 12531 ms; 18 attempts; 7 model calls; static caps 800 input, 192 output, 18800 ms against budgets 1000, 256 and 20000.
 
 ## Open
