@@ -1,0 +1,902 @@
+note SPDX-License-Identifier: AGPL-3.0-or-later
+note Allen #13: admission and journal replay for one persistent objective compiled into a
+note typed microjob DAG. Input on stdin is the plan (header, nodes) then the append-only
+note event journal, all whitespace-separated decimal words. Output on stdout is the
+note replayed state, the fundable ready set and, when complete, the objective receipt.
+note A refused plan or event prints 199 seq code and exits with code; nothing is admitted.
+note LOCAL ADAPTER PENDING aien-protocols-mv#50: record order and codes are Allen-local and
+note documented in docs/GOAL_MICROJOBS.md; the canonical microjob-v1 ABI replaces them.
+note This kernel executes no job, calls no model, and writes no memory or authority state.
+global Inb uchar 262144
+global Cur ulong 8
+global Hdr ulong 16
+global Nd ulong 1536
+global Dep ulong 512
+global St ulong 1024
+global Ev ulong 16
+global Tot ulong 8
+global Wk ulong 64
+global Ob uchar 65536
+
+note ---- output: decimal words, one record per line ----
+fn putb b ulong to void
+p = get Cur 2
+put Ob p uchar b
+put Cur 2 add p 1
+end
+
+fn putd v ulong to void
+if gt v 9
+putd div v 10
+end
+putb add rem v 10 48
+end
+
+fn putn v ulong to void
+putd v
+putb 32
+end
+
+fn endl to void
+put Ob sub get Cur 2 1 uchar 10
+end
+
+fn flush to void
+w = write 1 Ob 0 get Cur 2
+put Cur 2 0
+end
+
+fn fail code ulong to void
+put Cur 2 0
+putn 199
+putn get Cur 4
+putn code
+endl
+flush
+exit int code
+end
+
+note ---- input ----
+fn load to void
+cap = sub len Inb 1
+t = ulong 0
+k = read 0 Inb 0 cap
+while gt k 0
+t = add t ulong k
+k = long 0
+if lt t cap
+k = read 0 Inb t sub cap t
+end
+end
+if lt k 0
+fail 4
+end
+if ge t cap
+fail 3
+end
+put Inb t 32
+put Cur 1 t
+end
+
+fn isws c ulong to bool
+ret or eq c 32 or eq c 10 or eq c 9 eq c 13
+end
+
+fn more to bool
+p = get Cur 0
+n = get Cur 1
+while lt p n
+if eq isws ulong get Inb p false
+put Cur 0 p
+ret true
+end
+p = add p 1
+end
+put Cur 0 p
+ret false
+end
+
+fn rd to ulong
+if eq more false
+fail 2
+end
+p = get Cur 0
+v = ulong 0
+while eq isws ulong get Inb p false
+c = ulong get Inb p
+if or lt c 48 gt c 57
+fail 3
+end
+d = sub c 48
+if or gt v 1844674407370955161 and eq v 1844674407370955161 gt d 5
+fail 3
+end
+v = add mul v 10 d
+p = add p 1
+end
+put Cur 0 p
+ret v
+end
+
+note ---- record accessors (node index i is the node id minus one) ----
+fn nd i ulong f ulong to ulong
+ret get Nd add mul i 24 f
+end
+
+fn sg i ulong f ulong to ulong
+ret get St add mul i 16 f
+end
+
+fn ss i ulong f ulong v ulong to void
+put St add mul i 16 f v
+end
+
+fn ev f ulong to ulong
+ret get Ev f
+end
+
+fn dep i ulong j ulong to ulong
+ret sub get Dep add mul i 8 j 1
+end
+
+note nonzero 4-word digests: objective (header 1..4), operand (node 16..19), event (6..9)
+fn nzhdr to bool
+v = ulong 0
+for f ulong 4
+v = or v get Hdr add 1 f
+end
+ret ne v 0
+end
+
+fn nzop i ulong to bool
+v = ulong 0
+for f ulong 4
+v = or v nd i add 16 f
+end
+ret ne v 0
+end
+
+fn evdigz to bool
+v = ulong 0
+for f ulong 4
+v = or v ev add 6 f
+end
+ret eq v 0
+end
+
+note ---- plan: header and nodes ----
+fn header to void
+if ne rd 1
+fail 5
+end
+for i ulong 16
+put Hdr i rd
+end
+if ne get Hdr 0 1
+fail 10
+end
+n = get Hdr 8
+if or eq n 0 gt n 64
+fail 11
+end
+if eq nzhdr false
+fail 25
+end
+ow = get Hdr 5
+rt = get Hdr 6
+if or eq ow 0 or eq rt 0 eq ow rt
+fail 25
+end
+t = get Hdr 9
+if or eq t 0 gt t n
+fail 21
+end
+if eq get Hdr 10 0
+fail 24
+end
+if gt get Hdr 7 2
+fail 13
+end
+end
+
+fn readnode i ulong to void
+if ne rd 2
+fail 5
+end
+if ne rd add i 1
+fail 12
+end
+b = mul i 24
+for f ulong 20
+put Nd add b f rd
+end
+k = rd
+if gt k 8
+fail 19
+end
+put Nd add b 20 k
+for j ulong k
+put Dep add mul i 8 j rd
+end
+end
+
+fn depsok i ulong to void
+n = get Hdr 8
+k = nd i 20
+for j ulong k
+d = get Dep add mul i 8 j
+if or eq d 0 or gt d n eq d add i 1
+fail 19
+end
+for m ulong j
+if eq get Dep add mul i 8 m d
+fail 19
+end
+end
+end
+end
+
+note static node rules in the order of aien-protocols-mv#50 draft section 4.4 (subset)
+fn nodeok i ulong to void
+kind = nd i 0
+op = nd i 1
+if or eq kind 0 gt kind 2
+fail 13
+end
+if or eq op 0 gt op sub 8 mul kind 2
+fail 13
+end
+if or gt nd i 4 2 or gt nd i 15 1 gt nd i 3 4
+fail 13
+end
+vk = nd i 9
+rc = nd i 11
+ma = nd i 12
+if or eq vk 0 or gt vk 3 eq nd i 10 0
+fail 16
+end
+if or eq rc 0 or gt rc 3 or eq ma 0 gt ma 8
+fail 13
+end
+if ne nd i 13 get Hdr 5
+fail 17
+end
+if gt nd i 4 get Hdr 7
+fail 18
+end
+tokok i
+if and eq rc 1 gt ma 1
+fail 23
+end
+if and eq nd i 4 2 eq rc 2
+fail 23
+end
+if eq nd i 14 0
+fail 24
+end
+if eq nzop i false
+fail 22
+end
+depsok i
+end
+
+note token profile: COMPUTE is profile ZERO with every token count zero and no route;
+note NEURAL names a route class and caps within its profile; needs above caps refuse.
+fn tokok i ulong to void
+prof = nd i 3
+it = nd i 5
+ot = nd i 6
+if eq nd i 0 1
+if or ne prof 0 or ne it 0 or ne ot 0 ne nd i 2 0
+fail 14
+end
+if or ne nd i 7 0 ne nd i 8 0
+fail 14
+end
+ret
+end
+if or eq prof 0 or eq it 0 eq ot 0
+fail 14
+end
+if or eq nd i 2 0 gt nd i 2 3
+fail 14
+end
+if or gt it shl ulong 32 prof gt ot shl ulong 8 prof
+fail 14
+end
+if or gt nd i 7 it gt nd i 8 ot
+fail 15
+end
+end
+
+note static budget: sums of node caps within the header budgets (input, output, time)
+fn budgok to void
+n = get Hdr 8
+a = ulong 0
+b = ulong 0
+c = ulong 0
+for i ulong n
+if gt or or nd i 5 nd i 6 nd i 14 4294967295
+fail 26
+end
+a = add a nd i 5
+b = add b nd i 6
+c = add c nd i 14
+end
+if gt a get Hdr 13
+fail 26
+end
+if or gt b get Hdr 14 gt c get Hdr 15
+fail 26
+end
+end
+
+fn depsin i ulong to bool
+k = nd i 20
+for j ulong k
+if eq get Wk dep i j 0
+ret false
+end
+end
+ret true
+end
+
+fn acyclic to bool
+n = get Hdr 8
+for i ulong n
+put Wk i 0
+end
+for r ulong n
+f = ulong 0
+for i ulong n
+if and eq f 0 and eq get Wk i 0 depsin i
+f = add i 1
+end
+end
+if eq f 0
+ret false
+end
+put Wk sub f 1 1
+end
+ret true
+end
+
+fn plan to void
+header
+n = get Hdr 8
+for i ulong n
+readnode i
+end
+for i ulong n
+nodeok i
+end
+if eq acyclic false
+fail 20
+end
+budgok
+if eq nd sub get Hdr 9 1 15 0
+fail 21
+end
+for i ulong n
+ss i 0 1
+ss i 1 1
+end
+end
+
+note ---- replay: node states 1 pending, 2 running, 3 resulted, 4 done, 5 failed,
+note 6 cancelled, 7 refused ----
+fn depsdone i ulong to bool
+k = nd i 20
+for j ulong k
+if ne sg dep i j 0 4
+ret false
+end
+end
+ret true
+end
+
+fn tokcap i ulong to ulong
+ret add nd i 5 nd i 6
+end
+
+fn ismodel i ulong to bool
+ret eq nd i 0 2
+end
+
+fn fundable i ulong to bool
+if ge sg i 2 nd i 12
+ret false
+end
+if ge get Tot 0 get Hdr 10
+ret false
+end
+if eq ismodel i true
+if ge get Tot 1 get Hdr 11
+ret false
+end
+if gt add get Tot 2 tokcap i get Hdr 12
+ret false
+end
+end
+ret true
+end
+
+fn same i ulong to void
+if ne ev 3 sg i 1
+fail 34
+end
+if ne ev 2 sg i 3
+fail 35
+end
+end
+
+fn charge i ulong to void
+if gt ev 10 tokcap i
+fail 42
+end
+if gt ev 11 nd i 14
+fail 42
+end
+put Tot 6 add get Tot 6 ev 10
+put Tot 4 add get Tot 4 ev 11
+end
+
+fn retry i ulong to void
+ss i 3 0
+if lt sg i 2 nd i 12
+ss i 0 1
+else
+ss i 0 5
+end
+end
+
+fn dispatch i ulong to void
+if ne sg i 0 1
+fail 33
+end
+if ne ev 3 sg i 1
+fail 34
+end
+if eq depsdone i false
+fail 43
+end
+if ne ev 2 add sg i 2 1
+fail 35
+end
+w = ev 4
+if or eq w 0 eq w nd i 10
+fail 39
+end
+if or eq w get Hdr 5 eq w get Hdr 6
+fail 39
+end
+a = sg i 2
+if ge a nd i 12
+fail 36
+end
+if ge get Tot 0 get Hdr 10
+fail 36
+end
+if eq ismodel i true
+if ge get Tot 1 get Hdr 11
+fail 37
+end
+if gt add get Tot 2 tokcap i get Hdr 12
+fail 38
+end
+put Tot 1 add get Tot 1 1
+put Tot 2 add get Tot 2 tokcap i
+end
+ss i 0 2
+ss i 2 ev 2
+ss i 3 ev 2
+ss i 4 ev 4
+put Tot 0 add get Tot 0 1
+end
+
+fn result i ulong to void
+if ne sg i 0 2
+fail 33
+end
+same i
+if ne ev 4 sg i 4
+fail 39
+end
+if eq evdigz true
+fail 41
+end
+if and eq ismodel i false ne ev 10 0
+fail 48
+end
+charge i
+for f ulong 4
+ss i add 5 f ev add 6 f
+end
+ss i 0 3
+end
+
+fn verify i ulong to void
+if ne sg i 0 3
+fail 33
+end
+same i
+if eq ev 4 sg i 4
+fail 40
+end
+if ne ev 4 nd i 10
+fail 39
+end
+for f ulong 4
+if ne sg i add 5 f ev add 6 f
+fail 41
+end
+end
+if eq ev 5 1
+ss i 0 4
+else
+if ne ev 5 0
+fail 49
+end
+retry i
+end
+end
+
+fn failev i ulong to void
+if ne sg i 0 2
+fail 33
+end
+same i
+if and ne ev 4 sg i 4 ne ev 4 get Hdr 6
+fail 39
+end
+charge i
+retry i
+end
+
+fn refuse i ulong to void
+s = sg i 0
+if eq s 2
+same i
+if ne ev 4 sg i 4
+fail 39
+end
+else
+if ne s 1
+fail 33
+end
+if ne ev 3 sg i 1
+fail 34
+end
+if ne ev 4 get Hdr 6
+fail 39
+end
+end
+ss i 3 0
+ss i 0 7
+end
+
+note mark: Wk[j] = 1 for node k and every node that transitively depends on it
+fn mark k ulong to void
+n = get Hdr 8
+for i ulong n
+put Wk i 0
+end
+put Wk k 1
+for r ulong n
+for i ulong n
+if eq get Wk i 0
+m = nd i 20
+for j ulong m
+if eq get Wk dep i j 1
+put Wk i 1
+end
+end
+end
+end
+end
+end
+
+fn cancel i ulong to void
+if ne ev 4 get Hdr 5
+fail 39
+end
+n = get Hdr 8
+if eq i n
+put Tot 5 1
+for j ulong n
+if ne sg j 0 4
+ss j 0 6
+ss j 3 0
+end
+end
+ret
+end
+s = sg i 0
+if or eq s 4 eq s 6
+fail 33
+end
+mark i
+for j ulong n
+if and eq get Wk j 1 ne sg j 0 4
+ss j 0 6
+ss j 3 0
+end
+end
+end
+
+fn correct i ulong to void
+if ne ev 4 get Hdr 5
+fail 39
+end
+if ne ev 3 sg i 1
+fail 34
+end
+if eq evdigz true
+fail 41
+end
+same4 i
+for f ulong 4
+put Nd add mul i 24 add 16 f ev add 6 f
+end
+mark i
+n = get Hdr 8
+for j ulong n
+if eq get Wk j 1
+ss j 1 add sg j 1 1
+ss j 2 0
+ss j 3 0
+for f ulong 4
+ss j add 5 f 0
+end
+if ne sg j 0 6
+ss j 0 1
+end
+end
+end
+end
+
+fn same4 i ulong to void
+for f ulong 4
+if ne nd i add 16 f ev add 6 f
+ret
+end
+end
+fail 46
+end
+
+fn effect i ulong to void
+if ne ev 4 get Hdr 6
+fail 39
+end
+if or ne sg i 0 4 ne nd i 4 2
+fail 44
+end
+if ne ev 3 sg i 1
+fail 34
+end
+if eq sg i 9 sg i 1
+fail 45
+end
+if eq evdigz true
+fail 41
+end
+ss i 9 sg i 1
+end
+
+fn event to void
+for f ulong 12
+put Ev f rd
+end
+t = ev 0
+k = ev 1
+n = get Hdr 8
+if or eq t 0 gt t 8
+fail 32
+end
+if eq t 5
+if gt k n
+fail 31
+end
+if eq k 0
+if eq get Tot 5 1
+fail 47
+end
+cancel n
+ret
+end
+end
+if or eq k 0 gt k n
+fail 31
+end
+if eq get Tot 5 1
+fail 47
+end
+i = sub k 1
+if eq t 1
+dispatch i
+end
+if eq t 2
+result i
+end
+if eq t 3
+verify i
+end
+if eq t 4
+failev i
+end
+if eq t 5
+cancel i
+end
+if eq t 6
+correct i
+end
+if eq t 7
+refuse i
+end
+if eq t 8
+effect i
+end
+end
+
+fn replay to void
+s = ulong 0
+while eq more true
+put Cur 4 add s 1
+if ne rd 3
+fail 5
+end
+if ne rd add s 1
+fail 30
+end
+event
+s = add s 1
+end
+put Tot 3 s
+put Cur 4 0
+end
+
+note ---- report ----
+fn blocked to void
+n = get Hdr 8
+for i ulong n
+s = sg i 0
+put Wk i 0
+if or eq s 5 or eq s 6 eq s 7
+put Wk i 1
+end
+end
+for r ulong n
+for i ulong n
+if and eq get Wk i 0 ne sg i 0 4
+m = nd i 20
+for j ulong m
+if eq get Wk dep i j 1
+put Wk i 1
+end
+end
+end
+end
+end
+end
+
+fn ready i ulong to bool
+if eq get Tot 5 1
+ret false
+end
+if or ne sg i 0 1 eq depsdone i false
+ret false
+end
+ret fundable i
+end
+
+fn status to ulong
+if eq get Tot 5 1
+ret 4
+end
+n = get Hdr 8
+blocked
+ok = true
+bad = false
+blk = false
+live = false
+for i ulong n
+s = sg i 0
+if eq nd i 15 1
+if ne s 4
+ok = false
+end
+if and eq nd i 4 2 ne sg i 9 sg i 1
+ok = false
+if eq s 4
+live = true
+end
+end
+if eq s 5
+bad = true
+end
+if eq get Wk i 1
+blk = true
+end
+end
+if or or eq s 2 eq s 3 ready i
+live = true
+end
+end
+if ok
+ret 2
+end
+if bad
+ret 3
+end
+if blk
+ret 5
+end
+if eq live false
+ret 6
+end
+ret 1
+end
+
+fn report to void
+n = get Hdr 8
+st = status
+done = ulong 0
+for i ulong n
+if eq sg i 0 4
+done = add done 1
+end
+end
+putn 100
+putn st
+putn n
+putn done
+for f ulong 7
+putn get Tot f
+end
+endl
+blocked
+for i ulong n
+putn 101
+putn add i 1
+putn sg i 0
+putn sg i 1
+putn sg i 2
+putn get Wk i
+if ready i
+putn 1
+else
+putn 0
+end
+putn sg i 9
+endl
+end
+putn 102
+for i ulong n
+if ready i
+putn add i 1
+end
+end
+endl
+if eq st 2
+t = sub get Hdr 9 1
+putn 103
+for f ulong 4
+putn get Hdr add 1 f
+end
+for f ulong 4
+putn sg t add 5 f
+end
+putn sg t 1
+putn get Tot 3
+endl
+end
+end
+
+fn main to int
+load
+plan
+replay
+report
+flush
+ret 0
+end
