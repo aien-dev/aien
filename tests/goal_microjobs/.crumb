@@ -1,5 +1,19 @@
 {
-  "schema_version": "1.0.0",
+  "extensions": {
+    "generated": {
+      "children": [],
+      "children_root": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "compiled_at": "2026-10-29T02:17:31Z",
+      "compiler": "crumb-compile/1",
+      "digest": "sha256:334fbcb6c0caa322b48a62deb65fc100e2d633fd8373a2c508eb80a32c928a10",
+      "evidence_files": 0,
+      "evidence_root": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "files": 1,
+      "generated_at_commit": "52067ba2ec2e631db017fb9e700f31c048f1a12d",
+      "source_tree": "sha256:f8c2033979bc0646272db0abfc94ad61aed8e7ba5f40dc682cf25f9096eb8b49"
+    }
+  },
   "name": "goal-microjobs",
-  "purpose": "Offline restart, correction, model-failure, partial-completion and mutation gate"
+  "purpose": "Offline restart, correction, model-failure, partial-completion and mutation gate",
+  "schema_version": "1.0.0"
 }
