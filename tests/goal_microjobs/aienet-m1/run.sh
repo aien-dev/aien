@@ -29,8 +29,14 @@ export KEYS="$K/requester" WKEYS="$K/worker" PINS="$K/pins" WPINS="$K/wpins"
 for file in "$KEYS/transport.seed" "$KEYS/submitter.p256" "$KEYS/verifier.p256" "$WKEYS/transport.seed" "$WKEYS/executor.p256"; do
   openssl rand -hex -out "$file" 32
 done
-(cd "$OH_TREE"; cargo build --locked --release --bin aienet0-run --bin aienet0-serve) > "$E/build.log" 2>&1
-export RUN="$OH_TREE/target/release/aienet0-run" SERVE="$OH_TREE/target/release/aienet0-serve"
+(cd "$OH_TREE"; cargo build --locked --release --bin aienet0-run --bin aienet0-serve --message-format=json) > "$E/build.jsonl" 2> "$E/build.log"
+export RUN SERVE
+RUN=$(jq -r 'select(.reason == "compiler-artifact" and .target.name == "aienet0-run" and .profile.test == false) | .executable // empty' "$E/build.jsonl")
+SERVE=$(jq -r 'select(.reason == "compiler-artifact" and .target.name == "aienet0-serve" and .profile.test == false) | .executable // empty' "$E/build.jsonl")
+test -x "$RUN"; test -x "$SERVE"
+oh_source=$(git -C "$OH_TREE" rev-parse HEAD)
+oh_run_sha=$(sha256sum "$RUN" | cut -d' ' -f1)
+oh_serve_sha=$(sha256sum "$SERVE" | cut -d' ' -f1)
 # The test executable enables only the worker's pre-existing cfg(test) pauses.
 (cd "$OH_TREE"; cargo test --locked -p oh-volunteer --bin aienet0-serve --no-run --message-format=json) > "$E/test-build.jsonl" 2> "$E/test-build.log"
 TEST_WORKER=$(jq -r 'select(.reason == "compiler-artifact" and .profile.test == true) | .executable // empty' "$E/test-build.jsonl")
@@ -44,6 +50,8 @@ bash "$repo/scripts/goal_microjobs/build.sh" "$repo/src/goal_microjobs/kernel.om
 OMEGA_OMC="$RECOMPUTE_OMC" OMEGA_MV="$SHA_OMEGA_TREE" bash "$PROTOCOLS/specs/aienet/jobpath/build.sh" "$RECOMPUTE" > "$E/recompute-build.log" 2>&1
 export RECOMPUTE_SHA256=d2cd7382e0dc64e49498ae3b1ceffc73f1ddcbd3ddcf93e6d607498ccd58ea12
 test "$(sha256sum "$RECOMPUTE" | cut -d' ' -f1)" = "$RECOMPUTE_SHA256"
+export RECOVERY="$E/recovery"
+OMEGA_OMC="$RECOMPUTE_OMC" sh "$repo/scripts/goal_microjobs/recovery-build.sh" "$RECOVERY" > "$E/recovery-build.log" 2>&1
 words() { local hex=$1; printf '%u %u %u %u\n' "0x${hex:0:16}" "0x${hex:16:16}" "0x${hex:32:16}" "0x${hex:48:16}"; }
 hash_words() { words "$(sha256sum | cut -d' ' -f1)"; }
 export EXECUTOR_WORDS VERIFIER_WORDS
@@ -73,12 +81,27 @@ new_state() {
   test -z "$(ss -H -ltn "sport = :$port")"
   LISTEN="127.0.0.1:$port"
 }
+assert_done() {
+  local status_file=$1 wanted=$2 tag id st gen rest matches=0
+  while read -r tag id st gen rest; do
+    if test "$tag" = 101 && test "$id" = 1; then
+      matches=$((matches+1))
+      test "$st" = 4 || return 1
+      test "$gen" = "$wanted" || return 1
+    fi
+  done < "$status_file"
+  test "$matches" = 1 || return 1
+}
+done_negative() {
+  printf '%s\n' "$2" > "$E/done-$1.input"
+  local rc=0
+  assert_done "$E/done-$1.input" 1 || rc=$?
+  test "$rc" = 1
+}
 exactly_once() {
   bash "$driver" status "$STATE" > "$STATE/final-status"
-  local tag id st gen rest
-  while read -r tag id st gen rest; do
-    if test "$tag" = 101 && test "$id" = 1; then test "$st" = 4 && test "$gen" = "${1:-1}"; break; fi
-  done < "$STATE/final-status"
+  assert_done "$STATE/final-status" "${1:-1}" || return 1
+  local tag id gen rest
   local dispatch=0 result=0 verify=0
   while read -r tag seq type node attempt gen rest; do
     if test "$node" = 1 && test "$gen" = "${1:-1}"; then
@@ -154,7 +177,7 @@ stale() {
   cp "$STATE/journal" "$STATE/before-stale"
   rm "$STATE/paused"
   local rc=0; wait "$pid" || rc=$?
-  semantic generation-match test "$rc" = 34
+  semantic generation-match test "$rc" = 14
   cmp "$STATE/journal" "$STATE/before-stale"
   # Independently challenge canon with the saved generation1 wire receipt.
   local dag; dag=$(sha256sum "$STATE/g1/document" | cut -d' ' -f1)
@@ -177,9 +200,11 @@ altered() {
   local dag; dag=$(sha256sum "$STATE/g1/document" | cut -d' ' -f1)
   cp "$STATE/g1/out/$dag.mjr1" "$STATE/receipt.original"
   # Signature-covered byte, not a malformed wire header.
-  printf '\377' | dd of="$STATE/g1/out/$dag.mjr1" bs=1 seek=176 conv=notrunc status=none
+  local old; old=$(od -An -tu1 -j176 -N1 "$STATE/g1/out/$dag.mjr1")
+  printf '%b' "\\$(printf '%03o' "$((old ^ 1))")" | dd of="$STATE/g1/out/$dag.mjr1" bs=1 seek=176 conv=notrunc status=none
   cp "$STATE/journal" "$STATE/before"
   local rc=0; run_sequence > "$STATE/refusal.log" 2>&1 || rc=$?
+  printf 'altered signature expected_exit=12 observed_exit=%s\n' "$rc"
   test "$rc" = 12
   cmp "$STATE/journal" "$STATE/before"
   cp "$STATE/receipt.original" "$STATE/g1/out/$dag.mjr1"
@@ -246,6 +271,49 @@ attestation_signature() {
   semantic check-before-ingest test "$rc" = 14
   cmp "$STATE/journal" "$STATE/before"
 }
+conflicting_result() {
+  new_state conflicting-result
+  M1_PAUSE=resulted bash "$sequence" > "$STATE/first.log" 2>&1 &
+  local pid=$!; active_pid=$pid
+  wait_file "$STATE/paused" "$pid"
+  kill -KILL "$pid"; wait "$pid" || true
+  rm "$STATE/paused"
+  local lines fields rc=0
+  mapfile -t lines < "$STATE/journal"
+  read -r -a fields <<< "${lines[1]}"
+  fields[13]=$((fields[13]+1))
+  printf '%s\n%s\n' "${lines[0]}" "${fields[*]}" > "$STATE/journal"
+  bash "$driver" status "$STATE" > "$STATE/resulted-status"
+  cp "$STATE/journal" "$STATE/before-conflict"
+  run_sequence > "$STATE/conflict.log" 2>&1 || rc=$?
+  semantic result-conflict test "$rc" = 33
+  cmp "$STATE/journal" "$STATE/before-conflict"
+}
+conflict_mutant() {
+  local original=$RECOVERY line skip=0
+  : > "$E/recovery-mutant.om"
+  while IFS= read -r line; do
+    if test "$skip" = 1; then skip=0; continue; fi
+    if test "$line" = 'note RECOVERY-GUARD result-conflict'; then skip=1; fi
+    printf '%s\n' "$line" >> "$E/recovery-mutant.om"
+  done < "$repo/src/goal_microjobs/recovery.om"
+  OMEGA_OMC="$RECOMPUTE_OMC" sh "$repo/scripts/goal_microjobs/recovery-build.sh" "$E/recovery-mutant" "$E/recovery-mutant.om" > "$E/recovery-mutant-build.log" 2>&1
+  export RECOVERY="$E/recovery-mutant" CASE_PREFIX=mutant-conflict-
+  local rc=0
+  set +e
+  (set -e; trap cleanup_case EXIT; conflicting_result) > "$E/mutant-conflict.log" 2>&1
+  rc=$?
+  set -e
+  export RECOVERY=$original
+  unset CASE_PREFIX
+  test "$rc" = 1
+  local killed=0
+  while IFS= read -r line; do
+    if test "$line" = 'M1_SEMANTIC result-conflict'; then killed=1; fi
+  done < "$E/mutant-conflict.log"
+  test "$killed" = 1
+  printf 'result-conflict\tKILLED\t1\n' >> "$E/mutants.tsv"
+}
 # Mutations are generated into evidence-local copies by removing exactly the
 # named guard line. No candidate source, compiler or historical receipt changes.
 mutant() {
@@ -281,6 +349,9 @@ mutant() {
 persist_probe() { crash dispatched; }
 checks=0 failures=0
 printf '# canon_source\t%s\n# canon_binary_sha256\t%s\ncase\texpected\tobserved\texit\n' "$canon_source" "$canon_binary" > "$E/summary.tsv"
+printf '# oh_source\t%s\n# oh_run_sha256\t%s\n# oh_serve_sha256\t%s\n' "$oh_source" "$oh_run_sha" "$oh_serve_sha" > "$E/metadata.tsv"
+cat "$E/summary.tsv" >> "$E/metadata.tsv"
+mv "$E/metadata.tsv" "$E/summary.tsv"
 case_run() {
   local name=$1; shift
   local rc=0
@@ -296,6 +367,10 @@ case_run() {
     printf '%s\tPASS\tFAIL\t%s\n' "$name" "$rc" >> "$E/summary.tsv"
   fi
 }
+case_run done-reject-resulted done_negative resulted '101 1 3 1 1 0 0 0'
+case_run done-reject-missing done_negative missing '100 1 1 0'
+case_run done-reject-duplicate done_negative duplicate $'101 1 4 1 1 0 0 0\n101 1 4 1 1 0 0 0'
+case_run result-conflict conflicting_result
 case_run happy happy
 for boundary in persisted dispatched published resulted; do case_run "crash-$boundary" crash "$boundary"; done
 case_run crash-worker-admitted worker_crash
@@ -314,6 +389,7 @@ printf 'mutant\tverdict\tprobe_exit\n' > "$E/mutants.tsv"
 case_run mutant-persist mutant persist persist-before-dispatch persist_probe
 case_run mutant-check mutant check check-before-ingest attestation_signature
 case_run mutant-generation mutant generation generation-match stale
+case_run mutant-result-conflict conflict_mutant
 cat "$E/summary.tsv" "$E/mutants.tsv"
 printf 'M1 cases=%s failures=%s evidence=%s\n' "$checks" "$failures" "$E"
 test "$failures" = 0

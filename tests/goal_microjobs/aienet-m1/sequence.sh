@@ -13,8 +13,11 @@ exec 8>"$STATE/sequence.lock"
 flock -n 8 || exit 75
 pause() {
   if test "${M1_PAUSE:-}" = "$1"; then
+    test -p "$STATE/pause.fifo" || mkfifo "$STATE/pause.fifo"
+    exec 9<>"$STATE/pause.fifo"
     printf '%s\n' "$1" > "$STATE/paused"
-    while test -e "$STATE/paused"; do sleep 0.05 8>&-; done
+    while test -e "$STATE/paused"; do read -r -t 0.05 -u 9 _ || true; done
+    exec 9>&-
   fi
 }
 status=$(bash "$driver" status "$STATE")
@@ -26,19 +29,13 @@ if test "$st" = 4; then echo ALREADY_ACCEPTED; exit 0; fi
 test "$st" = 1 || test "$st" = 2 || test "$st" = 3
 art="$STATE/g$gen"
 mkdir -p "$art"
-# Reconstruct the current operand from the immutable plan and owner CORRECTs.
-read -r header < "$STATE/plan"
-mapfile -t plan < "$STATE/plan"
-read -r -a node <<< "${plan[1]}"
-while read -r tag seq type nid attempt generation issuer verdict d0 d1 d2 d3 tok ms; do
-  if test "$type" = 6 && test "$nid" = 1; then
-    node[18]=$d0 node[19]=$d1 node[20]=$d2 node[21]=$d3
-  fi
-done < "$STATE/journal"
+# Kernel replay validates the journal; Omega derives the effective operand.
 {
-  printf '%s\n' "$header" "${node[*]}" "101 1 $st $gen $attempts $blocked $ready $effect"
-  cat "$STATE/bindings/$gen"
-} | "$CANON" emit > "$art/emission.next"
+  printf '1 %s\n' "$(wc -l < "$STATE/journal")"
+  cat "$STATE/plan"
+  printf '101 1 %s %s %s %s %s %s\n' "$st" "$gen" "$attempts" "$blocked" "$ready" "$effect"
+  cat "$STATE/bindings/$gen" "$STATE/journal"
+} | "${RECOVERY:?}" | "$CANON" emit > "$art/emission.next"
 dd if="$art/emission.next" of="$art/document.next" bs=1 count=640 status=none
 dd if="$art/emission.next" of="$art/payload.next" bs=1 skip=640 count=15 status=none
 if test -e "$art/document"; then
@@ -102,13 +99,14 @@ current=$(bash "$driver" status "$STATE")
 while read -r tag id current_state current_gen rest; do
   if test "$tag" = 101 && test "$id" = 1; then break; fi
 done <<< "$current"
+ingest_gen=$gen
 # M1-GUARD generation-match
-test "$current_gen" = "$gen" || { echo REFUSED_STALE_GENERATION >&2; exit 34; }
+ingest_gen=$current_gen
 next=$(( $(wc -l < "$STATE/journal") + 1 ))
 if test "$st" = 3; then next=$((next - 1)); fi
 {
   cat "$art/document" "$out/$dag.mjr1" "$out/$dag.mjv"
-  printf '5 1 %s 1 20 5 %s %s %s\n' "$gen" "$EXECUTOR_WORDS" "$VERIFIER_WORDS" "$next"
+  printf '5 1 %s 1 20 5 %s %s %s\n' "$ingest_gen" "$EXECUTOR_WORDS" "$VERIFIER_WORDS" "$next"
 } | "$CANON" ingest > "$art/events"
 # Each event is independently journaled via the kernel. Recovery from a torn
 # pair proves the persisted RESULT is identical before proposing only VERIFY.
@@ -116,7 +114,7 @@ mapfile -t events < "$art/events"
 test "${#events[@]}" = 2
 if test "$st" = 3; then
   last=$(cat "$STATE/journal" | { mapfile -t lines; printf '%s\n' "${lines[-1]}"; })
-  test "$last" = "${events[0]}" || { echo RESULT_CONFLICT >&2; exit 33; }
+  printf '2\n%s\n%s\n' "$last" "${events[0]}" | "$RECOVERY"
 else
   read -r _ _ rest <<< "${events[0]}"
   bash "$driver" propose "$STATE" $rest

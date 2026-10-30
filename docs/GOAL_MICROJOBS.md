@@ -227,13 +227,17 @@ verification in Omega are not claimed.
 
 `tests/goal_microjobs/aienet-m1/sequence.sh` is a shell migration adapter
 under [aien#22](https://github.com/aien-dev/aien/issues/22), not a new
-admission or signature implementation. It reconstructs the current node
-generation from the journal, calls `canon emit`, persists the unchanged
+admission or signature implementation. It reads the current generation from
+kernel status and routes the kernel-validated journal through `recovery.om`
+to derive the effective operand, then calls `canon emit`, persists the unchanged
 signed bundle before DISPATCH, resends with the worker's durable `--retry`
 state, checks signatures and independent recomputation through Open Humanity,
 then calls `canon ingest` and proposes RESULT and VERIFY through the kernel.
-A restart after RESULT compares that persisted RESULT byte-for-byte before
-proposing VERIFY alone. An owner correction wins over an in-flight response.
+`recovery.om` compares every field of an already-persisted RESULT with the
+canonical RESULT before VERIFY-only recovery (mismatch: exit 33). The current
+kernel generation is supplied to canonical ingestion; stale wire generations
+are refused by canon (exit 14), not by a shell generation rule.
+`recovery-build.sh` checks the same e5b32567 compiler digest as canon-build.sh.
 
 Build `canon` with the preceding pinned build command. Materialize the SHA
 oracle source without modifying its checkout:
@@ -252,9 +256,11 @@ taskset -c 10-14 nice -n 19 ionice -c3 env \
 ```
 
 The output directory must not exist. The harness builds both OH release
-binaries from the explicitly supplied seal-document worktree, verifies the
-recompute binary pin, records the exact canonical source revision and binary
-digest in `summary.tsv`, and writes one expected/observed row per case.
+binaries from the explicitly supplied seal-document worktree and resolves
+their executables from Cargo's reported artifacts, including when
+`CARGO_TARGET_DIR` is set. It verifies the recompute pin and records the exact
+OH revision, both OH binary digests, canonical source revision and canonical
+binary digest in `summary.tsv`, with one expected/observed row per case.
 `mutants.tsv` counts a mutant as killed only for its named semantic failure;
 setup errors are not kills. Baseline failures prevent mutant qualification.
 
@@ -262,9 +268,12 @@ Cases cover happy completion; SIGKILL after bundle persistence, DISPATCH,
 receipt plus AN0V publication and RESULT; worker SIGKILL after durable admission
 and after durable completion; generation correction; signature-covered MJR1
 mutation; executor-signed wrong output; duplicate receipt and an independently
-signed second completion; and signature-only AN0V mutation. Guard-removal
-mutants challenge persist-before-DISPATCH, check-before-ingest and generation
-matching. Every accepted generation has one DISPATCH, RESULT and VERIFY.
+signed second completion; signature-only AN0V mutation; and RESULT-only recovery
+with a kernel-valid but conflicting persisted time charge. Negative self-tests
+prove the DONE helper rejects RESULTED, missing and duplicate node-1 status
+records. Guard-removal mutants challenge persist-before-DISPATCH,
+check-before-ingest, current-generation routing and Omega RESULT conflict
+checking. Every accepted generation has one DISPATCH, RESULT and VERIFY.
 Recovery checks that persisted bundle bytes never change.
 
 All identities and payload bindings here are explicit synthetic test values.
