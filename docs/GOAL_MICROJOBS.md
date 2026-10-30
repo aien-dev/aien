@@ -88,6 +88,12 @@ worker, authenticate integer authority roles, append a journal, or grant authori
 The caller MUST successfully run `aienet0-run check` against its pinned executor
 and independent verifier keys before ingest, and replay/atomically commit the
 events through the kernel. Passing ingest alone is not authenticated completion.
+**Ingest is not a standalone verifier. It must only receive the exact immutable
+document/MJR1/AN0V bytes that passed that Rust check.** In particular, ingest
+does not verify either signature, source/model/policy hashes, fuel/memory/work
+accounting or the recompute verdict's cryptographic derivation. Refreshing an
+AN0V receipt hash is not signature verification. A changed AN0V signature can
+still pass ingest; it must fail the preceding Rust checker.
 
 ### Build and pins
 
@@ -156,15 +162,27 @@ the document/dag digest, not the authority references.
 `document[640] || MJR1[404] || AN0V[236] || expected_ascii`, where the final
 ASCII record is:
 
-`5 node generation attempt worker verifier executor_key_sha256(4) verifier_key_sha256(4) next_sequence`
+`5 node generation attempt worker verifier executor_key_sha256(4) verifier_key_sha256(4) next_sequence objective_id(4) effective_operand_digest(4)`
+
+This is exactly 23 decimal words. The original first 15 words are unchanged;
+objective occupies zero-based words 15..18 and effective operand 19..22.
+The caller MUST derive those pins from its trusted objective header and replayed
+effective operand (including the latest CORRECT), never from the supplied
+document or receipt. A different objective or operand must not complete the
+original task even when its bundle and signatures are otherwise valid.
 
 The key digests are SHA-256 of the 33-byte compressed SEC1 public keys, not keys
 or signatures. Worker/verifier are the caller's pinned local role integers,
-nonzero and distinct. The adapter re-derives document identity for the expected
-node, requires the receipt's job/key, generation, attempt (one), COMPLETED
-outcome, dag digest, nonzero output, zero COMPUTE tokens and bounded time.
+nonzero and distinct. The adapter checks document objective and CONTENT operand
+digest against those independent pins, then derives job/idempotence identities
+from the expected objective and node. It requires the receipt's full 32-byte
+job/idempotence pair, generation, attempt (one), COMPLETED outcome, dag digest,
+nonzero output, zero COMPUTE tokens and bounded time. It checks all MJR1 reserved
+bytes are zero and recomputes input_binding as
+`SHA-256("MJR1-BIND" || operand_kind_u8 || operand_generation_u32_BE || operand_digest)`,
+following SPEC section 5.1 for one operand and no dependencies.
 It checks AN0V framing, hash of the entire 404-byte receipt (including signature),
-dag/output/verdict commitments, and both public-key hashes.
+cross-record dag/output/verdict equality, and both public-key hashes.
 
 On success exactly two lines are emitted:
 `3 seq 2 node attempt generation worker 0 output(4) 0 used_time_ms`, then
@@ -178,7 +196,8 @@ VERIFY. Never re-dispatch or replace an existing completion on recovery.
 
 Refusals print `CANON_<NAME>` to stderr and exit: 2 INPUT (including truncation),
 3 IO, 10 REF, 11 PAYLOAD, 12 SHAPE, 13 RANGE, 14 GENERATION, 15 JOB,
-16 OUTCOME, 17 DAG, 18 OUTPUT, 19 AN0V, 20 KEYPIN, 21 ATTEMPT, 22 RESOURCE.
+16 OUTCOME, 17 DAG, 18 OUTPUT, 19 AN0V, 20 KEYPIN, 21 ATTEMPT, 22 RESOURCE,
+23 OBJECTIVE, 24 OPERAND, 25 BINDING, 26 RESERVED.
 No refusal writes event/document bytes to stdout.
 
 ### Host acceptance and limits
@@ -202,14 +221,20 @@ and `dag_digest`, `seal_bundle`/`admit_bundle`, `executor_receipt`/`check_receip
 The throwaway helper is not shipped. Fresh clones can replay the committed
 byte-level oracles without Cargo or generated helper source.
 
-The gate checks exact emission and events, twelve refusal fixtures and eleven
-guard-removal mutants, replay through the archived kernel to DONE, and compiler
+The gate checks exact emission and events, nineteen refusal fixtures and sixteen
+source mutants, replay through the archived kernel to DONE, and compiler
 pin refusal. Guard-isolating malformed fixtures deliberately refresh AN0V
 bindings without signatures where necessary: they test individual structural
 guards, not authenticated network acceptance. `staleoutput` leaves signatures
 and AN0V stale and is also rejected by the external Rust receipt checker.
 The mutant table records that each guardless binary accepts its targeted
 malformed input while the real adapter refuses with the named code.
+The new objective/operand swap fixtures carry valid independently admitted,
+executed, signed and countersigned jobs; they are refused only because the
+caller's expected task differs. The objective-pin mutant removes both the
+explicit equality check and expected-objective identity derivation. The
+idempotence-only fixture kills the specific mutant shortening the comparison
+from 32 to 16 bytes. Three reserved-byte-region fixtures share one guard mutant.
 
 WolframLanguageEvaluator: `FromDigits[ToCharacterCode["MJB1"],256]`,
 `FromDigits[ToCharacterCode["MJR1"],256]`,
