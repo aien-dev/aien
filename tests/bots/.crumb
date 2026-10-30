@@ -1,0 +1,19 @@
+{
+  "extensions": {
+    "generated": {
+      "children": [],
+      "children_root": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "compiled_at": "2026-10-30T00:58:14Z",
+      "compiler": "crumb-compile/1",
+      "digest": "sha256:8c75c397d20cc61816a2306691de2093262a3b9b7708ea519d5fd5cedfa43bcf",
+      "evidence_files": 0,
+      "evidence_root": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "files": 0,
+      "generated_at_commit": "b02bc7fb8c28bf90803d5bd357d1749cabdfc974",
+      "source_tree": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "name": "bots-acceptance",
+  "purpose": "Host negative controls process interruption and guard-removal mutants for M2",
+  "schema_version": "1.0.0"
+}

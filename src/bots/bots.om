@@ -1,0 +1,755 @@
+note SPDX-License-Identifier: AGPL-3.0-or-later
+note Local bot journal only. Concatenate after pinned Omega sha256-om2 unit.
+global BR uchar 1024
+global BJ uchar 1048576
+global BB uchar 65536
+global BL uchar 2048
+global BM uchar 262144
+global BC uchar 8192
+global BS ulong 256
+global BT ulong 64
+global BV ulong 12
+global BA uchar 4096
+global BP uchar 4096
+global BK uchar 4096
+global BF uchar 4096
+global BD uchar 4096
+global BN uchar 8192
+global BO uchar 4096
+text bdom "AIEN-BOT-V1"
+text mdom "AIEN-BOT-MESSAGE-V1"
+text hx "0123456789abcdef"
+text ec "REFUSE "
+text ok "OK "
+text dup "DUPLICATE "
+text bn "BOT "
+text ln "LEASE "
+text mn "MESSAGE "
+text cmds "register rotate deliver claim ack nack expire retire show"
+text kenv "BOTS_KILL="
+
+text lockend ".lock"
+text candend ".cand"
+global BH uchar 32
+fn bg s ulong p ulong to uchar
+if eq s 1
+ret get BR p
+end
+if eq s 2
+ret get BJ p
+end
+if eq s 3
+ret get BB p
+end
+if eq s 4
+ret get BL p
+end
+if eq s 5
+ret get BM p
+end
+if eq s 6
+ret get BC p
+end
+if eq s 7
+ret get BA p
+end
+if eq s 8
+ret get BP p
+end
+if eq s 9
+ret get BK p
+end
+if eq s 10
+ret get BF p
+end
+if eq s 11
+ret get BD p
+end
+if eq s 12
+ret get BN p
+end
+if eq s 13
+ret get BO p
+end
+if eq s 14
+ret get BH p
+end
+if eq s 15
+ret get cmds p
+end
+if eq s 16
+ret get kenv p
+end
+if eq s 17
+ret get lockend p
+end
+if eq s 18
+ret get candend p
+end
+bfail 3
+ret 0
+end
+fn bp s ulong p ulong v uchar to void
+if eq s 1
+put BR p v
+ret
+end
+if eq s 2
+put BJ p v
+ret
+end
+if eq s 3
+put BB p v
+ret
+end
+if eq s 4
+put BL p v
+ret
+end
+if eq s 5
+put BM p v
+ret
+end
+if eq s 6
+put BC p v
+ret
+end
+if eq s 7
+put BA p v
+ret
+end
+if eq s 8
+put BP p v
+ret
+end
+if eq s 9
+put BK p v
+ret
+end
+if eq s 10
+put BF p v
+ret
+end
+if eq s 11
+put BD p v
+ret
+end
+if eq s 12
+put BN p v
+ret
+end
+if eq s 13
+put BO p v
+ret
+end
+if eq s 14
+put BH p v
+ret
+end
+bfail 3
+end
+fn bfail code int to void
+w = write 1 ec 0 len ec
+bdecimal ulong code
+bend
+exit code
+end
+fn bcheck yes bool code int to void
+if not yes
+bfail code
+end
+end
+fn bwrite fd int s ulong off ulong n ulong to void
+p = ulong 0
+while lt p n bound 999999
+w = long 0
+if eq s 1
+w = write fd BR add off p sub n p
+else
+w = write fd BJ add off p sub n p
+end
+bcheck gt w 0 3
+p = add p ulong w
+end
+end
+fn bdecimal v ulong to void
+if gt v 9
+bdecimal div v 10
+end
+put BO 0 uchar add rem v 10 48
+w = write 1 BO 0 1
+bcheck eq w 1 3
+end
+fn bend to void
+put BO 0 10
+w = write 1 BO 0 1
+bcheck eq w 1 3
+end
+fn bspace to void
+put BO 0 32
+w = write 1 BO 0 1
+bcheck eq w 1 3
+end
+fn bhex s ulong off ulong n ulong to void
+for i ulong n
+v = ulong bg s add off i
+put BO mul i 2 get hx shr v 4
+put BO add mul i 2 1 get hx and v 15
+end
+w = write 1 BO 0 mul n 2
+bcheck eq w long mul n 2 3
+end
+fn bcopy ds ulong dp ulong ss ulong sp ulong n ulong to void
+for i ulong n
+bp ds add dp i bg ss add sp i
+end
+end
+fn bequal ds ulong dp ulong ss ulong sp ulong n ulong to bool
+for i ulong n
+if ne bg ds add dp i bg ss add sp i
+ret false
+end
+end
+ret true
+end
+fn bzero s ulong off ulong n ulong to bool
+v = uchar 0
+for i ulong n
+v = or v bg s add off i
+end
+ret eq v 0
+end
+fn bget a ulong to ulong
+v = ulong 0
+for i ulong 8
+v = or shl v 8 ulong get BR add a i
+end
+ret v
+end
+fn bset a ulong v ulong to void
+for i ulong 8
+put BR add a i uchar and shr v mul sub 7 i 8 255
+end
+end
+fn bclear to void
+for i ulong 1024
+put BR i 0
+end
+end
+fn barg n ulong to ulong
+r = argread n BA 0 len BA
+bcheck ge r 0 2
+ret ulong r
+end
+fn bnyb c uchar to uchar
+if and ge c 48 le c 57
+ret sub c 48
+end
+if and ge c 97 le c 102
+ret add sub c 97 10
+end
+bfail 2
+ret 0
+end
+fn bparse n ulong off ulong to void
+r = barg n
+note BOT-GUARD hex
+bcheck eq r 64 2
+for i ulong 32
+v = shl bnyb get BA mul i 2 4
+put BR add off i or v bnyb get BA add mul i 2 1
+end
+note BOT-GUARD nonzero
+bcheck not bzero 1 off 32 4
+end
+fn brefs n ulong off ulong to void
+r = barg n
+if and eq r 1 eq get BA 0 45
+ret
+end
+note BOT-GUARD refs
+bcheck and le r 259 eq rem add r 1 65 0 2
+cnt = div add r 1 65
+for j ulong cnt
+for i ulong 32
+p = add mul j 65 mul i 2
+v = shl bnyb get BA p 4
+v = or v bnyb get BA add p 1
+p = add off mul j 32
+put BR add p i v
+end
+bcheck not bzero 1 add off mul j 32 32 4
+if lt add j 1 cnt
+bcheck eq get BA add mul j 65 64 44 2
+end
+end
+end
+fn bhash mode ulong to void
+p = new uchar 1024 0
+d = new uchar 32 0
+n = ulong 992
+dest = ulong 992
+if eq mode 0
+for i ulong 992
+put p i get BR i
+end
+else
+if eq mode 1
+for i ulong len bdom
+put p i get bdom i
+end
+n = add len bdom 97
+for i ulong 96
+put p add add len bdom 1 i get BR add 48 i
+end
+dest = 16
+else
+for i ulong len mdom
+put p i get mdom i
+end
+n = add len mdom 129
+for i ulong 32
+put p add add len mdom 1 i get BR add 16 i
+end
+for i ulong 96
+put p add add len mdom 33 i get BR add 48 i
+end
+dest = 144
+end
+end
+sha256_hash part p 0 n d
+for i ulong 32
+put BR add dest i get d i
+end
+end
+fn bpayload n ulong to void
+p = new uchar 4096 0
+d = new uchar 32 0
+r = barg n
+for i ulong r
+put p i get BA i
+end
+sha256_hash part p 0 r d
+for i ulong 32
+put BR add 80 i get d i
+end
+end
+fn bcommand to ulong
+n = barg 1
+p = ulong 0
+for k ulong 9
+q = p
+while lt p len cmds bound 64
+if eq get cmds p 32
+break
+end
+p = add p 1
+end
+if eq n sub p q
+if bequal 7 0 15 q n
+ret add k 1
+end
+end
+p = add p 1
+end
+bfail 2
+ret 0
+end
+fn bargs t ulong to void
+bclear
+put BR 0 66
+put BR 1 74
+put BR 2 84
+put BR 3 49
+put BR 4 uchar t
+if eq t 1
+bcheck eq argcnt 10 2
+bparse 3 48
+bparse 4 80
+bparse 5 112
+r = barg 6
+note BOT-GUARD name
+bcheck and gt r 0 le r 64 2
+for i ulong r
+bcheck and ge get BA i 32 le get BA i 126 2
+put BR add 144 i get BA i
+end
+brefs 7 208
+brefs 8 336
+brefs 9 464
+bhash 1
+ret
+end
+if eq t 9
+bcheck eq argcnt 3 2
+ret
+end
+bparse 3 16
+if eq t 8
+bcheck eq argcnt 4 2
+ret
+end
+if eq t 2
+bcheck eq argcnt 5 2
+bparse 4 48
+ret
+end
+if eq t 3
+bcheck eq argcnt 7 2
+bparse 4 48
+bpayload 5
+bparse 6 112
+bhash 2
+ret
+end
+bcheck eq argcnt 6 2
+bparse 4 48
+bparse 5 80
+end
+fn bfind to ulong
+for i ulong get BV 1
+if bequal 1 16 3 add mul i 1024 16 32
+ret i
+end
+end
+bfail 11
+ret 0
+end
+fn bmfind to ulong
+for i ulong get BV 2
+if bequal 1 16 5 add mul i 1024 16 32
+if bequal 1 48 5 add mul i 1024 144 32
+ret i
+end
+end
+end
+bfail 14
+ret 0
+end
+fn bcurrent b ulong off ulong to void
+note BOT-GUARD current
+bcheck bequal 1 off 4 mul b 32 32 15
+end
+fn bregister to void
+for i ulong get BV 1
+note BOT-GUARD registered
+bcheck not bequal 1 16 3 add mul i 1024 16 32 10
+end
+note BOT-GUARD botcap
+bcheck lt get BV 1 64 5
+b = get BV 1
+bcopy 3 mul b 1024 1 0 1024
+put BT b 1
+put BV 1 add b 1
+end
+fn brotate b ulong to void
+for i ulong sub bget 8 1
+p = mul i 1024
+if eq get BJ add p 4 2
+if bequal 2 add p 16 1 16 32
+note BOT-GUARD leaseunique
+bcheck not bequal 2 add p 48 1 48 32 13
+end
+end
+end
+bcopy 4 mul b 32 1 48 32
+end
+fn bdeliver to void
+for i ulong get BV 2
+if bequal 1 144 5 add mul i 1024 144 32
+note BOT-GUARD dedup
+put BV 3 1
+ret
+end
+end
+note BOT-GUARD msgcap
+bcheck lt get BV 2 256 5
+i = get BV 2
+bcopy 5 mul i 1024 1 0 1024
+put BS i 1
+put BV 2 add i 1
+end
+fn bmessage t ulong b ulong to void
+m = bmfind
+s = get BS m
+if eq t 4
+note BOT-GUARD pending
+bcheck eq s 1 16
+bcurrent b 80
+bcopy 6 mul m 32 1 80 32
+put BS m 2
+ret
+end
+note BOT-GUARD claimed
+bcheck eq s 2 17
+note BOT-GUARD claimant
+bcheck bequal 1 80 6 mul m 32 32 18
+if eq t 7
+note BOT-GUARD expiry
+bcheck not bequal 1 80 4 mul b 32 32 19
+else
+bcurrent b 80
+end
+if eq t 5
+put BS m 3
+else
+put BS m 1
+end
+for i ulong 32
+put BC add mul m 32 i 0
+end
+end
+fn bapply to void
+put BV 3 0
+t = ulong get BR 4
+note BOT-GUARD type
+bcheck and gt t 0 le t 8 6
+if eq t 1
+bregister
+ret
+end
+b = bfind
+note BOT-GUARD active
+bcheck eq get BT b 1 12
+if eq t 2
+brotate b
+ret
+end
+if eq t 3
+bdeliver
+ret
+end
+if eq t 8
+put BT b 2
+ret
+end
+bmessage t b
+end
+fn bshape to void
+note BOT-GUARD magic
+bcheck and and eq get BR 0 66 eq get BR 1 74 and eq get BR 2 84 eq get BR 3 49 6
+t = ulong get BR 4
+note BOT-GUARD botvalue
+bcheck not bzero 1 16 32 6
+note BOT-GUARD reserved
+bcheck bzero 1 5 3 6
+if eq t 1
+note BOT-GUARD bindings
+bcheck and not bzero 1 48 32 and not bzero 1 80 32 not bzero 1 112 32 6
+bcopy 14 0 1 16 32
+bhash 1
+note BOT-GUARD identity
+bcheck bequal 14 0 1 16 32 6
+z = ulong 0
+for i ulong 64
+v = get BR add 144 i
+if eq v 0
+z = 1
+else
+note BOT-GUARD display
+bcheck and eq z 0 and ge v 32 le v 126 6
+end
+end
+note BOT-GUARD nonempty
+bcheck ne get BR 144 0 6
+end
+if eq t 2
+note BOT-GUARD leasevalue
+bcheck not bzero 1 48 32 6
+end
+if eq t 3
+note BOT-GUARD envelope
+bcheck and not bzero 1 48 32 not bzero 1 112 32 6
+bcopy 14 0 1 144 32
+bhash 2
+note BOT-GUARD content
+bcheck bequal 14 0 1 144 32 6
+end
+if and ge t 4 le t 7
+note BOT-GUARD transition
+bcheck and not bzero 1 48 32 not bzero 1 80 32 6
+end
+n = ulong 48
+if eq t 1
+n = 592
+end
+if eq t 2
+n = 80
+end
+if eq t 3
+n = 176
+end
+if and ge t 4 le t 7
+n = 112
+end
+note BOT-GUARD padding
+bcheck bzero 1 n sub 992 n 6
+end
+fn breplay to void
+p = ulong 0
+while lt p get BV 0 bound 1024
+bcopy 1 0 2 p 1024
+bshape
+note BOT-GUARD sequence
+bcheck eq bget 8 add div p 1024 1 7
+bcopy 14 0 1 992 32
+bhash 0
+note BOT-GUARD checksum
+bcheck bequal 14 0 1 992 32 8
+bapply
+p = add p 1024
+end
+end
+fn bpaths to void
+n = argread 2 BP 0 2048
+bcheck and gt n 0 lt n 2048 2
+put BV 4 ulong n
+bcopy 9 0 8 0 ulong n
+bcopy 10 0 8 0 ulong n
+bcopy 9 ulong n 17 0 5
+bcopy 10 ulong n 18 0 5
+p = ulong 0
+for i ulong ulong n
+if eq get BP i 47
+p = add i 1
+end
+end
+bcheck lt p ulong n 2
+if eq p 0
+put BD 0 46
+put BV 5 1
+else
+bcopy 11 0 8 0 p
+put BV 5 p
+end
+note packed path pair for renameat2
+put BN 0 2
+put BN 2 uchar and add ulong n 5 255
+put BN 3 uchar shr add ulong n 5 8
+bcopy 12 4 10 0 add ulong n 5
+p = add ulong n 9
+put BN p uchar and ulong n 255
+put BN add p 1 uchar shr ulong n 8
+bcopy 12 add p 2 8 0 ulong n
+put BV 6 add p add ulong n 2
+end
+fn bload to void
+n = get BV 4
+note Linux aarch64 O_NOFOLLOW=0100000 and O_DIRECTORY=040000
+lk = int fopen BK 0 add n 5 or int 32768 int 66 384
+bcheck ge lk 0 3
+note BOT-GUARD lock
+bcheck eq flock lk 6 0 9
+put BV 7 ulong lk
+fd = fopen BP 0 n 32768 0
+if eq fd -2
+ret
+end
+bcheck ge fd 0 3
+p = ulong 0
+while lt p len BJ bound 999999
+r = read int fd BJ p sub len BJ p
+bcheck ge r 0 3
+if eq r 0
+break
+end
+p = add p ulong r
+end
+x = new uchar 1 0
+r = read int fd x 0 1
+bcheck eq r 0 5
+bcheck eq fclose int fd 0 3
+note BOT-GUARD alignment
+bcheck eq rem p 1024 0 6
+put BV 0 p
+breplay
+end
+fn bfault n ulong to void
+for i ulong ulong envcnt
+r = envread i BA 0 len BA
+if eq r 11
+if bequal 7 0 16 0 10
+if eq ulong get BA 10 add n 48
+w = killpid int getpid 9
+bfail 3
+end
+end
+end
+end
+end
+fn bcommit to void
+n = get BV 4
+note BOT-GUARD eventcap
+bcheck lt get BV 0 len BJ 5
+fd = int fopen BF 0 add n 5 or int 32768 int 578 384
+bcheck ge fd 0 3
+bfault 1
+bwrite fd 2 0 get BV 0
+bfault 2
+bwrite fd 1 0 1024
+bfault 3
+bcheck eq fsync fd 0 3
+bfault 4
+bcheck eq fclose fd 0 3
+bcheck eq renames BN 0 get BV 6 0 0 3
+bfault 5
+df = int fopen BD 0 get BV 5 or int 32768 int 16384 0
+bcheck ge df 0 3
+bcheck eq fsync df 0 3
+bfault 6
+bcheck eq fclose df 0 3
+end
+fn bshow to void
+for i ulong get BV 1
+w = write 1 bn 0 len bn
+bhex 3 mul i 1024 592
+bspace
+bdecimal get BT i
+bend
+w = write 1 ln 0 len ln
+bhex 3 add mul i 1024 16 32
+bspace
+bhex 4 mul i 32 32
+bend
+end
+for i ulong get BV 2
+w = write 1 mn 0 len mn
+bhex 5 add mul i 1024 16 160
+bspace
+bdecimal get BS i
+bspace
+bhex 6 mul i 32 32
+bend
+end
+end
+fn main to int
+bcheck ge argcnt 3 2
+bpaths
+bload
+t = bcommand
+if eq t 9
+bcheck eq argcnt 3 2
+bshow
+ret 0
+end
+bargs t
+bset 8 add div get BV 0 1024 1
+bshape
+bapply
+if eq get BV 3 1
+w = write 1 dup 0 len dup
+bhex 1 144 32
+bend
+ret 0
+end
+bhash 0
+bcommit
+w = write 1 ok 0 len ok
+if eq t 3
+bhex 1 144 32
+else
+bhex 1 16 32
+end
+bend
+ret 0
+end
