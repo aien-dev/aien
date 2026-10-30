@@ -260,8 +260,14 @@ state, checks signatures and independent recomputation through Open Humanity,
 then calls `canon ingest` and proposes RESULT and VERIFY through the kernel.
 `recovery.om` compares every field of an already-persisted RESULT with the
 canonical RESULT before VERIFY-only recovery (mismatch: exit 33). The current
-kernel generation is supplied to canonical ingestion; stale wire generations
-are refused by canon (exit 14), not by a shell generation rule.
+kernel generation is supplied to canonical ingestion. Immediately before ingest,
+recovery replays the current trusted plan+journal again. The sequencer routes
+the objective from its effective header and operand from its effective node into
+the final eight words of canon's 23-word expected record; neither pin comes from
+the submitted document or bundle. Stale receipts with changed operands refuse
+at the earlier operand check (exit 24). A correction round-trip returning to the
+original operand isolates stale-generation refusal (exit 14). These decisions
+remain in Omega, not shell admission rules.
 `recovery-build.sh` checks the same e5b32567 compiler digest as canon-build.sh.
 
 Effective-operand folding streams the unchanged kernel plan+journal bytes after
@@ -308,9 +314,18 @@ records. History regressions exercise multiple CORRECTs, 257 and 1000 CORRECTs,
 and two CORRECTs after a persisted RESULT. Capacity probes check the largest
 accepted kernel input and refused boundary/over-capacity inputs against both
 kernel and recovery, with matching observed exits in `capacity.tsv`.
+Authenticated substitution regressions replace a complete validly signed job,
+receipt and countersign after publication but before ingest. Different objective
+and operand substitutions must pass Open Humanity's pinned-key check but refuse
+at canon with 23 and 24 respectively, emit no events, preserve the journal and
+leave the generation running. A generation-two pre-CORRECT operand substitution
+also refuses with 24. Restoring the original checked bytes then completes the
+same dispatch exactly once. Observed exits are filed in `pin-refusals.tsv`.
 Guard-removal mutants challenge persist-before-DISPATCH, check-before-ingest,
 current-generation routing and Omega RESULT conflict checking. A fifth mutant
 stops folding after the first CORRECT; the last-CORRECT regression must kill it.
+Two further mutants pass the submitted document's own objective or operand as
+the expected pin; the authenticated substitution cases must kill both.
 Every accepted generation has one DISPATCH, RESULT and VERIFY.
 Recovery checks that persisted bundle bytes never change.
 

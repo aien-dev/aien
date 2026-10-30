@@ -105,11 +105,21 @@ done <<< "$current"
 ingest_gen=$gen
 # M1-GUARD generation-match
 ingest_gen=$current_gen
+# Recovery, not submitted wire bytes, supplies the objective and latest operand.
+{
+  printf '1\n'
+  cat "$STATE/plan" "$STATE/journal"
+} | "$RECOVERY" > "$art/ingest-effective"
+read -r -a trusted < "$art/ingest-effective"
+# M1-GUARD objective-pin
+objective_pin="${trusted[*]:2:4}"
+# M1-GUARD operand-pin
+operand_pin="${trusted[*]:35:4}"
 next=$(( $(wc -l < "$STATE/journal") + 1 ))
 if test "$st" = 3; then next=$((next - 1)); fi
 {
   cat "$art/document" "$out/$dag.mjr1" "$out/$dag.mjv"
-  printf '5 1 %s 1 20 5 %s %s %s\n' "$ingest_gen" "$EXECUTOR_WORDS" "$VERIFIER_WORDS" "$next"
+  printf '5 1 %s 1 20 5 %s %s %s %s %s\n' "$ingest_gen" "$EXECUTOR_WORDS" "$VERIFIER_WORDS" "$next" "$objective_pin" "$operand_pin"
 } | "$CANON" ingest > "$art/events"
 # Each event is independently journaled via the kernel. Recovery from a torn
 # pair proves the persisted RESULT is identical before proposing only VERIFY.

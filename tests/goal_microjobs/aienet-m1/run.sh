@@ -11,8 +11,8 @@ here="$repo/tests/goal_microjobs/aienet-m1"
 : "${RECOMPUTE_OMC:?e5b32567 omc}"
 : "${SHA_OMEGA_TREE:?tree containing pinned SHA unit}"
 : "${CANON:?compiled canon from feat/aienet-m1-canon}"
-canon_source=4e85855210a4828f1143c08518c0aea99208d008
-canon_binary=e894ce48da2c885e84a4c68d667bd9a7cdbe965990feb423d5370e12cc09b103
+canon_source=b5057df61bc2175e6e1bf23d1ebce0a2857f8584
+canon_binary=4d7d2a0bda184622980f61570b8ae5294a1989c89af2aa498bdbfa443abf2b1b
 git -C "$repo" merge-base --is-ancestor "$canon_source" HEAD
 test "$(sha256sum "$CANON" | cut -d' ' -f1)" = "$canon_binary"
 export CARGO_BUILD_JOBS=4 PYTHONDONTWRITEBYTECODE=1
@@ -67,15 +67,16 @@ driver="$repo/scripts/goal_microjobs/microjobs.sh"
 sequence="$here/sequence.sh"
 export STATE LISTEN
 new_state() {
+  local state_seed=${2:-7} state_objective=${3:-$objective}
   STATE="$E/${CASE_PREFIX:-}$1"
   mkdir -p "$STATE/bindings"
-  printf '010002000300020000000000000007' | xxd -r -p > "$STATE/payload1"
+  printf '01000200030002%016x' "$state_seed" | xxd -r -p > "$STATE/payload1"
   operand=$(hash_words < "$STATE/payload1")
   {
-    printf '1 1 %s 7 9 1 1 1 4 0 0 0 0 120000\n' "$objective"
+    printf '1 1 %s 7 9 1 1 1 4 0 0 0 0 120000\n' "$state_objective"
     printf '2 1 1 2 0 0 1 0 0 0 0 1 5 1 1 7 120000 1 %s 0\n' "$operand"
   } > "$STATE/input-plan"
-  printf '4 %s %s %s %s %s %s 2 3 2 7 1\n' "$objective" "$tenant" "$subject" "$approval" "$capability" "$expires" > "$STATE/bindings/1"
+  printf '4 %s %s %s %s %s %s 2 3 2 %s 1\n' "$state_objective" "$tenant" "$subject" "$approval" "$capability" "$expires" "$state_seed" > "$STATE/bindings/1"
   bash "$driver" init "$STATE" "$STATE/input-plan"
   port=$(shuf -i 49152-65535 -n 1)
   test -z "$(ss -H -ltn "sport = :$port")"
@@ -169,24 +170,37 @@ correct() {
   printf '4 %s %s %s %s %s %s 2 3 2 8 1\n' "$objective" "$tenant" "$subject" "$approval" "$capability" "$expires" > "$STATE/bindings/2"
 }
 stale() {
-  new_state stale
+  local mode=${1:-single} expected=24 target=2 guard=operand-pin
+  new_state "stale-$mode"
   M1_PAUSE=published bash "$sequence" > "$STATE/first.log" 2>&1 &
   local pid=$!; active_pid=$pid
   wait_file "$STATE/paused" "$pid"
   correct
+  if test "$mode" = roundtrip; then
+    bash "$driver" propose "$STATE" 6 1 0 2 7 0 $operand 0 0
+    printf '4 %s %s %s %s %s %s 2 3 2 7 1\n' "$objective" "$tenant" "$subject" "$approval" "$capability" "$expires" > "$STATE/bindings/3"
+    expected=14; target=3; guard=generation-match
+  fi
   cp "$STATE/journal" "$STATE/before-stale"
   rm "$STATE/paused"
   local rc=0; wait "$pid" || rc=$?
-  semantic generation-match test "$rc" = 14
+  semantic "$guard" test "$rc" = "$expected"
   cmp "$STATE/journal" "$STATE/before-stale"
   # Independently challenge canon with the saved generation1 wire receipt.
   local dag; dag=$(sha256sum "$STATE/g1/document" | cut -d' ' -f1)
-  { cat "$STATE/g1/document" "$STATE/g1/out/$dag.mjr1" "$STATE/g1/out/$dag.mjv"; printf '5 1 2 1 20 5 %s %s 3\n' "$EXECUTOR_WORDS" "$VERIFIER_WORDS"; } > "$STATE/stale.ingest"
+  local trusted
+  { printf '1\n'; cat "$STATE/plan" "$STATE/journal"; } | "$RECOVERY" > "$STATE/stale.effective"
+  read -r -a trusted < "$STATE/stale.effective"
+  {
+    cat "$STATE/g1/document" "$STATE/g1/out/$dag.mjr1" "$STATE/g1/out/$dag.mjv"
+    printf '5 1 %s 1 20 5 %s %s %s %s %s\n' "$target" "$EXECUTOR_WORDS" "$VERIFIER_WORDS" "$(( $(wc -l < "$STATE/journal") + 1 ))" "${trusted[*]:2:4}" "${trusted[*]:35:4}"
+  } > "$STATE/stale.ingest"
   rc=0; "$CANON" ingest < "$STATE/stale.ingest" > "$STATE/stale.events" 2> "$STATE/stale.err" || rc=$?
-  test "$rc" = 14 && test ! -s "$STATE/stale.events"
+  test "$rc" = "$expected" && test ! -s "$STATE/stale.events"
   run_sequence
-  exactly_once 2
+  exactly_once "$target"
 }
+generation_probe() { stale roundtrip; }
 publish_only() {
   M1_PAUSE=published bash "$sequence" > "$STATE/first.log" 2>&1 &
   local pid=$!; active_pid=$pid
@@ -228,7 +242,7 @@ duplicate() {
   dag=$(sha256sum "$STATE/g1/document" | cut -d' ' -f1)
   {
     cat "$STATE/g1/document" "$STATE/g1/out/$dag.mjr1" "$STATE/g1/out/$dag.mjv"
-    printf '5 1 1 1 20 5 %s %s 4\n' "$EXECUTOR_WORDS" "$VERIFIER_WORDS"
+    printf '5 1 1 1 20 5 %s %s 4 %s %s\n' "$EXECUTOR_WORDS" "$VERIFIER_WORDS" "$objective" "$operand"
   } | "$CANON" ingest > "$STATE/replayed.events"
   read -r line < "$STATE/replayed.events"
   read -r _ _ rest <<< "$line"
@@ -248,7 +262,7 @@ duplicate() {
   "$RUN" check --bundle "$STATE/second-out/$dag.an0b" --mjr1 "$STATE/second-out/$dag.mjr1" --mjv "$STATE/second-out/$dag.mjv" --keys "$KEYS" --pins "$PINS"
   {
     cat "$STATE/g1/document" "$STATE/second-out/$dag.mjr1" "$STATE/second-out/$dag.mjv"
-    printf '5 1 1 1 20 5 %s %s 4\n' "$EXECUTOR_WORDS" "$VERIFIER_WORDS"
+    printf '5 1 1 1 20 5 %s %s 4 %s %s\n' "$EXECUTOR_WORDS" "$VERIFIER_WORDS" "$objective" "$operand"
   } | "$CANON" ingest > "$STATE/second.events"
   read -r line < "$STATE/second.events"
   read -r _ _ rest <<< "$line"
@@ -271,6 +285,71 @@ attestation_signature() {
   semantic check-before-ingest test "$rc" = 14
   cmp "$STATE/journal" "$STATE/before"
 }
+pin_substitution() {
+  local mode=$1 guard=operand-pin expected=24 source_gen=1 target_gen=1 source_state source_dag
+  local other_objective old_operand target_dag pid rc=0 tag id st generation rest matches=0
+  case "$mode" in
+    objective)
+      guard=objective-pin; expected=23
+      other_objective=$(printf aienet-m1-other-objective | hash_words)
+      new_state foreign-objective 7 "$other_objective"
+      ;;
+    operand) new_state foreign-operand 8 ;;
+    after-correct)
+      new_state foreign-old-operand 8
+      old_operand=$(printf '010002000300020000000000000007' | xxd -r -p | hash_words)
+      bash "$driver" propose "$STATE" 6 1 0 1 7 0 $old_operand 0 0
+      printf '4 %s %s %s %s %s %s 2 3 2 7 1\n' "$objective" "$tenant" "$subject" "$approval" "$capability" "$expires" > "$STATE/bindings/2"
+      source_gen=2; target_gen=2
+      ;;
+    *) return 2 ;;
+  esac
+  run_sequence
+  exactly_once "$source_gen"
+  source_state=$STATE
+  source_dag=$(sha256sum "$STATE/g$source_gen/document" | cut -d' ' -f1)
+  new_state "substitute-$mode"
+  if test "$mode" = after-correct; then correct; fi
+  # The real sequencer is paused after authentic artifacts arrive but before
+  # its check/ingest. Replace the entire signed submission, not isolated bytes.
+  M1_PAUSE=published bash "$sequence" > "$STATE/first.log" 2>&1 &
+  pid=$!; active_pid=$pid
+  wait_file "$STATE/paused" "$pid"
+  target_dag=$(sha256sum "$STATE/g$target_gen/document" | cut -d' ' -f1)
+  local art="$STATE/g$target_gen" foreign="$source_state/g$source_gen"
+  mkdir "$STATE/original"
+  cp "$art/document" "$art/job.an0b" "$art/out/$target_dag.mjr1" "$art/out/$target_dag.mjv" "$STATE/original/"
+  cp "$foreign/document" "$art/document"
+  cp "$foreign/job.an0b" "$art/job.an0b"
+  cp "$foreign/out/$source_dag.mjr1" "$art/out/$target_dag.mjr1"
+  cp "$foreign/out/$source_dag.mjv" "$art/out/$target_dag.mjv"
+  "$RUN" check --bundle "$art/job.an0b" --mjr1 "$art/out/$target_dag.mjr1" --mjv "$art/out/$target_dag.mjv" --keys "$KEYS" --pins "$PINS" > "$STATE/substitute-check.log" 2>&1
+  cp "$STATE/journal" "$STATE/before-substitute"
+  rm "$STATE/paused"
+  wait "$pid" || rc=$?
+  active_pid=
+  printf '%s%s\t%s\t%s\n' "${CASE_PREFIX:-}" "$mode" "$expected" "$rc" >> "$E/pin-refusals.tsv"
+  semantic "$guard" test "$rc" = "$expected"
+  test ! -s "$art/events"
+  cmp "$STATE/journal" "$STATE/before-substitute"
+  bash "$driver" status "$STATE" > "$STATE/refused-status"
+  while read -r tag id st generation rest; do
+    if test "$tag/$id" = 101/1; then
+      matches=$((matches+1))
+      test "$st/$generation" = "2/$target_gen"
+    fi
+  done < "$STATE/refused-status"
+  test "$matches" = 1
+  # Restore the originally checked bytes: the same dispatch can then complete.
+  cp "$STATE/original/document" "$art/document"
+  cp "$STATE/original/job.an0b" "$art/job.an0b"
+  cp "$STATE/original/$target_dag.mjr1" "$art/out/$target_dag.mjr1"
+  cp "$STATE/original/$target_dag.mjv" "$art/out/$target_dag.mjv"
+  run_sequence
+  exactly_once "$target_gen"
+}
+operand_substitution() { pin_substitution operand; }
+objective_substitution() { pin_substitution objective; }
 conflicting_result() {
   new_state conflicting-result
   M1_PAUSE=resulted bash "$sequence" > "$STATE/first.log" 2>&1 &
@@ -394,6 +473,12 @@ mutant() {
     if test "$line" = "# M1-GUARD $guard"; then skip=1; fi
     printf '%s\n' "$line" >> "$sequence"
     if test "$name" = persist && test "$line" = '# M1-MUTANT late-persist insertion point'; then printf 'persist\n' >> "$sequence"; fi
+    if test "$name/$line" = 'doc-objective/# M1-GUARD objective-pin'; then
+      printf 'objective_pin=$(od -An -tu8 --endian=big -j8 -N32 "$art/document")\n' >> "$sequence"
+    fi
+    if test "$name/$line" = 'doc-operand/# M1-GUARD operand-pin'; then
+      printf 'operand_pin=$(od -An -tu8 --endian=big -j488 -N32 "$art/document")\n' >> "$sequence"
+    fi
   done < "$original"
   # The copy is outside the repository; preserve its known adapter root.
   export M1_REPO="$repo"
@@ -419,6 +504,7 @@ printf '# canon_source\t%s\n# canon_binary_sha256\t%s\ncase\texpected\tobserved\
 printf '# oh_source\t%s\n# oh_run_sha256\t%s\n# oh_serve_sha256\t%s\n' "$oh_source" "$oh_run_sha" "$oh_serve_sha" > "$E/metadata.tsv"
 cat "$E/summary.tsv" >> "$E/metadata.tsv"
 mv "$E/metadata.tsv" "$E/summary.tsv"
+printf 'case\texpected_refusal\tobserved_exit\n' > "$E/pin-refusals.tsv"
 case_run() {
   local name=$1; shift
   local rc=0
@@ -448,10 +534,14 @@ for boundary in persisted dispatched published resulted; do case_run "crash-$bou
 case_run crash-worker-admitted worker_crash
 case_run crash-worker-done worker_crash done
 case_run stale stale
+case_run stale-restored-operand generation_probe
 case_run altered altered
 case_run signed-wrong-output wrong_output
 case_run duplicate duplicate
 case_run attestation-signature attestation_signature
+case_run substitute-operand operand_substitution
+case_run substitute-objective objective_substitution
+case_run substitute-pre-correct pin_substitution after-correct
 if test "$failures" != 0; then
   cat "$E/summary.tsv"
   echo 'mutants NOT_RUN: baseline cases must all pass'
@@ -460,9 +550,11 @@ fi
 printf 'mutant\tverdict\tprobe_exit\n' > "$E/mutants.tsv"
 case_run mutant-persist mutant persist persist-before-dispatch persist_probe
 case_run mutant-check mutant check check-before-ingest attestation_signature
-case_run mutant-generation mutant generation generation-match stale
+case_run mutant-generation mutant generation generation-match generation_probe
 case_run mutant-result-conflict omega_mutant conflict result-conflict conflicting_result
 case_run mutant-first-correct omega_mutant first-correct latest-correct multiple_corrects
+case_run mutant-doc-objective mutant doc-objective objective-pin objective_substitution
+case_run mutant-doc-operand mutant doc-operand operand-pin operand_substitution
 cat "$E/summary.tsv" "$E/mutants.tsv"
 printf 'M1 cases=%s failures=%s evidence=%s\n' "$checks" "$failures" "$E"
 test "$failures" = 0

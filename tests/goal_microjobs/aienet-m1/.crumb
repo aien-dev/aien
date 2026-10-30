@@ -3,14 +3,14 @@
     "generated": {
       "children": [],
       "children_root": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "compiled_at": "2026-10-30T01:10:49Z",
+      "compiled_at": "2026-10-30T01:37:38Z",
       "compiler": "crumb-compile/1",
-      "digest": "sha256:fdea64648acf97d32735403c1cc37d3f43dbb014c5dd8f155a58d5ea60fb2c91",
+      "digest": "sha256:13164921f84a8a74627a4118f0470649f2299af21d033101182e255e830726d1",
       "evidence_files": 0,
       "evidence_root": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "files": 2,
-      "generated_at_commit": "8f83b0361f3d666d71d0fbde54e493b86ca469f4",
-      "source_tree": "sha256:ed529d4518b7cac80ee68a67c8e8f3f00d147fb31731d0950f6ffb6b599bbfbf"
+      "generated_at_commit": "48892b8108a544e386dba9c21708bd19cf66403d",
+      "source_tree": "sha256:baa3f84e7d158a49defdff0804587eb136fa397ac4f1030ad1389b7591f9954c"
     }
   },
   "name": "aienet-m1",
