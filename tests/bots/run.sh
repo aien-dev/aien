@@ -7,15 +7,42 @@ hex() { printf '%064x' "$1"; }
 K=$(hex 1); L=$(hex 2); R=$(hex 3); W=$(hex 4); H=$(hex 5); V=$(hex 6); Z=$(hex 0)
 fail() { echo "FAIL $*"; exit 1; }
 pass() { echo "PASS $*"; }
+probe_result() {
+ # A separate receipt preserves the binary status even though the assertion child exits 1.
+ if [ -n "${PROBE_META:-}" ]; then
+  printf '%s\t%s\t%s\n' "$1" "$2" "$3" > "$PROBE_META"
+ fi
+}
+probe_state_fail() {
+ probe_result 0 0 KILLED_STATE
+ fail "$*"
+}
+classify_status() {
+ local expected=$1 actual=$2
+ if ((actual>=101 && actual<=114)); then echo TRAPPED
+ elif ((actual>128 && actual<=192)); then echo SIGNALLED
+ elif [ "$actual" = 0 ] && [ "$expected" != 0 ]; then echo KILLED_ADMIT
+ elif ((actual>=2 && actual<=19)) && [ "$(cat "$T/out")" = "REFUSE $actual" ]; then echo KILLED_CODE
+ else echo ERROR
+ fi
+}
 invoke() {
  local expected=$1; shift
  set +e
  "$@" > "$T/out" 2> "$T/err"
  local rc=$?
  set -e
- [ "$rc" = "$expected" ] || { cat "$T/out" "$T/err"; fail "expected=$expected observed=$rc command=$*"; }
+ probe_result "$expected" "$rc" SURVIVED
+ if [ "$rc" != "$expected" ]; then
+  probe_result "$expected" "$rc" "$(classify_status "$expected" "$rc")"
+  cat "$T/out" "$T/err"
+  fail "expected=$expected observed=$rc command=$*"
+ fi
  if [ "$expected" -ge 2 ] && [ "$expected" -le 19 ]; then
-  [ "$(cat "$T/out")" = "REFUSE $expected" ] || fail "refusal output $*"
+  if [ "$(cat "$T/out")" != "REFUSE $expected" ]; then
+   probe_result "$expected" "$rc" KILLED_OUTPUT
+   fail "refusal output $*"
+  fi
  fi
  pass "rc=$rc $*"
 }
@@ -44,7 +71,7 @@ fixture_probe() {
  registered) cp "$F/base" "$j"; invoke 10 "$B" register "$j" "$K" "$L" "$R" Allen "$K,$L" "$R" "$H";;
  botcap) cp "$F/botcap" "$j"; invoke 5 "$B" register "$j" "$(hex 999)" "$L" "$R" Extra - - -;;
  leaseunique) cp "$F/lease" "$j"; invoke 13 "$B" rotate "$j" "$ID" "$W";;
- dedup) cp "$F/acked" "$j"; cp "$j" "$T/before"; invoke 0 "$B" deliver "$j" "$ID" "$K" hello "$H"; [ "$(cat "$T/out")" = "DUPLICATE $MID" ] || fail duplicate-output; cmp "$j" "$T/before" || fail duplicate-append; pass duplicate-no-append;;
+ dedup) cp "$F/acked" "$j"; cp "$j" "$T/before"; invoke 0 "$B" deliver "$j" "$ID" "$K" hello "$H"; [ "$(cat "$T/out")" = "DUPLICATE $MID" ] || probe_state_fail duplicate-output; cmp "$j" "$T/before" || probe_state_fail duplicate-append; pass duplicate-no-append;;
  msgcap) cp "$F/msgcap" "$j"; invoke 5 "$B" deliver "$j" "$ID" "$K" overflow "$H";;
  pending) cp "$F/acked" "$j"; invoke 16 "$B" claim "$j" "$ID" "$MID" "$V";;
  claimed) cp "$F/acked" "$j"; invoke 17 "$B" ack "$j" "$ID" "$MID" "$V";;
@@ -72,6 +99,45 @@ fixture_probe() {
  *) fail "unknown probe $g";;
  esac
 }
+barrier_probe() {
+ B=$1
+ T=$(mktemp -d "$2/barrier-XXXXXX")
+ local j=$T/j trace=$T/commit.strace line fd kind events=''
+ declare -A kinds=()
+ if ! command -v strace >/dev/null; then
+  echo 'NOT_RUN commit barriers: strace unavailable'
+  probe_result 0 NA ERROR
+  fail 'strace required'
+ fi
+ invoke 0 strace -qq -s 4096 -o "$trace" -e trace=openat,close,fsync,renameat2 \
+  "$B" register "$j" "$K" "$L" "$R" Allen - - -
+ while IFS= read -r line; do
+  if [[ "$line" == openat* && "$line" =~ =[[:space:]]([0-9]+)$ ]]; then
+   fd=${BASH_REMATCH[1]}
+   if [[ "$line" == *"\"$j.cand\""* ]]; then kinds[$fd]=candidate
+   elif [[ "$line" == *O_DIRECTORY* ]]; then kinds[$fd]=directory
+   else kinds[$fd]=other
+   fi
+  elif [[ "$line" =~ ^fsync\(([0-9]+)\)[[:space:]]*=[[:space:]]0$ ]]; then
+   fd=${BASH_REMATCH[1]}; kind=${kinds[$fd]:-unknown}
+   events="${events}${kind} "
+  elif [[ "$line" == renameat2* && "$line" == *"\"$j.cand\""* && "$line" == *"\"$j\""* && "$line" =~ =[[:space:]]0$ ]]; then
+   events="${events}rename "
+  elif [[ "$line" =~ ^close\(([0-9]+)\) ]]; then
+   unset "kinds[${BASH_REMATCH[1]}]"
+  fi
+ done < "$trace"
+ printf '%s\n' "$events" > "$T/barriers.txt"
+ if [ "$events" != 'candidate rename directory ' ]; then
+  probe_result 0 0 KILLED_BARRIER
+  fail "commit barriers expected=candidate,rename,directory observed=$events trace=$trace"
+ fi
+ pass "commit-barrier-order trace=$trace (not power-loss qualification)"
+}
+if [ "${1:-}" = --barrier ]; then
+ barrier_probe "$2" "$3"
+ exit 0
+fi
 if [ "${1:-}" = --probe ]; then
  ID=$5; MID=$6
  fixture_probe "$2" "$3" "$4" "$7"
@@ -84,6 +150,10 @@ case "$BOTS_RUN_ROOT" in "$HERE"|"$HERE"/*) fail 'run root must be external';; e
 mkdir -p "$BOTS_RUN_ROOT"
 [ ! -e "$BOTS_RUN_ROOT/transcript" ] || fail 'use a fresh run root'
 exec > >(tee "$BOTS_RUN_ROOT/transcript") 2>&1
+if ! command -v strace >/dev/null; then
+ printf 'barriers=NOT_RUN\nreason=strace unavailable\n' > "$BOTS_RUN_ROOT/results.txt"
+ fail 'NOT_RUN: strace required for commit-barrier acceptance'
+fi
 T=$BOTS_RUN_ROOT/work
 F=$BOTS_RUN_ROOT/fixtures
 mkdir -p "$T" "$F" "$BOTS_RUN_ROOT/mutants"
@@ -214,25 +284,62 @@ cp "$F/pending" "$T/torn"; dd if="$F/claimed" of="$T/torn.cand" bs=1 count=3500 
 invoke 0 "$B" show "$T/torn"; cp "$T/out" "$T/torn-show"
 invoke 0 "$B" show "$F/pending"; cmp "$T/out" "$T/torn-show"; pass torn-candidate-ignored
 invoke 0 "$B" claim "$T/torn" "$ID" "$MID" "$W"; cmp "$T/torn" "$F/claimed"; pass torn-candidate-replaced
-printf 'guard\tbuild_exit\tprobe_exit\tverdict\n' > "$BOTS_RUN_ROOT/mutants.tsv"
-killed=0; survived=0
-for g in $GUARDS; do
+barrier_probe "$B" "$BOTS_RUN_ROOT"
+printf 'guard\tbuild_exit\tprobe_exit\texpected_binary_exit\tbinary_exit\tverdict\n' > "$BOTS_RUN_ROOT/mutants.tsv"
+declare -A counts=()
+for g in $GUARDS fsync-candidate fsync-directory barrier-order; do
  md=$BOTS_RUN_ROOT/mutants/$g; mkdir -p "$md"
- if [ "$g" = dedup ]; then
-  sed '/^note BOT-GUARD dedup$/{n;s/.*/put BV 3 0/;}' "$HERE/src/bots/bots.om" > "$md/bots.om"
- else
-  sed "/^note BOT-GUARD $g\$/{n;s/^bcheck .*/bcheck true 99/;}" "$HERE/src/bots/bots.om" > "$md/bots.om"
- fi
+ case "$g" in
+ dedup)
+  sed '/^note BOT-GUARD dedup$/{n;s/.*/put BV 3 0/;}' "$HERE/src/bots/bots.om" > "$md/bots.om";;
+ fsync-candidate)
+  sed 's/^bcheck eq fsync fd 0 3$/bcheck true 3/' "$HERE/src/bots/bots.om" > "$md/bots.om";;
+ fsync-directory)
+  sed 's/^bcheck eq fsync df 0 3$/bcheck true 3/' "$HERE/src/bots/bots.om" > "$md/bots.om";;
+ barrier-order)
+  # Keep both barriers, but move the atomic rename before candidate fsync.
+  sed '/^bcheck eq renames BN 0 get BV 6 0 0 3$/d; /^bcheck eq fsync fd 0 3$/i bcheck eq renames BN 0 get BV 6 0 0 3' "$HERE/src/bots/bots.om" > "$md/bots.om";;
+ *)
+  sed "/^note BOT-GUARD $g\$/{n;s/^bcheck .*/bcheck true 99/;}" "$HERE/src/bots/bots.om" > "$md/bots.om";;
+ esac
  cmp -s "$md/bots.om" "$HERE/src/bots/bots.om" && fail "no mutation $g"
- BOTS_SOURCE=$md/bots.om sh "$HERE/scripts/bots/build.sh" "$md/bots" > "$md/build.txt" 2>&1 || fail "mutant did not compile $g"
  set +e
- bash "$0" --probe "$g" "$md/bots" "$F" "$ID" "$MID" "$md" > "$md/probe.txt" 2>&1
- rc=$?
+ BOTS_SOURCE=$md/bots.om sh "$HERE/scripts/bots/build.sh" "$md/bots" > "$md/build.txt" 2>&1
+ build_rc=$?
  set -e
- if [ "$rc" = 0 ]; then verdict=SURVIVED; survived=$((survived+1)); else verdict=KILLED; killed=$((killed+1)); fi
- printf '%s\t0\t%s\t%s\n' "$g" "$rc" "$verdict" >> "$BOTS_RUN_ROOT/mutants.tsv"
- echo "$verdict $g probe_exit=$rc"
+ rc=NA; expected=NA; actual=NA; verdict=ERROR
+ if [ "$build_rc" = 0 ]; then
+  set +e
+  case "$g" in
+  fsync-*|barrier-order) PROBE_META=$md/outcome.tsv bash "$0" --barrier "$md/bots" "$md" > "$md/probe.txt" 2>&1;;
+  *) PROBE_META=$md/outcome.tsv bash "$0" --probe "$g" "$md/bots" "$F" "$ID" "$MID" "$md" > "$md/probe.txt" 2>&1;;
+  esac
+  rc=$?
+  set -e
+  if [ -f "$md/outcome.tsv" ]; then
+   IFS=$'\t' read -r expected actual verdict < "$md/outcome.tsv"
+   # An assertion child that failed without recording a specific counterexample is infrastructure failure.
+   if [ "$rc" != 0 ] && [ "$verdict" = SURVIVED ]; then verdict=ERROR; fi
+   if [ "$rc" = 0 ] && [ "$verdict" != SURVIVED ]; then verdict=ERROR; fi
+  fi
+ fi
+ counts[$verdict]=$((${counts[$verdict]:-0}+1))
+ printf '%s\t%s\t%s\t%s\t%s\t%s\n' "$g" "$build_rc" "$rc" "$expected" "$actual" "$verdict" >> "$BOTS_RUN_ROOT/mutants.tsv"
+ echo "$verdict $g binary_exit=$actual probe_exit=$rc"
 done
-printf 'mutants_killed=%s\nmutants_survived=%s\ncrash_cases=48\n' "$killed" "$survived" > "$BOTS_RUN_ROOT/results.txt"
-[ "$survived" = 0 ] || fail "surviving mutants=$survived"
-pass "ALL mutants_killed=$killed mutants_survived=$survived crash_cases=48"
+{
+ for verdict in KILLED_ADMIT KILLED_CODE KILLED_STATE KILLED_OUTPUT KILLED_BARRIER TRAPPED SIGNALLED ERROR SURVIVED; do
+  printf '%s=%s\n' "$verdict" "${counts[$verdict]:-0}"
+ done
+ printf 'crash_cases=48\nbarriers=PASS\n'
+} > "$BOTS_RUN_ROOT/results.txt"
+cat "$BOTS_RUN_ROOT/results.txt"
+# Fixed-capacity array bounds make botcap/msgcap removals trap; do not claim semantic kills.
+while IFS=$'\t' read -r g build_rc rc expected actual verdict; do
+ case "$verdict" in
+ KILLED_*) ;;
+ TRAPPED) [[ "$g" = botcap || "$g" = msgcap ]] && [ "$actual" = 103 ] || fail "unexpected trap $g=$actual";;
+ *) fail "unqualified mutant $g verdict=$verdict";;
+ esac
+done < <(sed '1d' "$BOTS_RUN_ROOT/mutants.tsv")
+pass 'ALL classified mutants; 48 crash equalities; commit barrier order PASS (not power-loss qualification)'

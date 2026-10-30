@@ -3,14 +3,14 @@
     "generated": {
       "children": [],
       "children_root": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "compiled_at": "2026-10-30T00:58:14Z",
+      "compiled_at": "2026-10-30T01:17:49Z",
       "compiler": "crumb-compile/1",
-      "digest": "sha256:a08eb763297c28d8decb4f281845d8c27f48e5099eb42eda594c659ee12e65b9",
+      "digest": "sha256:2d28448812bbbcb9afc98df6b680a7cb97ecf73bbb955334d1c34486afdb6e14",
       "evidence_files": 0,
       "evidence_root": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "files": 0,
-      "generated_at_commit": "b02bc7fb8c28bf90803d5bd357d1749cabdfc974",
-      "source_tree": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      "files": 1,
+      "generated_at_commit": "144370e8818ff5c87a7c751291fbad2859d26686",
+      "source_tree": "sha256:ae28d99ab544137ec9321f14d5d1a2c45ae3c16038aef930ec69f12bc8c57b19"
     }
   },
   "name": "bots-build",

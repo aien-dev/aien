@@ -1,6 +1,6 @@
 # M2: persistent bot records and durable inboxes
 
-PROPOSED local component for [architecture #311](https://github.com/aien-dev/aien-architecture-mv/issues/311). Not a master plan, network schema, capability, or new subject identity.
+PROPOSED local component for the [bot-network plan comment](https://github.com/aien-dev/aien-architecture-mv/issues/311#issuecomment-6511785962), coordinated on architecture issue #311, whose title is TURING NETWORK R0. Not a master plan, network schema, capability, or new subject identity.
 
 ## Owners and source map
 
@@ -75,12 +75,14 @@ The build adapter checks `omc` SHA-256 `2c82480596bbdc50cda9626866209ef662d5834f
 taskset -c 10-14 nice -n 19 ionice -c3 env PYTHONDONTWRITEBYTECODE=1 \
  OMEGA_OMC=/home/drakestapleton/workspace/omega-mcp/build/omc \
  OMEGA_MV=/home/drakestapleton/workspace/bridge-g1-mv \
- BOTS_RUN_ROOT=/tmp/aienet-m2-acceptance-final bash tests/bots/run.sh
+ BOTS_RUN_ROOT=/home/drakestapleton/handoffs/aienet-m2/round2 bash tests/bots/run.sh
 ```
 
 Use a fresh external run root. The harness records `transcript`, `mutants.tsv`, `results.txt`, source/compiler hashes, exact fixture journals, show output and mutant build/probe transcripts. Independent `sha256sum` checks both public identity derivation and envelope content identity. Capacity fixtures are constructed by the harness, with independently recomputed SHA-256 checksums, not generated through a fake runtime.
 
-Each catalogued admission/integrity guard (`BOT-GUARD` in the source) gets a precise failing negative control and a separately compiled sed-patched removal mutant. A mutant counts as killed only when its targeted baseline probe fails; build failures are harness failures, not kills. The corpus additionally checks usage, missing bot/message, filesystem refusals, lock contention and symlink refusal. `BOTS_KILL=1` through `6` is a deliberately explicit test-only fault seam in the runtime: SIGKILL after candidate open, prefix write, event write, candidate fsync, rename and directory fsync. Eight event types exercise every boundary. Replay must match the exact old/new committed bytes and deterministic show output. An arbitrary truncated candidate is ignored and replaced. These are process-interruption tests, not power-loss or filesystem/hardware qualification.
+Each catalogued admission/integrity guard (`BOT-GUARD` in the source) gets a precise failing negative control and a separately compiled sed-patched removal mutant. `mutants.tsv` preserves expected and actual binary exits separately from the assertion-child exit. Semantic admissions are `KILLED_ADMIT`; changed valid refusal codes are `KILLED_CODE`; output/state/barrier mismatches have distinct `KILLED_OUTPUT`, `KILLED_STATE`, `KILLED_BARRIER` verdicts. Omega traps (101..114), signals and infrastructure/build failures are `TRAPPED`, `SIGNALLED` and `ERROR`, never kills. Removing botcap/msgcap checks hits fixed-size array bounds (exit 103, trap 3), so these two controls are honestly TRAPPED, not semantic counterexamples. No extra allocation is introduced solely to make a mutant admissible.
+
+The corpus additionally checks usage, missing bot/message, filesystem refusals, lock contention and symlink refusal. `BOTS_KILL=1` through `6` is a deliberately explicit test-only fault seam: SIGKILL after candidate open, prefix write, event write, candidate fsync, rename and directory fsync. Eight event types exercise every boundary. Replay must match exact old/new committed bytes and deterministic show output; a truncated candidate is ignored and replaced. A required strace oracle tracks actual candidate/directory descriptor opens and asserts successful `fsync(candidate)` then `renameat2(candidate,journal)` then `fsync(directory)`. Separate mutants remove each fsync and move rename before candidate fsync. Missing strace fails closed with NOT_RUN, not PASS. This establishes commit-barrier ordering evidence, not power-loss qualification.
 
 Compiler restrictions encountered, with no dropped behavior: error 19 at composed line 484 (global arrays cannot be passed as views) was resolved by selector-based bounded copy/access functions and local SHA buffers; error 12 at composed line 621 (register pressure) by splitting reference decoding into temporaries; error 8 at composed line 390 (loop bound too large) by using the supported 999999 bound. No compiler extension or host runtime fallback was required.
 
@@ -90,4 +92,4 @@ P1 two-machine, P2 federation, signing/key-ownership proof, Cortex integration, 
 
 ## Host receipt
 
-The command above exited 0. The final transcript contains 317 PASS assertions (262 exact CLI exit-code checks), 48 process-interruption replay equalities and 33 compiled guard-removal mutants killed, zero survived. `crumb compile . && crumb verify .` also exited 0 (six crumbs current). Evidence is copied to `/home/drakestapleton/handoffs/aienet-m2/acceptance-final/`; `mutants.tsv` and individual probe transcripts distinguish behavioral kills from compilation. This is HOST_TESTED only, not two-machine, federation, power-loss or hardware qualification.
+The earlier round-one claim of 33 semantic mutant kills is withdrawn: two capacity mutants actually trapped at fixed array bounds. Historical evidence under `/home/drakestapleton/handoffs/aienet-m2/acceptance-final/` is unchanged; round-two evidence and corrected per-verdict results live separately under `/home/drakestapleton/handoffs/aienet-m2/round2/`. Only host behavior and barrier ordering are exercised, not two-machine, federation, power-loss or hardware qualification.

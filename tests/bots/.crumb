@@ -3,14 +3,14 @@
     "generated": {
       "children": [],
       "children_root": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "compiled_at": "2026-10-30T00:58:14Z",
+      "compiled_at": "2026-10-30T01:17:49Z",
       "compiler": "crumb-compile/1",
-      "digest": "sha256:8c75c397d20cc61816a2306691de2093262a3b9b7708ea519d5fd5cedfa43bcf",
+      "digest": "sha256:5ec32d1e2234b31b60e3d113531f952972c1b927d989df7466bbf38a1fc5d826",
       "evidence_files": 0,
       "evidence_root": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "files": 0,
-      "generated_at_commit": "b02bc7fb8c28bf90803d5bd357d1749cabdfc974",
-      "source_tree": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      "files": 1,
+      "generated_at_commit": "144370e8818ff5c87a7c751291fbad2859d26686",
+      "source_tree": "sha256:84f6f9dd02d484da8e032ab6410b3bba112ee28a39f328af044699b319059ef1"
     }
   },
   "name": "bots-acceptance",
