@@ -28,9 +28,21 @@ mkdir -p "$work/mut/scripts/goal_microjobs" "$work/mut/src/goal_microjobs"
 cp "$repo/scripts/goal_microjobs/canon-build.sh" "$work/mut/scripts/goal_microjobs/"
 : > "$CANON_RUN_ROOT/mutants.tsv"
 while read -r name code mode; do
-  # Stale-output tests both receipt and output binding; each has its isolated mutant below.
-  test "$name" != staleoutput || continue
-  sed "/^note CANON-GUARD $name\$/{n;s/.*/if false/;}" "$repo/src/goal_microjobs/canon.om" > "$work/mut/src/goal_microjobs/canon.om"
+  # These share guards with isolated receipt/outbind and reserved controls.
+  case "$name" in staleoutput|reserved1|reserved2) continue;; esac
+  case "$name" in
+    objective)
+      # Remove the whole expected-objective pin: equality and identity derivation.
+      sed -e '/^note CANON-GUARD objective$/{n;s/.*/if false/;}' \
+        -e 's/put av add 2 i get a add 15 i/put av add 2 i num doc add 8 mul i 8 8/' \
+        "$repo/src/goal_microjobs/canon.om" > "$work/mut/src/goal_microjobs/canon.om";;
+    idempotence)
+      # The reviewed surviving mutant: check job_id but silently omit idempotence_key.
+      sed 's/same part doc 192 32 part r 40 32/same part doc 192 16 part r 40 16/' \
+        "$repo/src/goal_microjobs/canon.om" > "$work/mut/src/goal_microjobs/canon.om";;
+    *)
+      sed "/^note CANON-GUARD $name\$/{n;s/.*/if false/;}" "$repo/src/goal_microjobs/canon.om" > "$work/mut/src/goal_microjobs/canon.om";;
+  esac
   bash "$work/mut/scripts/goal_microjobs/canon-build.sh" "$work/mutant" > "$work/build.log" 2>&1
   rc=0
   "$work/mutant" "$mode" < "$work/$name.in" > "$work/out" 2> "$work/err" || rc=$?

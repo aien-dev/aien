@@ -9,8 +9,9 @@ text jobdom "AIEN-ALLEN-AN0-JOB-V1"
 text idemdom "AIEN-ALLEN-AN0-IDEM-V1"
 text modearg "emit"
 text ingarg "ingest"
+text binddom "MJR1-BIND"
 text errpre "CANON_"
-text errname "INPUT IO REF PAYLOAD SHAPE RANGE GENERATION JOB OUTCOME DAG OUTPUT AN0V KEYPIN ATTEMPT RESOURCE"
+text errname "INPUT IO REF PAYLOAD SHAPE RANGE GENERATION JOB OUTCOME DAG OUTPUT AN0V KEYPIN ATTEMPT RESOURCE OBJECTIVE OPERAND BINDING RESERVED"
 
 fn die code int to void
 w = write 2 errpre 0 len errpre
@@ -328,7 +329,7 @@ digit v
 put Ob get Op 0 32
 put Op 0 add get Op 0 1
 end
-fn eventline a view ulong 15 r view uchar 404 typ ulong to void
+fn eventline a view ulong 23 r view uchar 404 typ ulong to void
 dec 3
 dec add get a 14 sub typ 2
 dec typ
@@ -353,7 +354,7 @@ dec 0
 end
 put Ob sub get Op 0 1 10
 end
-fn nodechk doc view uchar 640 a view ulong 15 to void
+fn nodechk doc view uchar 640 a view ulong 23 to void
 tmp = new uchar 640 0
 av = new ulong 75 0
 if or gt get a 1 65535 gt get a 2 4294967295
@@ -361,7 +362,18 @@ die 13
 end
 put av 18 get a 1
 for i ulong 4
-put av add 2 i num doc add 8 mul i 8 8
+put av add 2 i get a add 15 i
+be tmp add 8 mul i 8 8 get a add 15 i
+end
+note CANON-GUARD objective
+if not same part tmp 8 32 part doc 8 32
+die 23
+end
+for i ulong 4
+note CANON-GUARD operand
+if ne num doc add 488 mul i 8 8 get a add 19 i
+die 24
+end
 end
 ident tmp av num doc 224 4
 note CANON-GUARD node
@@ -369,8 +381,28 @@ if not same part tmp 192 32 part doc 192 32
 die 15
 end
 end
-fn recchk doc view uchar 640 r view uchar 404 a view ulong 15 to void
+fn recchk doc view uchar 640 r view uchar 404 a view ulong 23 to void
 d = new uchar 32 0
+pre = new uchar 46 0
+note CANON-GUARD reserved
+if or or ne get r 7 0 ne num r 84 4 0 ne num r 337 3 0
+die 26
+end
+for i ulong 9
+put pre i get binddom i
+end
+put pre 9 get doc 480
+for i ulong 4
+put pre add 10 i get doc add 484 i
+end
+for i ulong 32
+put pre add 14 i get doc add 488 i
+end
+sha256_hash view pre d
+note CANON-GUARD binding
+if not same view d part r 112 32
+die 25
+end
 if or ne num r 0 4 1296716337 ne get r 4 1
 die 2
 end
@@ -408,7 +440,7 @@ if or ne num r 80 4 0 gt num r 76 4 num doc 252 4
 die 22
 end
 end
-fn verchk r view uchar 404 v view uchar 236 a view ulong 15 to void
+fn verchk r view uchar 404 v view uchar 236 a view ulong 23 to void
 d = new uchar 32 0
 if or ne num v 0 4 1095643222 ne get v 4 1
 die 19
@@ -443,7 +475,7 @@ fn ingest to void
 doc = new uchar 640 0
 r = new uchar 404 0
 v = new uchar 236 0
-a = new ulong 15 0
+a = new ulong 23 0
 if lt get Pos 1 1280
 die 2
 end
@@ -457,7 +489,7 @@ for i ulong 236
 put v i get Ib add 1044 i
 end
 put Pos 0 1280
-for i ulong 15
+for i ulong 23
 put a i word
 end
 endin

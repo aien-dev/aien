@@ -3,14 +3,14 @@
     "generated": {
       "children": [],
       "children_root": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "compiled_at": "2026-10-30T00:33:51Z",
+      "compiled_at": "2026-10-30T01:25:18Z",
       "compiler": "crumb-compile/1",
-      "digest": "sha256:ea66d1969ee66680db163de8acf89945dac49c308ff9f760b1b28ba96de1ba67",
+      "digest": "sha256:710018340a6186e016723ee8acd5998306ecf623d2a5aeabd29e3f8e685bbea3",
       "evidence_files": 0,
       "evidence_root": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "files": 2,
-      "generated_at_commit": "b02bc7fb8c28bf90803d5bd357d1749cabdfc974",
-      "source_tree": "sha256:68f64e94841cb7e18b53535812d4ad7e6f58abe112471c160348608af8facf86"
+      "generated_at_commit": "4e85855210a4828f1143c08518c0aea99208d008",
+      "source_tree": "sha256:cb9bd5a7afe863c72c00977f49c555eeea4e9e143412ed89ccc803d5d8f47ab1"
     }
   },
   "name": "goal-microjobs",
