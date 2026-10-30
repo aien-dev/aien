@@ -1,0 +1,12 @@
+generation 14 ingest
+node 15 ingest
+job 15 ingest
+outcome 16 ingest
+dag 17 ingest
+staleoutput 19 ingest
+receipt 19 ingest
+dagbind 19 ingest
+outbind 19 ingest
+output 18 ingest
+payload 11 emit
+ref 10 emit
