@@ -31,11 +31,14 @@ art="$STATE/g$gen"
 mkdir -p "$art"
 # Kernel replay validates the journal; Omega derives the effective operand.
 {
-  printf '1 %s\n' "$(wc -l < "$STATE/journal")"
-  cat "$STATE/plan"
+  printf '1\n'
+  cat "$STATE/plan" "$STATE/journal"
+} | "${RECOVERY:?}" > "$art/effective.next"
+{
+  cat "$art/effective.next"
   printf '101 1 %s %s %s %s %s %s\n' "$st" "$gen" "$attempts" "$blocked" "$ready" "$effect"
-  cat "$STATE/bindings/$gen" "$STATE/journal"
-} | "${RECOVERY:?}" | "$CANON" emit > "$art/emission.next"
+  cat "$STATE/bindings/$gen"
+} | "$CANON" emit > "$art/emission.next"
 dd if="$art/emission.next" of="$art/document.next" bs=1 count=640 status=none
 dd if="$art/emission.next" of="$art/payload.next" bs=1 skip=640 count=15 status=none
 if test -e "$art/document"; then

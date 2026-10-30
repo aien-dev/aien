@@ -289,19 +289,86 @@ conflicting_result() {
   semantic result-conflict test "$rc" = 33
   cmp "$STATE/journal" "$STATE/before-conflict"
 }
-conflict_mutant() {
-  local original=$RECOVERY line skip=0
-  : > "$E/recovery-mutant.om"
+history() {
+  local count=$1 gen=$(( $1+1 )) i current=1 changed expected seed effective
+  new_state "history-$count"
+  printf '010002000300020000000000000008' | xxd -r -p > "$STATE/payload2"
+  changed=$(hash_words < "$STATE/payload2")
+  for ((i=1;i<=count;i++)); do
+    if ((i%2)); then effective=$changed; else effective=$operand; fi
+    printf '3 %s 6 1 0 %s 7 0 %s 0 0\n' "$i" "$current" "$effective" >> "$STATE/journal"
+    current=$((current+1))
+  done
+  if ((count%2)); then seed=8; expected=$changed; else seed=7; expected=$operand; fi
+  printf '4 %s %s %s %s %s %s 2 3 2 %s 1\n' "$objective" "$tenant" "$subject" "$approval" "$capability" "$expires" "$seed" > "$STATE/bindings/$gen"
+  bash "$driver" status "$STATE" > "$STATE/history-status"
+  { printf '1\n'; cat "$STATE/plan" "$STATE/journal"; } | "$RECOVERY" > "$STATE/effective-probe"
+  read -r -a fields < "$STATE/effective-probe"
+  semantic latest-correct test "${fields[*]:35:4}" = "$expected"
+  run_sequence
+  exactly_once "$gen"
+}
+multiple_corrects() { history 2; }
+correct_after_result() {
+  new_state correct-after-result
+  M1_PAUSE=resulted bash "$sequence" > "$STATE/first.log" 2>&1 &
+  local pid=$!; active_pid=$pid
+  wait_file "$STATE/paused" "$pid"
+  kill -KILL "$pid"; wait "$pid" || true
+  rm "$STATE/paused"
+  correct
+  bash "$driver" propose "$STATE" 6 1 0 2 7 0 $operand 0 0
+  printf '4 %s %s %s %s %s %s 2 3 2 7 1\n' "$objective" "$tenant" "$subject" "$approval" "$capability" "$expires" > "$STATE/bindings/3"
+  run_sequence
+  exactly_once 3
+  local tag seq type node attempt generation rest stale_verify=0
+  while read -r tag seq type node attempt generation rest; do
+    if test "$type/$node/$generation" = 3/1/1; then stale_verify=$((stale_verify+1)); fi
+  done < "$STATE/journal"
+  test "$stale_verify" = 0
+}
+capacity_boundaries() {
+  new_state capacity
+  # kernel.om:10,60-79: buffer length 262144, load refuses >= length-1.
+  local capacity=262144 size bytes expected kr hr
+  cat "$STATE/plan" "$STATE/journal" > "$STATE/base-input"
+  bytes=$(wc -c < "$STATE/base-input")
+  printf 'bytes\texpected_kernel\texpected_recovery\tobserved_kernel\tobserved_recovery\n' > "$STATE/capacity.tsv"
+  for size in "$((capacity-2))" "$((capacity-1))" "$capacity" "$((capacity+1))"; do
+    cp "$STATE/base-input" "$STATE/kernel-input"
+    printf '%*s' "$((size-bytes))" '' >> "$STATE/kernel-input"
+    expected=3; if test "$size" = "$((capacity-2))"; then expected=0; fi
+    kr=0; "$GM_KERNEL" < "$STATE/kernel-input" > "$STATE/capacity-status" || kr=$?
+    hr=0; { printf '1\n'; cat "$STATE/kernel-input"; } | "$RECOVERY" > "$STATE/capacity-fold" || hr=$?
+    printf '%s\t%s\t%s\t%s\t%s\n' "$size" "$expected" "$expected" "$kr" "$hr" >> "$STATE/capacity.tsv"
+    test "$kr" = "$expected"; test "$hr" = "$expected"
+    if test "$expected" = 0; then
+      {
+        cat "$STATE/capacity-fold"
+        while read -r tag rest; do if test "$tag" = 101; then printf '%s %s\n' "$tag" "$rest"; fi; done < "$STATE/capacity-status"
+        cat "$STATE/bindings/1"
+      } | "$CANON" emit > "$STATE/capacity-emission"
+      test "$(wc -c < "$STATE/capacity-emission")" = 687
+    else
+      test ! -s "$STATE/capacity-fold"
+    fi
+  done
+}
+omega_mutant() {
+  local name=$1 guard=$2 probe=$3 original=$RECOVERY line skip=0
+  local source="$E/recovery-$name.om" binary="$E/recovery-$name"
+  : > "$source"
   while IFS= read -r line; do
     if test "$skip" = 1; then skip=0; continue; fi
-    if test "$line" = 'note RECOVERY-GUARD result-conflict'; then skip=1; fi
-    printf '%s\n' "$line" >> "$E/recovery-mutant.om"
+    if test "$name" = conflict && test "$line" = 'note RECOVERY-GUARD result-conflict'; then skip=1; fi
+    printf '%s\n' "$line" >> "$source"
+    if test "$name" = first-correct && test "$line" = 'note RECOVERY-MUTANT first-correct-stop'; then printf 'break\n' >> "$source"; fi
   done < "$repo/src/goal_microjobs/recovery.om"
-  OMEGA_OMC="$RECOMPUTE_OMC" sh "$repo/scripts/goal_microjobs/recovery-build.sh" "$E/recovery-mutant" "$E/recovery-mutant.om" > "$E/recovery-mutant-build.log" 2>&1
-  export RECOVERY="$E/recovery-mutant" CASE_PREFIX=mutant-conflict-
+  OMEGA_OMC="$RECOMPUTE_OMC" sh "$repo/scripts/goal_microjobs/recovery-build.sh" "$binary" "$source" > "$E/recovery-$name-build.log" 2>&1
+  export RECOVERY="$binary" CASE_PREFIX="mutant-$name-"
   local rc=0
   set +e
-  (set -e; trap cleanup_case EXIT; conflicting_result) > "$E/mutant-conflict.log" 2>&1
+  (set -e; trap cleanup_case EXIT; "$probe") > "$E/mutant-$name.log" 2>&1
   rc=$?
   set -e
   export RECOVERY=$original
@@ -309,10 +376,10 @@ conflict_mutant() {
   test "$rc" = 1
   local killed=0
   while IFS= read -r line; do
-    if test "$line" = 'M1_SEMANTIC result-conflict'; then killed=1; fi
-  done < "$E/mutant-conflict.log"
+    if test "$line" = "M1_SEMANTIC $guard"; then killed=1; fi
+  done < "$E/mutant-$name.log"
   test "$killed" = 1
-  printf 'result-conflict\tKILLED\t1\n' >> "$E/mutants.tsv"
+  printf '%s\tKILLED\t1\n' "$guard" >> "$E/mutants.tsv"
 }
 # Mutations are generated into evidence-local copies by removing exactly the
 # named guard line. No candidate source, compiler or historical receipt changes.
@@ -371,6 +438,11 @@ case_run done-reject-resulted done_negative resulted '101 1 3 1 1 0 0 0'
 case_run done-reject-missing done_negative missing '100 1 1 0'
 case_run done-reject-duplicate done_negative duplicate $'101 1 4 1 1 0 0 0\n101 1 4 1 1 0 0 0'
 case_run result-conflict conflicting_result
+case_run multiple-corrects multiple_corrects
+case_run history-257 history 257
+case_run history-1000 history 1000
+case_run correct-after-result correct_after_result
+case_run kernel-capacity-boundaries capacity_boundaries
 case_run happy happy
 for boundary in persisted dispatched published resulted; do case_run "crash-$boundary" crash "$boundary"; done
 case_run crash-worker-admitted worker_crash
@@ -389,7 +461,8 @@ printf 'mutant\tverdict\tprobe_exit\n' > "$E/mutants.tsv"
 case_run mutant-persist mutant persist persist-before-dispatch persist_probe
 case_run mutant-check mutant check check-before-ingest attestation_signature
 case_run mutant-generation mutant generation generation-match stale
-case_run mutant-result-conflict conflict_mutant
+case_run mutant-result-conflict omega_mutant conflict result-conflict conflicting_result
+case_run mutant-first-correct omega_mutant first-correct latest-correct multiple_corrects
 cat "$E/summary.tsv" "$E/mutants.tsv"
 printf 'M1 cases=%s failures=%s evidence=%s\n' "$checks" "$failures" "$E"
 test "$failures" = 0

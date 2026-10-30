@@ -239,6 +239,14 @@ kernel generation is supplied to canonical ingestion; stale wire generations
 are refused by canon (exit 14), not by a shell generation rule.
 `recovery-build.sh` checks the same e5b32567 compiler digest as canon-build.sh.
 
+Effective-operand folding streams the unchanged kernel plan+journal bytes after
+a `1\n` mode prefix, retaining only one event. It has no event-count ceiling.
+The prefix is excluded from the byte count. The same input-size rule as
+`kernel.om:10,60-79` applies: its 262144-byte buffer refuses input length
+greater than or equal to 262143 (exit 3), including trailing whitespace.
+`recovery.om` emits the updated 40-word header/node before the sequencer adds
+the current status and explicit binding for canonical emission.
+
 Build `canon` with the preceding pinned build command. Materialize the SHA
 oracle source without modifying its checkout:
 
@@ -271,9 +279,14 @@ mutation; executor-signed wrong output; duplicate receipt and an independently
 signed second completion; signature-only AN0V mutation; and RESULT-only recovery
 with a kernel-valid but conflicting persisted time charge. Negative self-tests
 prove the DONE helper rejects RESULTED, missing and duplicate node-1 status
-records. Guard-removal mutants challenge persist-before-DISPATCH,
-check-before-ingest, current-generation routing and Omega RESULT conflict
-checking. Every accepted generation has one DISPATCH, RESULT and VERIFY.
+records. History regressions exercise multiple CORRECTs, 257 and 1000 CORRECTs,
+and two CORRECTs after a persisted RESULT. Capacity probes check the largest
+accepted kernel input and refused boundary/over-capacity inputs against both
+kernel and recovery, with matching observed exits in `capacity.tsv`.
+Guard-removal mutants challenge persist-before-DISPATCH, check-before-ingest,
+current-generation routing and Omega RESULT conflict checking. A fifth mutant
+stops folding after the first CORRECT; the last-CORRECT regression must kill it.
+Every accepted generation has one DISPATCH, RESULT and VERIFY.
 Recovery checks that persisted bundle bytes never change.
 
 All identities and payload bindings here are explicit synthetic test values.

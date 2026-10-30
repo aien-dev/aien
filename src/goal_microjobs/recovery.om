@@ -1,45 +1,85 @@
 om2
 note SPDX-License-Identifier: AGPL-3.0-or-later
-note One-node M1 recovery: effective operand and exact RESULT identity.
-global Ib uchar 65536
-global Pos ulong 2
+note One-node M1 recovery over the kernel-validated original plan and journal.
+note Mode 1 prefix is 1 newline, followed by the unchanged kernel input bytes.
+note Capacity follows kernel.om:10,60-79: Inb=262144, load refuses >= len Inb - 1.
+note Chunked parsing keeps one event, with no independent event-count ceiling.
+global Ib uchar 4096
+global Cur ulong 6
 global Ob uchar 8192
 global Op ulong 1
 text conflict "RECOVERY_RESULT_CONFLICT\n"
 fn die c int to void
 exit c
 end
-fn ws c uchar to bool
+fn ws c ulong to bool
 ret or eq c 32 or eq c 10 or eq c 13 eq c 9
 end
+fn raw to ulong
+if eq get Cur 5 1
+ret 256
+end
+if eq get Cur 0 get Cur 1
+r = read 0 Ib 0 len Ib
+if lt r 0
+die 4
+end
+if eq r 0
+put Cur 5 1
+ret 256
+end
+put Cur 0 0
+put Cur 1 ulong r
+end
+c = ulong get Ib get Cur 0
+put Cur 0 add get Cur 0 1
+if eq get Cur 3 1
+put Cur 2 add get Cur 2 1
+if ge get Cur 2 262143
+die 3
+end
+end
+ret c
+end
+fn next to ulong
+c = get Cur 4
+if ne c 257
+put Cur 4 257
+ret c
+end
+ret raw
+end
+fn more to bool
+c = next
+while ws c bound 262144
+c = raw
+end
+put Cur 4 c
+ret ne c 256
+end
 fn word to ulong
-p = get Pos 0
-while lt p get Pos 1 bound 65536
-if not ws get Ib p
-break
-end
-p = add p 1
-end
-if eq p get Pos 1
+if not more
 die 2
 end
+c = next
 v = ulong 0
-while lt p get Pos 1 bound 65536
-c = get Ib p
+while true bound 262144
+if eq c 256
+ret v
+end
 if ws c
-break
+ret v
 end
 if or lt c 48 gt c 57
-die 2
+die 3
 end
-d = ulong sub c 48
+d = sub c 48
 if or gt v 1844674407370955161 and eq v 1844674407370955161 gt d 5
-die 2
+die 3
 end
 v = add mul v 10 d
-p = add p 1
+c = raw
 end
-put Pos 0 p
 ret v
 end
 fn digit v ulong to void
@@ -62,32 +102,14 @@ die 33
 end
 end
 end
-fn main to int
-a = new ulong 75 0
+fn prepare to void
+a = new ulong 40 0
 e = new ulong 14 0
-b = new ulong 14 0
-n = ulong 0
-while lt n len Ib bound 65536
-r = read 0 Ib n sub len Ib n
-if lt r 0
-die 3
-end
-if eq r 0
-break
-end
-n = add n ulong r
-end
-put Pos 1 n
-mode = word
-if eq mode 1
-count = word
-if gt count 256
-die 2
-end
-for i ulong 75
+put Cur 3 1
+for i ulong 40
 put a i word
 end
-for i ulong count
+while more bound 262144
 for j ulong 14
 put e j word
 end
@@ -95,25 +117,40 @@ if and eq get e 2 6 eq get e 3 1
 for j ulong 4
 put a add 35 j get e add 8 j
 end
+note RECOVERY-MUTANT first-correct-stop
 end
 end
-for i ulong 75
+for i ulong 40
 dec get a i
 end
 put Ob get Op 0 10
 put Op 0 add get Op 0 1
 w = write 1 Ob 0 get Op 0
-ret 0
 end
-if eq mode 2
+fn resume to void
+a = new ulong 14 0
+b = new ulong 14 0
 for i ulong 14
-put e i word
+put a i word
 end
 for i ulong 14
 put b i word
 end
+if more
+die 3
+end
 note RECOVERY-GUARD result-conflict
-checkresult e b
+checkresult a b
+end
+fn main to int
+put Cur 4 257
+mode = word
+if eq mode 1
+prepare
+ret 0
+end
+if eq mode 2
+resume
 ret 0
 end
 ret 2
