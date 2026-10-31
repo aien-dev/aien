@@ -1,16 +1,23 @@
 {
   "extensions": {
     "generated": {
-      "children": [],
-      "children_root": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "compiled_at": "2026-10-29T17:54:41Z",
+      "children": [
+        {
+          "digest": "e1d8451acf26b764832cedb86714f72fd238deb4c632ab418df81fbb9962b0b0",
+          "last_commit": "b5057df",
+          "name": "canon",
+          "purpose": "Synthetic canonical Aienet-0 byte oracles, refusal probes and guard-removal mutants"
+        }
+      ],
+      "children_root": "sha256:0d16a180e37a367d57b67f95c31ba2227fa974ea63b13ef53cf9650dad0f8ed6",
+      "compiled_at": "2026-10-31T02:20:58Z",
       "compiler": "crumb-compile/1",
-      "digest": "sha256:b9f3213defcfd29f7c3a71088c3e8b38bef9853ac97440c83acd6854964d7197",
+      "digest": "sha256:63c714e665d89c601f7a5f8ab14d582efe36d2a6f83863bb90b8ac9ac4007409",
       "evidence_files": 0,
       "evidence_root": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "files": 10,
-      "generated_at_commit": "946d701ed0c81684000eef6dc738c9e031db0b9f",
-      "source_tree": "sha256:30cd67b713a2c91e6cab56cb9b5eb1b63af03e7c9dea6f7ce259693c0fd75c92"
+      "files": 38,
+      "generated_at_commit": "4e11a8954699953f9e741a868b355f15d55de0d2",
+      "source_tree": "sha256:1804d07390823f415d5ee5d5da79e95bcaaaa23ef1837e6e64125e2aedc66668"
     }
   },
   "name": "goal-microjobs",

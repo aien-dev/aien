@@ -4,8 +4,8 @@ note typed microjob DAG. Input on stdin is the plan (header, nodes) then the app
 note event journal, all whitespace-separated decimal words. Output on stdout is the
 note replayed state, the fundable ready set and, when complete, the objective receipt.
 note A refused plan or event prints 199 seq code and exits with code; nothing is admitted.
-note LOCAL ADAPTER PENDING aien-protocols-mv#50: record order and codes are Allen-local and
-note documented in docs/GOAL_MICROJOBS.md; the canonical microjob-v1 ABI replaces them.
+note Local records and codes remain the replay ABI documented in docs/GOAL_MICROJOBS.md.
+note canon.om implements the bounded Aienet-0 MJB1/MJR1 adapter; kernel semantics are unchanged.
 note This kernel executes no job, calls no model, and writes no memory or authority state.
 global Inb uchar 262144
 global Cur ulong 8

@@ -1,0 +1,540 @@
+note SPDX-License-Identifier: AGPL-3.0-or-later
+note Append to hash-checked sha256-om2.om with exports removed. No signature verification here.
+note SPEC e705fdc9: MJB1 192+448 bytes; MJR1 404; AN0V 236. See GOAL_MICROJOBS.md.
+global Ib uchar 8192
+global Pos ulong 2
+global Ob uchar 1024
+global Op ulong 1
+text jobdom "AIEN-ALLEN-AN0-JOB-V1"
+text idemdom "AIEN-ALLEN-AN0-IDEM-V1"
+text modearg "emit"
+text ingarg "ingest"
+text binddom "MJR1-BIND"
+text errpre "CANON_"
+text errname "INPUT IO REF PAYLOAD SHAPE RANGE GENERATION JOB OUTCOME DAG OUTPUT AN0V KEYPIN ATTEMPT RESOURCE OBJECTIVE OPERAND BINDING RESERVED"
+
+fn die code int to void
+w = write 2 errpre 0 len errpre
+p = ulong 0
+idx = int 2
+if ge code 10
+idx = 10
+p = 9
+end
+while lt idx code bound 24
+while ne get errname p 32 bound 16
+p = add p 1
+end
+p = add p 1
+idx = add idx 1
+end
+q = p
+while lt q len errname bound 16
+if eq get errname q 32
+break
+end
+q = add q 1
+end
+w = write 2 errname p sub q p
+put Ob 0 10
+w = write 2 Ob 0 1
+exit code
+end
+
+fn loadin to void
+n = ulong 0
+while lt n len Ib bound 8192
+r = read 0 Ib n sub len Ib n
+if lt r 0
+die 3
+end
+if eq r 0
+put Pos 1 n
+ret
+end
+n = add n ulong r
+end
+die 2
+end
+
+fn ws c uchar to bool
+ret or eq c 32 or eq c 10 or eq c 13 eq c 9
+end
+fn word to ulong
+p = get Pos 0
+while lt p get Pos 1 bound 8192
+if not ws get Ib p
+break
+end
+p = add p 1
+end
+if eq p get Pos 1
+die 2
+end
+v = ulong 0
+while lt p get Pos 1 bound 8192
+c = get Ib p
+if ws c
+break
+end
+if or lt c 48 gt c 57
+die 2
+end
+d = ulong sub c 48
+if or gt v 1844674407370955161 and eq v 1844674407370955161 gt d 5
+die 13
+end
+v = add mul v 10 d
+p = add p 1
+end
+put Pos 0 p
+ret v
+end
+fn endin to void
+p = get Pos 0
+while lt p get Pos 1 bound 8192
+if not ws get Ib p
+die 2
+end
+p = add p 1
+end
+end
+fn be b edit uchar * p ulong n ulong v ulong to void
+for i ulong n
+put b add p i uchar and shr v mul sub sub n 1 i 8 255
+end
+end
+fn num b view uchar * p ulong n ulong to ulong
+v = ulong 0
+for i ulong n
+v = or shl v 8 ulong get b add p i
+end
+ret v
+end
+fn same a view uchar * b view uchar * to bool
+if ne len a len b
+ret false
+end
+for i ulong len a
+if ne get a i get b i
+ret false
+end
+end
+ret true
+end
+fn nz b view uchar * to bool
+v = uchar 0
+for i ulong len b
+v = or v get b i
+end
+ret ne v 0
+end
+fn sendout b view uchar * to void
+n = ulong 0
+while lt n len b bound 8192
+w = write 1 b n sub len b n
+if le w 0
+die 3
+end
+n = add n ulong w
+end
+end
+fn words b edit uchar * a view ulong * p ulong to void
+for i ulong 4
+be b mul i 8 8 get a add p i
+end
+end
+fn ident doc edit uchar 640 a view ulong 75 gen ulong to void
+pre = new uchar 64 0
+d = new uchar 32 0
+for i ulong len jobdom
+put pre i get jobdom i
+end
+words part pre add len jobdom 1 32 a 2
+be pre add len jobdom 33 2 get a 18
+be pre add len jobdom 35 4 gen
+sha256_hash part pre 0 add len jobdom 39 d
+for i ulong 16
+put doc add 192 i get d i
+end
+for i ulong len idemdom
+put pre i get idemdom i
+end
+put pre len idemdom 0
+words part pre add len idemdom 1 32 a 2
+be pre add len idemdom 33 2 get a 18
+be pre add len idemdom 35 4 gen
+sha256_hash part pre 0 add len idemdom 39 d
+for i ulong 16
+put doc add 208 i get d i
+end
+end
+fn shape a view ulong 75 to void
+for i ulong 4
+if gt get a add 24 i 65535
+die 13
+end
+end
+if or ne get a 0 1 ne get a 1 1
+die 12
+end
+if or or eq get a 18 0 gt get a 18 65535 ne get a 48 4
+die 13
+end
+if or ne get a 40 101 ne get a 41 get a 18
+die 14
+end
+if or eq get a 43 0 gt get a 43 4294967295
+die 13
+end
+if or ne get a 19 1 ne get a 20 2
+die 12
+end
+if or or ne get a 21 0 ne get a 22 0 ne get a 23 1
+die 12
+end
+for i ulong 4
+if ne get a add 24 i 0
+die 12
+end
+end
+if or or ne get a 28 1 ne get a 30 1 ne get a 31 1
+die 12
+end
+if or or eq get a 29 0 ne get a 32 get a 6 ne get a 39 0
+die 12
+end
+if or eq get a 33 0 gt get a 33 4294967295
+die 13
+end
+if lt get a 8 1
+die 12
+end
+for i ulong 3
+v = get a add 70 i
+if or eq v 0 gt v 256
+die 13
+end
+end
+if or eq get a 74 0 gt get a 74 4294967295
+die 13
+end
+end
+fn refs doc edit uchar 640 a view ulong 75 to void
+for i ulong 5
+words part doc add 8 mul i 32 32 a add 49 mul i 4
+note CANON-GUARD ref
+if not nz part doc add 8 mul i 32 32
+die 10
+end
+end
+for i ulong 4
+if ne get a add 2 i get a add 49 i
+die 10
+end
+end
+if eq get a 69 0
+die 10
+end
+note capability was temporarily at 136; copy it before writing incarnation and expiry.
+for i ulong 32
+put doc add 304 i get doc add 136 i
+put doc add 336 i get doc add 40 i
+end
+for i ulong 56
+put doc add 136 i 0
+end
+be doc 136 4 get a 74
+be doc 144 8 get a 69
+end
+fn caps doc edit uchar 640 a view ulong 75 to void
+m = get a 70
+k = get a 71
+n = get a 72
+workv = mul mul m k n
+mem = mul 4 add add mul m k mul k n mul m n
+be doc 152 8 get a 33
+be doc 160 8 workv
+be doc 168 8 mem
+be doc 176 8 workv
+be doc 252 4 get a 33
+be doc 256 8 workv
+be doc 264 8 mem
+be doc 272 8 workv
+be doc 280 8 get a 69
+end
+fn emitdoc to void
+a = new ulong 75 0
+doc = new uchar 640 0
+p = new uchar 15 0
+d = new uchar 32 0
+want = new uchar 32 0
+for i ulong 75
+put a i word
+end
+endin
+shape a
+refs doc a
+put p 0 1
+be p 1 2 get a 70
+be p 3 2 get a 71
+be p 5 2 get a 72
+be p 7 8 get a 73
+sha256_hash view p d
+words want a 35
+note CANON-GUARD payload
+if not same view d view want
+die 11
+end
+put doc 0 77
+put doc 1 74
+put doc 2 66
+put doc 3 49
+put doc 4 1
+put doc 5 1
+be doc 6 2 1
+ident doc a get a 43
+be doc 224 4 get a 43
+put doc 228 1
+put doc 229 2
+put doc 231 1
+put doc 240 1
+put doc 241 1
+put doc 242 1
+put doc 243 1
+put doc 245 1
+put doc 247 1
+put doc 248 7
+put doc 250 1
+caps doc a
+put doc 480 3
+be doc 484 4 get a 43
+for i ulong 32
+put doc add 488 i get d i
+end
+sha256_hash view doc d
+sendout view doc
+sendout view p
+sendout view d
+end
+fn digit v ulong to void
+if gt v 9
+digit div v 10
+end
+put Ob get Op 0 uchar add rem v 10 48
+put Op 0 add get Op 0 1
+end
+fn dec v ulong to void
+digit v
+put Ob get Op 0 32
+put Op 0 add get Op 0 1
+end
+fn eventline a view ulong 23 r view uchar 404 typ ulong to void
+dec 3
+dec add get a 14 sub typ 2
+dec typ
+dec get a 1
+dec get a 3
+dec get a 2
+if eq typ 2
+dec get a 4
+dec 0
+else
+dec get a 5
+dec 1
+end
+for i ulong 4
+dec num r add 144 mul i 8 8
+end
+dec 0
+if eq typ 2
+dec num r 76 4
+else
+dec 0
+end
+put Ob sub get Op 0 1 10
+end
+fn nodechk doc view uchar 640 a view ulong 23 to void
+tmp = new uchar 640 0
+av = new ulong 75 0
+if or gt get a 1 65535 gt get a 2 4294967295
+die 13
+end
+put av 18 get a 1
+for i ulong 4
+put av add 2 i get a add 15 i
+be tmp add 8 mul i 8 8 get a add 15 i
+end
+note CANON-GUARD objective
+if not same part tmp 8 32 part doc 8 32
+die 23
+end
+for i ulong 4
+note CANON-GUARD operand
+if ne num doc add 488 mul i 8 8 get a add 19 i
+die 24
+end
+end
+ident tmp av num doc 224 4
+note CANON-GUARD node
+if not same part tmp 192 32 part doc 192 32
+die 15
+end
+end
+fn recchk doc view uchar 640 r view uchar 404 a view ulong 23 to void
+d = new uchar 32 0
+pre = new uchar 46 0
+note CANON-GUARD reserved
+if or or ne get r 7 0 ne num r 84 4 0 ne num r 337 3 0
+die 26
+end
+for i ulong 9
+put pre i get binddom i
+end
+put pre 9 get doc 480
+for i ulong 4
+put pre add 10 i get doc add 484 i
+end
+for i ulong 32
+put pre add 14 i get doc add 488 i
+end
+sha256_hash view pre d
+note CANON-GUARD binding
+if not same view d part r 112 32
+die 25
+end
+if or ne num r 0 4 1296716337 ne get r 4 1
+die 2
+end
+note CANON-GUARD outcome
+if ne get r 5 1
+die 16
+end
+note CANON-GUARD generation
+if or ne get a 2 num doc 224 4 ne num r 72 4 get a 2
+die 14
+end
+if or ne get a 3 1 ne ulong get r 6 get a 3
+die 21
+end
+note CANON-GUARD job
+if not same part doc 192 32 part r 40 32
+die 15
+end
+sha256_hash doc d
+note CANON-GUARD dag
+if not same view d part r 8 32
+die 17
+end
+note CANON-GUARD output
+if not nz part r 144 32
+die 18
+end
+sha256_hash part r 304 33 d
+for i ulong 4
+if ne num d mul i 8 8 get a add 6 i
+die 20
+end
+end
+if or ne num r 80 4 0 gt num r 76 4 num doc 252 4
+die 22
+end
+end
+fn verchk r view uchar 404 v view uchar 236 a view ulong 23 to void
+d = new uchar 32 0
+if or ne num v 0 4 1095643222 ne get v 4 1
+die 19
+end
+if or ne num v 5 3 0 ne num v 169 3 0
+die 19
+end
+sha256_hash r d
+note CANON-GUARD receipt
+if not same view d part v 8 32
+die 19
+end
+note CANON-GUARD dagbind
+if not same part r 8 32 part v 40 32
+die 19
+end
+note CANON-GUARD outbind
+if not same part r 144 32 part v 72 32
+die 19
+end
+if not same part r 272 32 part v 104 32
+die 19
+end
+sha256_hash part v 136 33 d
+for i ulong 4
+if ne num d mul i 8 8 get a add 10 i
+die 20
+end
+end
+end
+fn ingest to void
+doc = new uchar 640 0
+r = new uchar 404 0
+v = new uchar 236 0
+a = new ulong 23 0
+if lt get Pos 1 1280
+die 2
+end
+for i ulong 640
+put doc i get Ib i
+end
+for i ulong 404
+put r i get Ib add 640 i
+end
+for i ulong 236
+put v i get Ib add 1044 i
+end
+put Pos 0 1280
+for i ulong 23
+put a i word
+end
+endin
+if or ne get a 0 5 eq get a 1 0
+die 2
+end
+if or or eq get a 4 0 eq get a 5 0 eq get a 4 get a 5
+die 20
+end
+if or eq get a 14 0 eq get a 14 18446744073709551615
+die 13
+end
+if or ne num doc 0 4 1296712241 ne num doc 6 2 1
+die 12
+end
+nodechk doc a
+recchk doc r a
+verchk r v a
+eventline a r 2
+eventline a r 3
+n = ulong 0
+while lt n get Op 0 bound 1024
+w = write 1 Ob n sub get Op 0 n
+if le w 0
+die 3
+end
+n = add n ulong w
+end
+end
+fn main to int
+arg = new uchar 16 0
+r = argread 1 arg 0 16
+loadin
+if eq r 4
+if same part arg 0 4 view modearg
+emitdoc
+ret 0
+end
+end
+if eq r 6
+if same part arg 0 6 view ingarg
+ingest
+ret 0
+end
+end
+die 2
+ret 2
+end

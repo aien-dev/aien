@@ -1,0 +1,19 @@
+{
+  "extensions": {
+    "generated": {
+      "children": [],
+      "children_root": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "compiled_at": "2026-10-30T01:25:18Z",
+      "compiler": "crumb-compile/1",
+      "digest": "sha256:e1d8451acf26b764832cedb86714f72fd238deb4c632ab418df81fbb9962b0b0",
+      "evidence_files": 0,
+      "evidence_root": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "files": 28,
+      "generated_at_commit": "4e85855210a4828f1143c08518c0aea99208d008",
+      "source_tree": "sha256:350770c5db40ef00667897c76eaf162bfdcad28ace241b520cfa214fa95629cd"
+    }
+  },
+  "name": "canon-tests",
+  "purpose": "Synthetic canonical Aienet-0 byte oracles, refusal probes and guard-removal mutants",
+  "schema_version": "1.0.0"
+}
