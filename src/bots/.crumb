@@ -1,0 +1,19 @@
+{
+  "extensions": {
+    "generated": {
+      "children": [],
+      "children_root": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "compiled_at": "2026-10-30T01:17:49Z",
+      "compiler": "crumb-compile/1",
+      "digest": "sha256:7c98171f6e5aad846a859793f80e28bf88d5894d2f2e866abc0828fea19d79ac",
+      "evidence_files": 0,
+      "evidence_root": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "files": 1,
+      "generated_at_commit": "144370e8818ff5c87a7c751291fbad2859d26686",
+      "source_tree": "sha256:6240c0a3ce454d956d38d7e31ff7ea22e813c56d53ee621cca8a8fb14a64fb95"
+    }
+  },
+  "name": "bots",
+  "purpose": "M2 local bot identity bindings and durable inbox journal in Omega",
+  "schema_version": "1.0.0"
+}

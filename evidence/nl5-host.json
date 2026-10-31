@@ -1,0 +1,234 @@
+{
+  "schema": "nl5-host-v1",
+  "scope": "HOST_ONLY synthetic deterministic specialists",
+  "status": "PASS",
+  "real_model": "BLOCKED",
+  "latent_transport": "NOT_RUN",
+  "canonical_LTP0_CONTENT_and_AEGIS": "NOT_RUN",
+  "base": "52067ba2ec2e631db017fb9e700f31c048f1a12d",
+  "omega": "e79566c191ea8ef11888e69ce50d8fadf375d4fd",
+  "compiler_sha256": "d6290c7663c2b4bafb59eb3fdf812476e977f4c144def71095c6248ef9b96b84",
+  "platform": "Linux-7.0.0-1019-nvidia-aarch64-with-glibc2.39",
+  "commands": [
+    "cat src/goal_microjobs/shadow.om tests/goal_microjobs/shadow-oracle.om | OMC >shadow",
+    "OMC <src/goal_microjobs/kernel.om >kernel",
+    "shadow --private-local-shadow ARM SCENARIO >proposal 2>trace",
+    "kernel <proposal >status"
+  ],
+  "checks": [
+    {
+      "arm": "A",
+      "scenario": 0,
+      "producer_exit": 0,
+      "kernel_exit": 0
+    },
+    {
+      "arm": "A",
+      "scenario": 1,
+      "producer_exit": 0,
+      "kernel_exit": 0
+    },
+    {
+      "arm": "A",
+      "scenario": 2,
+      "producer_exit": 0,
+      "kernel_exit": 0
+    },
+    {
+      "arm": "A",
+      "scenario": 3,
+      "producer_exit": 0,
+      "kernel_exit": 0
+    },
+    {
+      "arm": "A",
+      "scenario": 4,
+      "producer_exit": 65,
+      "kernel_exit": 0
+    },
+    {
+      "arm": "A",
+      "scenario": 5,
+      "producer_exit": 0,
+      "kernel_exit": 43
+    },
+    {
+      "arm": "A",
+      "scenario": 6,
+      "producer_exit": 0,
+      "kernel_exit": 39
+    },
+    {
+      "arm": "A",
+      "scenario": 7,
+      "producer_exit": 0,
+      "kernel_exit": 37
+    },
+    {
+      "arm": "A",
+      "scenario": 8,
+      "producer_exit": 0,
+      "kernel_exit": 44
+    },
+    {
+      "arm": "A",
+      "scenario": 9,
+      "producer_exit": 0,
+      "kernel_exit": 33
+    },
+    {
+      "arm": "B",
+      "scenario": 0,
+      "producer_exit": 0,
+      "kernel_exit": 0
+    },
+    {
+      "arm": "B",
+      "scenario": 1,
+      "producer_exit": 0,
+      "kernel_exit": 0
+    },
+    {
+      "arm": "B",
+      "scenario": 2,
+      "producer_exit": 0,
+      "kernel_exit": 0
+    },
+    {
+      "arm": "B",
+      "scenario": 3,
+      "producer_exit": 0,
+      "kernel_exit": 0
+    },
+    {
+      "arm": "B",
+      "scenario": 4,
+      "producer_exit": 65,
+      "kernel_exit": 0
+    },
+    {
+      "arm": "B",
+      "scenario": 5,
+      "producer_exit": 0,
+      "kernel_exit": 43
+    },
+    {
+      "arm": "B",
+      "scenario": 6,
+      "producer_exit": 0,
+      "kernel_exit": 39
+    },
+    {
+      "arm": "B",
+      "scenario": 7,
+      "producer_exit": 0,
+      "kernel_exit": 37
+    },
+    {
+      "arm": "B",
+      "scenario": 8,
+      "producer_exit": 0,
+      "kernel_exit": 44
+    },
+    {
+      "arm": "B",
+      "scenario": 9,
+      "producer_exit": 0,
+      "kernel_exit": 33
+    },
+    {
+      "arm": "C",
+      "scenario": 0,
+      "producer_exit": 0,
+      "kernel_exit": 0
+    },
+    {
+      "arm": "C",
+      "scenario": 1,
+      "producer_exit": 0,
+      "kernel_exit": 0
+    },
+    {
+      "arm": "C",
+      "scenario": 2,
+      "producer_exit": 0,
+      "kernel_exit": 0
+    },
+    {
+      "arm": "C",
+      "scenario": 3,
+      "producer_exit": 0,
+      "kernel_exit": 0
+    },
+    {
+      "arm": "C",
+      "scenario": 4,
+      "producer_exit": 0,
+      "kernel_exit": 0
+    },
+    {
+      "arm": "C",
+      "scenario": 5,
+      "producer_exit": 0,
+      "kernel_exit": 43
+    },
+    {
+      "arm": "C",
+      "scenario": 6,
+      "producer_exit": 0,
+      "kernel_exit": 39
+    },
+    {
+      "arm": "C",
+      "scenario": 7,
+      "producer_exit": 0,
+      "kernel_exit": 37
+    },
+    {
+      "arm": "C",
+      "scenario": 8,
+      "producer_exit": 0,
+      "kernel_exit": 44
+    },
+    {
+      "arm": "C",
+      "scenario": 9,
+      "producer_exit": 0,
+      "kernel_exit": 33
+    }
+  ],
+  "independent_oracle": "evidence/nl5-wolfram.jsonl",
+  "structural_controls": [
+    "A/B/C normal, correction, cancellation and prefix proposals byte-identical",
+    "prefix restart replay twice is exact",
+    "all observed result values compare to external Wolfram table",
+    "default-off and malformed optin emit no bytes",
+    "wrong value A/B never reaches terminal completion",
+    "C bad-proposal stub recomputes typed fallback",
+    "unauthorized effects, wrong owner, dependency ordering, budget and duplicate result refused"
+  ],
+  "hashes": {
+    "src/goal_microjobs/shadow.om": "af1c6d718e3073d0455335414f636ab536c01c218a49c0264be42524088f63c7",
+    "tests/goal_microjobs/shadow-oracle.om": "3557da2db4898099bdfababae7317759f9582fefe31f1eb3ccb909d173a5f18b",
+    "src/goal_microjobs/kernel.om": "1c96c165020cd9824293c4ea13e8f402ec17d8ca7b82a16495b88a7fda37740c",
+    "tests/goal_microjobs/shadow.cases": "c5cb9ad9de09490fa0d83243543bd53c86697333e420d3371c7a09298ce1ab46"
+  },
+  "binary_sha256": {
+    "shadow": "d626fb42b922f5c592b446227d437a1999139293bfd97864f96079c8ba7abc9b",
+    "kernel": "615d6757944765ab5dd710a420efe93315ffd8bffa666b823c59edc2aaa89bed"
+  },
+  "native_conductor": {
+    "source_sha256": "250361be99ced1246405b2e4a2e2de71373a90d0a0569fb43821ed8b106e045f",
+    "binary_sha256": "6c8691c21074595312fdd0f22ca30b6fbe48fb88f2fb0a58936f2960056acefa",
+    "status": "PASS",
+    "cases": 67,
+    "negative_controls": [
+      "oracle guard removal killed",
+      "fallback removal killed",
+      "optin bypass killed",
+      "exhausted specialist work cap refuses68"
+    ],
+    "log_sha256": "1edfa2d235c43d4af1e9ad5371b6b7fbdc94dbcc23bc5d6bb1428271c9f201c2"
+  },
+  "research_outcome": "INCONCLUSIVE"
+}
