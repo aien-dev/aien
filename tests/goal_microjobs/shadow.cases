@@ -1,0 +1,71 @@
+A0 run candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - file:candidate/evidence/nl5-A0.planjournal file:candidate/evidence/nl5-A0.trace 0 --private-local-shadow A 0
+kernel-A0 run candidate/src/goal_microjobs/kernel.om file:candidate/evidence/nl5-A0.planjournal file:candidate/evidence/nl5-A0.status - 0
+A1 run candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - file:candidate/evidence/nl5-A1.planjournal file:candidate/evidence/nl5-A1.trace 0 --private-local-shadow A 1
+kernel-A1 run candidate/src/goal_microjobs/kernel.om file:candidate/evidence/nl5-A1.planjournal file:candidate/evidence/nl5-A1.status - 0
+A2 run candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - file:candidate/evidence/nl5-A2.planjournal file:candidate/evidence/nl5-A2.trace 0 --private-local-shadow A 2
+kernel-A2 run candidate/src/goal_microjobs/kernel.om file:candidate/evidence/nl5-A2.planjournal file:candidate/evidence/nl5-A2.status - 0
+A3 run candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - file:candidate/evidence/nl5-A3.planjournal file:candidate/evidence/nl5-A3.trace 0 --private-local-shadow A 3
+kernel-A3 run candidate/src/goal_microjobs/kernel.om file:candidate/evidence/nl5-A3.planjournal file:candidate/evidence/nl5-A3.status - 0
+A4 run candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - file:candidate/evidence/nl5-A4.planjournal file:candidate/evidence/nl5-A4.trace 65 --private-local-shadow A 4
+kernel-A4 run candidate/src/goal_microjobs/kernel.om file:candidate/evidence/nl5-A4.planjournal file:candidate/evidence/nl5-A4.status - 0
+A5 run candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - file:candidate/evidence/nl5-A5.planjournal file:candidate/evidence/nl5-A5.trace 0 --private-local-shadow A 5
+kernel-A5 run candidate/src/goal_microjobs/kernel.om file:candidate/evidence/nl5-A5.planjournal file:candidate/evidence/nl5-A5.status - 43
+A6 run candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - file:candidate/evidence/nl5-A6.planjournal file:candidate/evidence/nl5-A6.trace 0 --private-local-shadow A 6
+kernel-A6 run candidate/src/goal_microjobs/kernel.om file:candidate/evidence/nl5-A6.planjournal file:candidate/evidence/nl5-A6.status - 39
+A7 run candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - file:candidate/evidence/nl5-A7.planjournal file:candidate/evidence/nl5-A7.trace 0 --private-local-shadow A 7
+kernel-A7 run candidate/src/goal_microjobs/kernel.om file:candidate/evidence/nl5-A7.planjournal file:candidate/evidence/nl5-A7.status - 37
+A8 run candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - file:candidate/evidence/nl5-A8.planjournal file:candidate/evidence/nl5-A8.trace 0 --private-local-shadow A 8
+kernel-A8 run candidate/src/goal_microjobs/kernel.om file:candidate/evidence/nl5-A8.planjournal file:candidate/evidence/nl5-A8.status - 44
+A9 run candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - file:candidate/evidence/nl5-A9.planjournal file:candidate/evidence/nl5-A9.trace 0 --private-local-shadow A 9
+kernel-A9 run candidate/src/goal_microjobs/kernel.om file:candidate/evidence/nl5-A9.planjournal file:candidate/evidence/nl5-A9.status - 33
+B0 run candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - file:candidate/evidence/nl5-B0.planjournal file:candidate/evidence/nl5-B0.trace 0 --private-local-shadow B 0
+kernel-B0 run candidate/src/goal_microjobs/kernel.om file:candidate/evidence/nl5-B0.planjournal file:candidate/evidence/nl5-B0.status - 0
+B1 run candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - file:candidate/evidence/nl5-B1.planjournal file:candidate/evidence/nl5-B1.trace 0 --private-local-shadow B 1
+kernel-B1 run candidate/src/goal_microjobs/kernel.om file:candidate/evidence/nl5-B1.planjournal file:candidate/evidence/nl5-B1.status - 0
+B2 run candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - file:candidate/evidence/nl5-B2.planjournal file:candidate/evidence/nl5-B2.trace 0 --private-local-shadow B 2
+kernel-B2 run candidate/src/goal_microjobs/kernel.om file:candidate/evidence/nl5-B2.planjournal file:candidate/evidence/nl5-B2.status - 0
+B3 run candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - file:candidate/evidence/nl5-B3.planjournal file:candidate/evidence/nl5-B3.trace 0 --private-local-shadow B 3
+kernel-B3 run candidate/src/goal_microjobs/kernel.om file:candidate/evidence/nl5-B3.planjournal file:candidate/evidence/nl5-B3.status - 0
+B4 run candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - file:candidate/evidence/nl5-B4.planjournal file:candidate/evidence/nl5-B4.trace 65 --private-local-shadow B 4
+kernel-B4 run candidate/src/goal_microjobs/kernel.om file:candidate/evidence/nl5-B4.planjournal file:candidate/evidence/nl5-B4.status - 0
+B5 run candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - file:candidate/evidence/nl5-B5.planjournal file:candidate/evidence/nl5-B5.trace 0 --private-local-shadow B 5
+kernel-B5 run candidate/src/goal_microjobs/kernel.om file:candidate/evidence/nl5-B5.planjournal file:candidate/evidence/nl5-B5.status - 43
+B6 run candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - file:candidate/evidence/nl5-B6.planjournal file:candidate/evidence/nl5-B6.trace 0 --private-local-shadow B 6
+kernel-B6 run candidate/src/goal_microjobs/kernel.om file:candidate/evidence/nl5-B6.planjournal file:candidate/evidence/nl5-B6.status - 39
+B7 run candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - file:candidate/evidence/nl5-B7.planjournal file:candidate/evidence/nl5-B7.trace 0 --private-local-shadow B 7
+kernel-B7 run candidate/src/goal_microjobs/kernel.om file:candidate/evidence/nl5-B7.planjournal file:candidate/evidence/nl5-B7.status - 37
+B8 run candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - file:candidate/evidence/nl5-B8.planjournal file:candidate/evidence/nl5-B8.trace 0 --private-local-shadow B 8
+kernel-B8 run candidate/src/goal_microjobs/kernel.om file:candidate/evidence/nl5-B8.planjournal file:candidate/evidence/nl5-B8.status - 44
+B9 run candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - file:candidate/evidence/nl5-B9.planjournal file:candidate/evidence/nl5-B9.trace 0 --private-local-shadow B 9
+kernel-B9 run candidate/src/goal_microjobs/kernel.om file:candidate/evidence/nl5-B9.planjournal file:candidate/evidence/nl5-B9.status - 33
+C0 run candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - file:candidate/evidence/nl5-C0.planjournal file:candidate/evidence/nl5-C0.trace 0 --private-local-shadow C 0
+kernel-C0 run candidate/src/goal_microjobs/kernel.om file:candidate/evidence/nl5-C0.planjournal file:candidate/evidence/nl5-C0.status - 0
+C1 run candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - file:candidate/evidence/nl5-C1.planjournal file:candidate/evidence/nl5-C1.trace 0 --private-local-shadow C 1
+kernel-C1 run candidate/src/goal_microjobs/kernel.om file:candidate/evidence/nl5-C1.planjournal file:candidate/evidence/nl5-C1.status - 0
+C2 run candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - file:candidate/evidence/nl5-C2.planjournal file:candidate/evidence/nl5-C2.trace 0 --private-local-shadow C 2
+kernel-C2 run candidate/src/goal_microjobs/kernel.om file:candidate/evidence/nl5-C2.planjournal file:candidate/evidence/nl5-C2.status - 0
+C3 run candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - file:candidate/evidence/nl5-C3.planjournal file:candidate/evidence/nl5-C3.trace 0 --private-local-shadow C 3
+kernel-C3 run candidate/src/goal_microjobs/kernel.om file:candidate/evidence/nl5-C3.planjournal file:candidate/evidence/nl5-C3.status - 0
+C4 run candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - file:candidate/evidence/nl5-C4.planjournal file:candidate/evidence/nl5-C4.trace 0 --private-local-shadow C 4
+kernel-C4 run candidate/src/goal_microjobs/kernel.om file:candidate/evidence/nl5-C4.planjournal file:candidate/evidence/nl5-C4.status - 0
+C5 run candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - file:candidate/evidence/nl5-C5.planjournal file:candidate/evidence/nl5-C5.trace 0 --private-local-shadow C 5
+kernel-C5 run candidate/src/goal_microjobs/kernel.om file:candidate/evidence/nl5-C5.planjournal file:candidate/evidence/nl5-C5.status - 43
+C6 run candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - file:candidate/evidence/nl5-C6.planjournal file:candidate/evidence/nl5-C6.trace 0 --private-local-shadow C 6
+kernel-C6 run candidate/src/goal_microjobs/kernel.om file:candidate/evidence/nl5-C6.planjournal file:candidate/evidence/nl5-C6.status - 39
+C7 run candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - file:candidate/evidence/nl5-C7.planjournal file:candidate/evidence/nl5-C7.trace 0 --private-local-shadow C 7
+kernel-C7 run candidate/src/goal_microjobs/kernel.om file:candidate/evidence/nl5-C7.planjournal file:candidate/evidence/nl5-C7.status - 37
+C8 run candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - file:candidate/evidence/nl5-C8.planjournal file:candidate/evidence/nl5-C8.trace 0 --private-local-shadow C 8
+kernel-C8 run candidate/src/goal_microjobs/kernel.om file:candidate/evidence/nl5-C8.planjournal file:candidate/evidence/nl5-C8.status - 44
+C9 run candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - file:candidate/evidence/nl5-C9.planjournal file:candidate/evidence/nl5-C9.trace 0 --private-local-shadow C 9
+kernel-C9 run candidate/src/goal_microjobs/kernel.om file:candidate/evidence/nl5-C9.planjournal file:candidate/evidence/nl5-C9.status - 33
+default-off run candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - - - 64
+bad-arm run candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - - - 64 --private-local-shadow D 0
+bad-scope run candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - - - 64 --public A 0
+subst candidate/tests/goal_microjobs/shadow-guard.from candidate/tests/goal_microjobs/shadow-guard.to
+oracle-guard-mutant kill candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - file:candidate/evidence/nl5-A4.planjournal any 0 --private-local-shadow A 4
+subst candidate/tests/goal_microjobs/shadow-fallback.from candidate/tests/goal_microjobs/shadow-fallback.to
+fallback-mutant kill candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - file:candidate/evidence/nl5-C4.planjournal any 65 --private-local-shadow C 4
+subst candidate/tests/goal_microjobs/shadow-optin.from candidate/tests/goal_microjobs/shadow-guard.to
+optin-mutant kill candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - - any 0 --public A 0
+subst candidate/tests/goal_microjobs/shadow-fuel.from candidate/tests/goal_microjobs/shadow-fuel.to
+fuel-refusal run candidate/src/goal_microjobs/shadow.om+candidate/tests/goal_microjobs/shadow-oracle.om - - any 68 --private-local-shadow A 0

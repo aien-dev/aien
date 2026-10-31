@@ -12,7 +12,7 @@ Status: **IMPLEMENTED, HOST_TESTED (offline, synthetic fixtures)**. The bounded 
 | Retry, budget, cancellation, correction and effect-once rules over the journal | Canonical wire ABI: aien-protocols-mv#50 (`specs/microjob/SPEC.md`, MJB1/MJR1 draft) |
 | Local journal file in an owner-private directory (mode 700) | Durable memory: Omega Cortex (ADR 0022); the Cortex writer adapter does not exist yet |
 
-The journal is not Cortex and is not a second memory store: it is the local replay log of one objective until the Cortex owner publishes a typed writer. Shell (`scripts/goal_microjobs/microjobs.sh`) only handles files, the `flock` lock and the atomic rename, because the seeded language has no file or argument API.
+The journal is not Cortex and is not a second memory store: it is the local replay log of one objective until the Cortex owner publishes a typed writer. The existing transitional shell (`scripts/goal_microjobs/microjobs.sh`) handles files, the `flock` lock and the atomic rename. Current seeded Omega has file and argument APIs; the shell has not been migrated. The NL-5 shadow experiment below does not invoke this writer.
 
 ## Records (local replay ABI; canonical adapter below)
 
@@ -335,3 +335,130 @@ owner-private `/dev/shm` directory and deleted on exit. Only loopback ephemeral
 ports are used; workers have owned state directories and owned process IDs.
 No GPU, model server, P1 second machine, P2 federation, Core TUR settlement,
 production deployment or hardware qualification is exercised by this harness.
+
+## NL-5: default-off private-local shadow experiment
+
+Issue [#19](https://github.com/aien-dev/aien/issues/19), parent
+[architecture #349](https://github.com/aien-dev/aien-architecture-mv/issues/349).
+This is a synthetic host experiment, not a serving route or a learned channel.
+The source is stacked on the unchanged #13 kernel at
+`52067ba2ec2e631db017fb9e700f31c048f1a12d` (PR #14).
+
+`src/goal_microjobs/shadow.om` emits an Allen-local plan and proposed journal.
+Only the existing `kernel.om` admits that journal. It does not call the
+transactional writer, execute effects, open files or sockets, read activations,
+write Cortex, create an identity, or change ordinary routing. No arguments
+means exit 64 with no output. Exact opt-in is
+`--private-local-shadow A|B|C SCENARIO`; no arbitrary task, trace or endpoint
+input is accepted. All data is fixed public synthetic fixture data. Runtime
+scratch expires on process exit; private-local redirects should use `umask 077`.
+Local opt-in grants no publication, training or Open Humanity consent.
+
+### Paired arms and invariant task
+
+- A: deterministic text specialist. Each hop serializes `add X Y`, parses it,
+  and returns the arithmetic result. This is a constrained text stub, not
+  ordinary Allen-to-model routing or an NLP quality result.
+- B: deterministic typed specialist. Each hop serializes three little-endian
+  u64 fields (operation 1, lhs, rhs), decodes them and computes the same result.
+  This is an internal test message, not MJB1 or SEM-WIRE.
+- C: unsupported latent interface; explicitly reports `NOT_RUN` and falls back
+  to B. It never treats a numerical message as authority. Scenario 4 injects a
+  bad proposed value into the stub, requires its independent rejection, then
+  recomputes from the original typed operands. This tests fallback mechanics,
+  not a trained projector or the actual LTP0 decoder.
+
+All arms share the exact objective, owner 7, Allen runtime 9, verifier 5,
+worker 20, pure effect ceiling 0, dependency graph and budgets. These small
+identifiers and result words are explicitly Allen-local synthetic references,
+not canonical identity/digest claims. The 12-node graph has four roots, a join
+at node 5, a chain to required terminal node 11, and optional node 12.
+Node 4 exercises the existing bounded NEURAL admission class without inference.
+The same attempt/model/token/time caps are emitted for each normal arm. The
+new harness also charges every specialist attempt, including fallback, against
+the same 32-call work cap, with a fixed 128-byte message buffer and bounded
+loops. The native conductor applies the same default child deadline to all
+arms. Plan token/time fields are reservations and synthetic charges, not
+observed model tokens or elapsed wall time.
+
+The independent oracle is Wolfram, not another invocation of the specialist.
+Raw verification calls and task query/results are in
+`evidence/nl5-wolfram.jsonl`; the fixed expected table is
+`tests/goal_microjobs/shadow-oracle.om`. Every proposed result is compared
+before verifier verdict 1. A rejected result never completes the objective.
+Initial terminal value is 65; correcting node 3 changes it to 66. These are
+oracle values from the filed Wolfram output, not performance statistics.
+
+| Scenario | Exercised behavior |
+|---|---|
+| 0 | Complete the equivalent pure objective; optional node 12 refused |
+| 1 | Owner correction invalidates affected generations; verified terminal changes |
+| 2 | Cancel node 5 and descendants; objective blocked, never complete |
+| 3 | Stop at four completed roots; saved prefix replays and full journal restarts identically |
+| 4 | Wrong result: A/B exit 65 with verifier rejection; C stub refuses it and recomputes typed fallback |
+| 5 | Dispatch before dependencies: kernel exit 43 |
+| 6 | Correction by worker, not owner: kernel exit 39 |
+| 7 | Exhaust neural admission budget: kernel exit 37 |
+| 8 | Attempt effect in pure shadow: kernel exit 44 |
+| 9 | Duplicate result after completion/replay: kernel exit 33 |
+
+### Reproduce and evidence
+
+Compiler source is Omega PR #919 at
+`e79566c191ea8ef11888e69ce50d8fadf375d4fd`; committed `seed/out/omc`
+SHA-256 is `d6290c7663c2b4bafb59eb3fdf812476e977f4c144def71095c6248ef9b96b84`.
+This binary was introduced by upstream commit
+`1fe5976d398646b17acabbf6d9dfae96b017e439` (diagnostics/Qty), not a local
+rebuild. The older 2c824805 and 49923639 guide pins are different compiler
+revisions and must not be substituted silently.
+
+From a private disposable directory, set `AIEN` to this checkout and `OMEGA`
+to that exact Omega checkout. Shell below only invokes the compiler and native
+conductor; no new shell runner is shipped.
+
+```sh
+umask 077
+ln -s "$AIEN" candidate
+ln -s "$OMEGA/seed" seed
+ln -s "$OMEGA/seed/out/omc" omc
+sha256sum omc
+./omc < seed/qualification/om2/gate.om > gate &&
+chmod 700 gate &&
+./gate ./omc d6290c7663c2b4bafb59eb3fdf812476e977f4c144def71095c6248ef9b96b84 \
+  candidate/tests/goal_microjobs/shadow.cases native-final
+```
+
+The conductor composes `shadow.om+shadow-oracle.om`; both are handwritten
+seeded Omega. It replays all arm/scenario outputs and independently runs the
+unchanged admission kernel against each. The `.cases` file also removes the
+oracle guard, removes typed fallback, bypasses opt-in, and exhausts the shared
+work budget. Recorded exact outputs are `evidence/nl5-*.planjournal`,
+`*.status` and `*.trace`. Trace rows `201 node arm_ascii handoff_bytes` count
+actual serialized hop bytes, including recomputation; `202 4` marks the
+injected bad-proposal refusal. Header bytes, model token counts, codec timing,
+queue/verification overhead, p50/p95, Turing yield and comparative economics
+are **NOT_RUN**, not zero or an implied improvement. The ASCII arm tag is not
+an identity. `nl5-host.json` records source/binary hashes and the independent
+oracle/replay checks; `nl5-native.log` is the native gate transcript.
+
+### External interface remains fail-closed
+
+NL3 owns LTP0 and NL4 owns `nlproposal`/`nlmatch`, not this repository. Their
+proposal-only interface does not provide canonical MJB1 CONTENT digest binding,
+durable nonce/sequence reservation, capability authorization or signed receipt
+admission to the current Allen decimal adapter. The owning gaps are
+[protocols #70](https://github.com/aien-dev/aien-protocols-mv/issues/70) and
+[AEGIS #79](https://github.com/aien-dev/aegis-runtime-mv/issues/79). NL4's
+closed inc/double/id fixture is not equivalent to this arbitrary-add graph.
+Therefore actual LTP0/semantic-boundary integration, wrong-basis/model-swap/
+expired-projector negotiation and learned C transport remain **NOT_RUN**,
+with a truthful typed fallback, not forged trust flags. The adapter boundary
+must consume those owner APIs before C can become eligible.
+
+Real-model runs are **BLOCKED** by the explicit no-serving/no-activation/GPU
+authorization boundary. The research outcome is **INCONCLUSIVE**: no latent
+quality, generalization, speed or economic result is claimed. No live route,
+public endpoint, promotion, Cortex writer or release gate changes are included.
+The independent benchmark preregistration is
+[benchmarks PR #56](https://github.com/aien-dev/benchmarks-mv/pull/56),
+commit `8ee0a494bf73230c9d37647eb3caea792298fa8d`.
