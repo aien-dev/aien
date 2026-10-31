@@ -13,7 +13,10 @@ here="$repo/tests/goal_microjobs/aienet-m1"
 : "${CANON:?compiled canon from feat/aienet-m1-canon}"
 canon_source=b5057df61bc2175e6e1bf23d1ebce0a2857f8584
 canon_binary=4d7d2a0bda184622980f61570b8ae5294a1989c89af2aa498bdbfa443abf2b1b
-git -C "$repo" merge-base --is-ancestor "$canon_source" HEAD
+# Pin the canon sources by git blob id, not by commit ancestry: a squash merge
+# of feat/aienet-m1-canon leaves b5057df off main while the sources stay equal.
+test "$(git -C "$repo" rev-parse HEAD:src/goal_microjobs/canon.om)" = 5719dc992cb358d7ea29dbec4ab82e310369de29
+test "$(git -C "$repo" rev-parse HEAD:scripts/goal_microjobs/canon-build.sh)" = 226fcae40b2daa9dcc3da785571b1cef70b41c4b
 test "$(sha256sum "$CANON" | cut -d' ' -f1)" = "$canon_binary"
 export CARGO_BUILD_JOBS=4 PYTHONDONTWRITEBYTECODE=1
 umask 077
