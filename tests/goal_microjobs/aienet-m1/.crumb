@@ -1,0 +1,19 @@
+{
+  "extensions": {
+    "generated": {
+      "children": [],
+      "children_root": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "compiled_at": "2026-10-31T11:04:32Z",
+      "compiler": "crumb-compile/1",
+      "digest": "sha256:6b23710000b0f9f1da795e5dd96fefa8f29ffc7549158dc24bcfc52354e70a8e",
+      "evidence_files": 0,
+      "evidence_root": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "files": 2,
+      "generated_at_commit": "918ffaf549bfc1cb37baef0633105cf55dbd5923",
+      "source_tree": "sha256:44b66b0c062ec78e1fb9d59a2de3404a76bc1836f5077650b09e2e1adf548145"
+    }
+  },
+  "name": "aienet-m1",
+  "purpose": "Host-only Allen journal to canonical Aienet-0 execution, recovery and refusal acceptance",
+  "schema_version": "1.0.0"
+}

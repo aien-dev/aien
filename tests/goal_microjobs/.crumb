@@ -3,21 +3,27 @@
     "generated": {
       "children": [
         {
+          "digest": "6b23710000b0f9f1da795e5dd96fefa8f29ffc7549158dc24bcfc52354e70a8e",
+          "last_commit": "918ffaf",
+          "name": "aienet-m1",
+          "purpose": "Host-only Allen journal to canonical Aienet-0 execution, recovery and refusal acceptance"
+        },
+        {
           "digest": "e1d8451acf26b764832cedb86714f72fd238deb4c632ab418df81fbb9962b0b0",
           "last_commit": "b5057df",
           "name": "canon",
           "purpose": "Synthetic canonical Aienet-0 byte oracles, refusal probes and guard-removal mutants"
         }
       ],
-      "children_root": "sha256:0d16a180e37a367d57b67f95c31ba2227fa974ea63b13ef53cf9650dad0f8ed6",
-      "compiled_at": "2026-10-31T02:20:58Z",
+      "children_root": "sha256:1c5340992dd7c7310d19546b1d0b46fcf0192ef1a8460309566e3843a13d38cd",
+      "compiled_at": "2026-10-31T11:04:32Z",
       "compiler": "crumb-compile/1",
-      "digest": "sha256:63c714e665d89c601f7a5f8ab14d582efe36d2a6f83863bb90b8ac9ac4007409",
+      "digest": "sha256:0327866d92415a130fbc7ea99e964e59e65bdd87f192328a6be803a921bfbe65",
       "evidence_files": 0,
       "evidence_root": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "files": 38,
-      "generated_at_commit": "4e11a8954699953f9e741a868b355f15d55de0d2",
-      "source_tree": "sha256:1804d07390823f415d5ee5d5da79e95bcaaaa23ef1837e6e64125e2aedc66668"
+      "files": 40,
+      "generated_at_commit": "918ffaf549bfc1cb37baef0633105cf55dbd5923",
+      "source_tree": "sha256:416fd7957d432ae01e19740038bcce0855eaa3e728624c93f236e06586c19726"
     }
   },
   "name": "goal-microjobs",

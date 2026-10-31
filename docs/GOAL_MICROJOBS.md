@@ -248,6 +248,94 @@ HOST_TESTED is not hardware qualification. P1 two-machine, P2 federation,
 GPU, deployment and merge are NOT_RUN. General DAG conversion and P-256
 verification in Omega are not claimed.
 
+### M1 loopback execution and interruption acceptance
+
+`tests/goal_microjobs/aienet-m1/sequence.sh` is a shell migration adapter
+under [aien#22](https://github.com/aien-dev/aien/issues/22), not a new
+admission or signature implementation. It reads the current generation from
+kernel status and routes the kernel-validated journal through `recovery.om`
+to derive the effective operand, then calls `canon emit`, persists the unchanged
+signed bundle before DISPATCH, resends with the worker's durable `--retry`
+state, checks signatures and independent recomputation through Open Humanity,
+then calls `canon ingest` and proposes RESULT and VERIFY through the kernel.
+`recovery.om` compares every field of an already-persisted RESULT with the
+canonical RESULT before VERIFY-only recovery (mismatch: exit 33). The current
+kernel generation is supplied to canonical ingestion. Immediately before ingest,
+recovery replays the current trusted plan+journal again. The sequencer routes
+the objective from its effective header and operand from its effective node into
+the final eight words of canon's 23-word expected record; neither pin comes from
+the submitted document or bundle. Stale receipts with changed operands refuse
+at the earlier operand check (exit 24). A correction round-trip returning to the
+original operand isolates stale-generation refusal (exit 14). These decisions
+remain in Omega, not shell admission rules.
+`recovery-build.sh` checks the same e5b32567 compiler digest as canon-build.sh.
+
+Effective-operand folding streams the unchanged kernel plan+journal bytes after
+a `1\n` mode prefix, retaining only one event. It has no event-count ceiling.
+The prefix is excluded from the byte count. The same input-size rule as
+`kernel.om:10,60-79` applies: its 262144-byte buffer refuses input length
+greater than or equal to 262143 (exit 3), including trailing whitespace.
+`recovery.om` emits the updated 40-word header/node before the sequencer adds
+the current status and explicit binding for canonical emission.
+
+Build `canon` with the preceding pinned build command. Materialize the SHA
+oracle source without modifying its checkout:
+
+```sh
+mkdir -p /tmp/aienet-m1-sha
+git -C "$OMEGA_MV" archive 55845e70 om/sha256/sha256-om2.om |
+  tar -x -C /tmp/aienet-m1-sha
+taskset -c 10-14 nice -n 19 ionice -c3 env \
+  OH_TREE=/home/drakestapleton/fix/aienet-oh-seal \
+  PROTOCOLS=/tmp/aienet/aien-protocols-mv \
+  OMEGA_WORKTREE=/home/drakestapleton/workspace/allen-harness-evolution-omega \
+  RECOMPUTE_OMC=/home/drakestapleton/workspace/omega-mcp/build/omc \
+  SHA_OMEGA_TREE=/tmp/aienet-m1-sha CANON=/tmp/aienet-m1-canon \
+  bash tests/goal_microjobs/aienet-m1/run.sh /tmp/aienet-m1-fresh-output
+```
+
+The output directory must not exist. The harness builds both OH release
+binaries from the explicitly supplied seal-document worktree and resolves
+their executables from Cargo's reported artifacts, including when
+`CARGO_TARGET_DIR` is set. It verifies the recompute pin and records the exact
+OH revision, both OH binary digests, canonical source revision and canonical
+binary digest in `summary.tsv`, with one expected/observed row per case.
+`mutants.tsv` counts a mutant as killed only for its named semantic failure;
+setup errors are not kills. Baseline failures prevent mutant qualification.
+
+Cases cover happy completion; SIGKILL after bundle persistence, DISPATCH,
+receipt plus AN0V publication and RESULT; worker SIGKILL after durable admission
+and after durable completion; generation correction; signature-covered MJR1
+mutation; executor-signed wrong output; duplicate receipt and an independently
+signed second completion; signature-only AN0V mutation; and RESULT-only recovery
+with a kernel-valid but conflicting persisted time charge. Negative self-tests
+prove the DONE helper rejects RESULTED, missing and duplicate node-1 status
+records. History regressions exercise multiple CORRECTs, 257 and 1000 CORRECTs,
+and two CORRECTs after a persisted RESULT. Capacity probes check the largest
+accepted kernel input and refused boundary/over-capacity inputs against both
+kernel and recovery, with matching observed exits in `capacity.tsv`.
+Authenticated substitution regressions replace a complete validly signed job,
+receipt and countersign after publication but before ingest. Different objective
+and operand substitutions must pass Open Humanity's pinned-key check but refuse
+at canon with 23 and 24 respectively, emit no events, preserve the journal and
+leave the generation running. A generation-two pre-CORRECT operand substitution
+also refuses with 24. Restoring the original checked bytes then completes the
+same dispatch exactly once. Observed exits are filed in `pin-refusals.tsv`.
+Guard-removal mutants challenge persist-before-DISPATCH, check-before-ingest,
+current-generation routing and Omega RESULT conflict checking. A fifth mutant
+stops folding after the first CORRECT; the last-CORRECT regression must kill it.
+Two further mutants pass the submitted document's own objective or operand as
+the expected pin; the authenticated substitution cases must kill both.
+Every accepted generation has one DISPATCH, RESULT and VERIFY.
+Recovery checks that persisted bundle bytes never change.
+
+All identities and payload bindings here are explicit synthetic test values.
+Disposable private scalars are generated by `openssl rand -hex 32` in an
+owner-private `/dev/shm` directory and deleted on exit. Only loopback ephemeral
+ports are used; workers have owned state directories and owned process IDs.
+No GPU, model server, P1 second machine, P2 federation, Core TUR settlement,
+production deployment or hardware qualification is exercised by this harness.
+
 ## NL-5: default-off private-local shadow experiment
 
 Issue [#19](https://github.com/aien-dev/aien/issues/19), parent
